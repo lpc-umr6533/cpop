@@ -1,0 +1,7 @@
+#!/bin/sh
+
+export CGAL_DIR=@CGAL_DIR@
+export CLHEP_DIR=@CLHEP_DIR@
+export Geant4_DIR=@Geant4_DIR@
+export ROOT_DIR=@ROOT_DIR@
+export CPOP_DIR=@CMAKE_INSTALL_PREFIX@/lib/cmake/CPOP

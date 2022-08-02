@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcReader.a CMakeFiles/cReader.dir/zupply.cpp.o
+/usr/bin/ranlib libcReader.a

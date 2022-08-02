@@ -1,0 +1,20 @@
+/cpop/population/verbose 1
+/cpop/population/input population.xml
+/cpop/population/numberFacet 100
+/cpop/population/deltaRef !
+/cpop/population/internalRatio 0.25
+/cpop/population/intermediaryRatio 0.75
+/cpop/population/sampling 12
+/cpop/population/init
+
+/cpop/source/gadolinium/particle e-
+/cpop/source/gadolinium/spectrum eSpectrum_550um.spec
+/cpop/source/gadolinium/totalNanoparticle 3
+/cpop/source/gadolinium/particlePerNano 1000
+
+# necrosis intermediary external
+/cpop/source/gadolinium/distributionInRegion  1 1 1
+
+# CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
+/cpop/source/gadolinium/distributionInCell 1.0 0 0 0
+

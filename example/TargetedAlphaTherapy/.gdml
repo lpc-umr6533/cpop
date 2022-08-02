@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+  <define/>
+
+  <materials>
+    <isotope N="1" Z="1" name="H10x29948b0">
+      <atom unit="g/mole" value="1.00782503081372"/>
+    </isotope>
+    <isotope N="2" Z="1" name="H20x2997500">
+      <atom unit="g/mole" value="2.01410199966617"/>
+    </isotope>
+    <element name="H0x29a4a60">
+      <fraction n="0.999885" ref="H10x29948b0"/>
+      <fraction n="0.000115" ref="H20x2997500"/>
+    </element>
+    <isotope N="16" Z="8" name="O160x29974b0">
+      <atom unit="g/mole" value="15.9949"/>
+    </isotope>
+    <isotope N="17" Z="8" name="O170x29a4c00">
+      <atom unit="g/mole" value="16.9991"/>
+    </isotope>
+    <isotope N="18" Z="8" name="O180x29a4c70">
+      <atom unit="g/mole" value="17.9992"/>
+    </isotope>
+    <element name="O0x29a44f0">
+      <fraction n="0.99757" ref="O160x29974b0"/>
+      <fraction n="0.00038" ref="O170x29a4c00"/>
+      <fraction n="0.00205" ref="O180x29a4c70"/>
+    </element>
+    <material name="G4_WATER0x29a48a0" state="solid">
+      <T unit="K" value="293.15"/>
+      <MEE unit="eV" value="78"/>
+      <D unit="g/cm3" value="1"/>
+      <fraction n="0.111898477841067" ref="H0x29a4a60"/>
+      <fraction n="0.888101522158933" ref="O0x29a44f0"/>
+    </material>
+  </materials>
+
+  <solids>
+    <box lunit="mm" name="sWorld0x2bd5ae0" x="0.105734406821439" y="0.107472187318517" z="0.107758597993392"/>
+  </solids>
+
+  <structure>
+    <volume name="LV_World0x2bd75c0">
+      <materialref ref="G4_WATER0x29a48a0"/>
+      <solidref ref="sWorld0x2bd5ae0"/>
+    </volume>
+  </structure>
+
+  <setup name="Default" version="1.0">
+    <world ref="LV_World0x2bd75c0"/>
+  </setup>
+
+</gdml>

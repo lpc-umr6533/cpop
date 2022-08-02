@@ -1,0 +1,15 @@
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/InformationSystem/include
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Agent/include
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Agent/src
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/ConflictSolver/include
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Layers/include
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Layers/src
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Settings/include
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Shapes/include
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Simulation/include
+-I/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Simulation/src
+-DWITH_GEANT_4
+-DWITH_GDML_EXPORT
+-o
+/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/build/source/MAS/Simulation/include/moc_SimulationManager.cpp
+/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/source/MAS/Simulation/include/SimulationManager.hh

@@ -1,0 +1,239 @@
+// $Id: poissonTables.src,v 1.2 2003/08/13 20:00:12 garren Exp $
+// -*- C++ -*-
+//
+// poissonTables.src
+//
+// This program creates the data tables that RandPoisson will use to 
+// interpolate from the flat random R to the poisson deviate N.
+// The tables are produced in files poissonTables.cdat.  The data is 
+// in the form of a row for each integer mu value, counting by 5's to
+// 100.  Each row of the table presents 51 values of r, corresponding to 
+// the lowest r such that the distribution ought to return N, for 51
+// consecutive integers N.  
+// This is exp(-mu) times sum(mu**k/k!, k=0 to N-1).
+//
+// For mu of 30 and lower, these start at N=1;
+// for mu of 35 and higher these start at mu-30.
+//
+// At the end of this file is a lengthy comment describing just what is going
+// on mathematically.
+//
+// This file need be compiled only once at one location; the poissonTables.cdat
+// generated is completely portable.  Therefore, one time only, 
+// poissonTables.src has been renamed poissonTables.cc, and compiled and run 
+// to create poissonTables.cdat.  The source poissonTables.src is provided 
+// with CLHEP as a mode of concrete documentation of how those numers were 
+// computed.
+//
+// This file is stylistically not suitable for distribution as a reusable 
+// module.
+//
+// 11/17/99  mf	Created.
+// 11/18/99  mf	Having been used (from test area) to create poissonTables.cdat, 
+//		poissonTables.cc was renamed .src and moved to Random area.
+// --------------------------------------------------------------
+
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+
+#define IOS_OK
+#ifdef  IOS_OK
+#include <ios.h>
+#endif
+
+using std::cout;
+
+
+//
+// Constants dictating the nature of the table are picked up from RandPoisson.h
+//
+
+#include "RandPoisson.h"
+
+int main() {
+
+  // Open the output file
+
+  std::ofstream output ( "poissonTables.cdat", std::ios::out );
+
+  // Write the table, one mu-value at a time
+
+  double mu;
+  for (  mu = FIRST_MU; mu <= LAST_MU; mu += S ) {
+
+    output << "\n//\n// mu = " << mu << "\n//\n";
+
+    double exp_mu = exp(-mu);
+    int Nmin = mu - BELOW;
+    if ( Nmin < 1 ) {Nmin = 1;}
+    int Nmax = Nmin + ENTRIES - 1;
+
+    double cdf  = 0;
+    double term = exp_mu;
+    int N;
+
+    // Compute exp_mu sum (mu**m/m!, m = 0 to Nmin-1.
+    // Leave term as the next term, mu**Nmin/Nmin!
+
+    N = 1;
+    while ( N < Nmin )  {
+      cdf += term;
+      term *= mu/N;
+      N++;
+    }
+
+    // Write out the values of cdf, in groups of 3
+    N = Nmin;
+    while (N <= Nmax) {
+      int   j;
+      for ( j = 0; j < 3; j++ ) {
+	double cdf0 = cdf;
+	cdf += term;
+	// The following lines handle roundoff issues:
+	  if ( (cdf == cdf0) && (cdf > (1 - 1.0E-14)) ) cdf = 1;
+	  if (cdf > 1) cdf = 1;
+	//
+        term *= mu/N;
+        output.setf(ios::fixed,ios::floatfield);
+        output.precision(17);
+        output << std::setw(20) << cdf << ", ";
+	N++;
+      }
+      output.setf(0,ios::floatfield);
+      output.precision(4);
+      output << " // " << N-3 << " - " << N-1 << "\n";
+    }
+   
+  }
+
+  cout << " Tables completed \n";
+
+  return 0;
+}
+
+
+#ifdef STRATEGY
+
+The task is, given a value r and a mean mu, to find the smallest value of 
+N such that cdf (mu, N) >= r.
+
+The crucial mathematical enabler is that the sum of two Poisson deviates
+with means u and v is distributed as a Possion with mean (u+v).  The idea 
+is to generate r, LOOK UP the Poisson N for a value of mu slightly less than
+the actual value, and then generate a small-mean Poisson to add to that N to
+reflect the differnce between the actual mu and the tabulated mu.
+
+The algorithm, then, is:
+
+0) Generate one random, r.
+
+1) If mu > boundary, use the Gaussian approximation.  We can share the normal
+   transform that RandGauss uses, to double the speed over a Box-Mueller.
+   This boundary can be pushed to quite a high value, since the only cost of
+   increasing it is table space.  THe original CENRLIB used 88; we can use 100.
+
+2) If mu is very small, simply do the direct series summation.
+
+3) Consider row [mu/S] of the table; that is, the table contains values of
+   r_min vs N for mu = 0, S, 2S, 3S, ...
+
+4) In that table, find the largest Rentry below r.  Note the index N1.
+
+                               r - Rentry[n1]
+5) Form a new random, r' = ----------------------- . This is uniform on (0,1).
+                           Rentry[n1+1]-Rentry[n1]
+
+
+6) Use the direct method to form Poisson deviate N2 from r'.
+
+	The new random r' has fewer bits of randomness than did r, but
+	only by about 1-7 bits (about 7 bits for selecting among 100 possible
+	N values),  Since the second Poisson is for a small mu, this
+	distortion will harm the overall accuracy of the distribution
+	by somewhat less than 7 bits of loss.
+
+7) The result is N1 + N2.
+
+This method is precise to at least 46-bit accuracy, and can be made accurate
+to the full precision of your random engine at the cost of one extra random
+fired per deviate.
+
+Some wrinkles:
+
+-- When the table runs out -- 
+
+The table should extend to one number more than the maximal N anticipated
+for most r.  In rare cases, r will put you above that last r.  In such 
+cases, (r-last R) / (1-last R) will again be uniformly distributed, but it
+would be incorrect to simply this as the second Random because we don't know
+the correct value of N1.  But we do know the sum of the N terms, and (from
+subtracting the next-to-last entry) the N-th term in the series.  So we can
+start from that last Rentry, and continue to extend the sum out as far as is
+needed to get the deviate in one step.
+
+Does the table need to start from 1?
+
+There is in each mu-row an implied Rentry of 0 at N=0.  For a given (assumedly 
+fairly large) mu, it is not essential that the first Rentry in the table be 1.
+If r is less than that first Rentry, and the Rentry corresponds to N > 1, then
+the direct method can be used to compute the proper value.  
+
+-- How big should the table be --
+
+The penalty for the table not going far enough out in N for a given mu
+is that with some frequency r will exceed the last Rentry.  Even in those 
+cases, as long as the correct N is not very far from the end of the table,
+extending by the direct series is not a very serious matter.
+
+If a row of the table is to start from M > 1, the penalty is proportial to
+the miss frequency, times roughly M iterations of the direct series.  Thus
+a miss by a little in this case is as bad as a miss by a lot.
+
+Thus, the table (for any given mu) ought to extend at least 2 sigma on either
+side of mu.  So for mu = 100, you would want to go at least from 80-120.  For
+large mu, it is more imprtant to provide coverage on the lower side, since
+the cost of a miss will be much bigger.  For instance, at 2 sigma with mu=100,
+we can expect about 80 iterations of the series about 2.5% of the time, which
+adds .6 r-units just for the *low-miss* cases.  On the high-end, the equivalent
+cost is about 15 times less.  So 70-120 would make sense for mu = 100.  We 
+make the table 51 numbers wide.
+
+The penalty for making the spacing between mu values, S, too large is that
+mu is about S/2 when computing N2.  My feeling is that a mu gap of 5 would
+be sensible, and that we could push that to 10 without serious regret.
+
+-- The size and shape of the table --
+
+The tradeoffs can be expressed in terms of expected series iteration count:
+
+* Increasing S by a unit costs .5 iterations 
+* Decreasing the first Rentry in one of the large mu rows 
+	2 sigma to 2.5 sigma --> 1.3 iterations
+	2.5 sigma to 3 sigma -->  .4 iterations
+	3.5 sigma to 4 sigma -->  .1 iterations
+* Increasing the last Rentry in one of the large mu rows 
+	2 sigma to 2.5 sigma -->  .1 iterations
+
+There is some advantage in keeping the table rectangular.  Since sigma goes
+as sqrt(mu), splitting off the lower mu values for less R entries would not
+gain much (perhaps 15% for a single split into two rectangular tables).  We
+thus keep the table ractangular.
+
+Varying the starting N for each row lets us avoid a factor of Nmax/(Nmax-Nmin)
+which will turn out to be a factor of 2 or so; this is worthwhile since it
+costs almost no extra time.
+
+So the table is thus 20 by 51 doubles.
+
+-- Precomputing for default mu --
+
+For the default mu, fire() can use precomputed N values.  The trick is to
+prepare a table of N vs 100 r, along with =the r at which you go to the next 
+N= and the series term at that point.  This saves, fundamentally, the time
+needed to search for N, plus the time needed to do the N2 calculation (which
+includes an exp()).  
+
+
+#endif
