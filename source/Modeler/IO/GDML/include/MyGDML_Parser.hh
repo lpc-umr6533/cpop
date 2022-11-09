@@ -1,5 +1,5 @@
 /*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
+Copyright (C): Henri Payno, Axel Delsol,
 Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
 
 This software is distributed under the terms
@@ -12,7 +12,7 @@ See LICENSE.md for further details
 
 #ifdef WITH_GEANT_4	// if using directly G4
 	#include "G4PVPlacement.hh"
-	#include "G4GDMLParser.hh"
+	#include <G4GDMLParser.hh>
 #else			// else using our own G4 definition from CAD Mesh
 	#include "geometry/volume/G4PVPlacement.hh"
 	#include "persistency/G4GDMLParser.hh"

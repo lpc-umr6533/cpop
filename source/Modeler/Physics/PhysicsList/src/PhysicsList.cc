@@ -105,7 +105,6 @@
 #include "G4NeutronTrackingCut.hh"
 #include "G4UnitsTable.hh"
 #include "G4IonParametrisedLossModel.hh"
-#include "G4EmProcessOptions.hh"
 #include "G4ParallelWorldPhysics.hh"
 #include "G4AutoDelete.hh"
 #include "G4HadronPhysicsQGSP_BIC_AllHP.hh"

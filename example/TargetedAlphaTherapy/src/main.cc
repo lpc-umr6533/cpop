@@ -6,6 +6,7 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
+#define G4MULTITHREADED // TODO hack
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
 #else
@@ -96,7 +97,7 @@ int main(int argc, char** argv)
 		// Create a population
 
 		std::ofstream fid;
-		fid.open ("/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/example/TXT/IDCell.txt");
+		fid.open ("../../example/TXT/IDCell.txt");
 
 		cpop::Population population;
 		population.messenger().BuildCommands("/cpop");
