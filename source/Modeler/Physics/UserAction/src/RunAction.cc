@@ -8,6 +8,7 @@
 #include "G4SystemOfUnits.hh"
 #include "UnitSystemManager.hh"
 #include <G4UnitsTable.hh>
+#include <G4AnalysisManager.hh>
 
 #include "PrimaryGeneratorAction.hh"
 

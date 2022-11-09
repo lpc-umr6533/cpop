@@ -13,6 +13,8 @@
 #include "EventAction.hh"
 #include "G4RunManager.hh"
 
+#include <G4AnalysisManager.hh>
+
 namespace cpop {
 
 SteppingAction::SteppingAction(const Population &population, EventAction* eventAction, PGA_impl &pga_impl)
