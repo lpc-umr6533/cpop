@@ -7,7 +7,7 @@ namespace cpop {
 StepMax::StepMax(const G4String &processName)
     :G4VDiscreteProcess(processName),
       max_charged_step_(DBL_MAX)
-      //messenger_(make_unique<StepMaxMessenger>(this))
+      //messenger_(std::make_unique<StepMaxMessenger>(this))
 {
 
 }

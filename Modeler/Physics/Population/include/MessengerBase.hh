@@ -24,9 +24,9 @@ private:
     std::unique_ptr<G4UIdirectory> dir_;
 };
 
-// make_unique<T> until we can use C++ 14
+//std::make_unique<T> until we can use C++ 14
 template <class T, class... Types>
-std::unique_ptr<T> make_unique(Types&&... Args)
+std::unique_ptr<T>std::make_unique(Types&&... Args)
 {
     return (std::unique_ptr<T>(new T(std::forward<Types>(Args)...)));
 }

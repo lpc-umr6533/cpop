@@ -18,7 +18,7 @@ void PopulationMessenger::BuildCommands(G4String base)
     G4String cmd_base = base + "/population";
 
     G4String cmd_name = cmd_base + "/verbose";
-    verbose_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
+    verbose_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
     verbose_cmd_->SetGuidance("Set vebose level. 0 (silent) 1 (output to terminal");
     verbose_cmd_->SetParameterName("Verbose",true);
     verbose_cmd_->SetDefaultValue(0);
@@ -26,13 +26,13 @@ void PopulationMessenger::BuildCommands(G4String base)
     verbose_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/input";
-    population_cmd_ = make_unique<G4UIcmdWithAString>(cmd_name, this);
+    population_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_name, this);
     population_cmd_->SetGuidance("Set cell population file");
     population_cmd_->SetParameterName("CellPop",false);
     population_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/numberFacet";
-    number_facet_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
+    number_facet_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
     number_facet_cmd_->SetGuidance("Set maximum number of facet for each cell representation");
     number_facet_cmd_->SetParameterName("NumberFacet", true);
     number_facet_cmd_->SetDefaultValue(100);
@@ -40,7 +40,7 @@ void PopulationMessenger::BuildCommands(G4String base)
     number_facet_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/deltaRef";
-    delta_ref_cmd_ = make_unique<G4UIcmdWithADouble>(cmd_name,this);
+    delta_ref_cmd_ = std::make_unique<G4UIcmdWithADouble>(cmd_name,this);
     delta_ref_cmd_->SetGuidance("Set delta refinement parameter");
     delta_ref_cmd_->SetParameterName("DeltaRef", true);
     delta_ref_cmd_->SetDefaultValue(0);
@@ -48,38 +48,38 @@ void PopulationMessenger::BuildCommands(G4String base)
     delta_ref_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/internalRatio";
-    internal_ratio_cmd_ = make_unique<G4UIcmdWithADouble>(cmd_name,this);
+    internal_ratio_cmd_ = std::make_unique<G4UIcmdWithADouble>(cmd_name,this);
     internal_ratio_cmd_->SetGuidance("Set internal layer ratio");
     internal_ratio_cmd_->SetParameterName("internalRatio", false);
     internal_ratio_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/intermediaryRatio";
-    intermediary_ratio_cmd_ = make_unique<G4UIcmdWithADouble>(cmd_name, this);
+    intermediary_ratio_cmd_ = std::make_unique<G4UIcmdWithADouble>(cmd_name, this);
     intermediary_ratio_cmd_->SetGuidance("Set intermediary layer ratio");
     intermediary_ratio_cmd_->SetParameterName("intermediaryRatio", false);
     intermediary_ratio_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/sampling";
-    number_sampling_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_name,this);
+    number_sampling_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name,this);
     number_sampling_cmd_->SetGuidance("Set number of cell to observe. Use ! to observe the whole population");
     number_sampling_cmd_->SetParameterName("Sampling", true);
     number_sampling_cmd_->SetDefaultValue(-1);
     number_sampling_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/init";
-    init_cmd_ = make_unique<G4UIcmdWithoutParameter>(cmd_name,this);
+    init_cmd_ = std::make_unique<G4UIcmdWithoutParameter>(cmd_name,this);
     init_cmd_->SetGuidance("Load population file and define regions");
     init_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/stepInfo";
-    get_stepping_level_info_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
+    get_stepping_level_info_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
     get_stepping_level_info_cmd_->SetGuidance("Get info at the stepping level");
     get_stepping_level_info_cmd_->SetParameterName("StepInfoBool", true);
     get_stepping_level_info_cmd_->SetDefaultValue(0);
     get_stepping_level_info_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_name = cmd_base + "/eventInfo";
-    get_event_level_info_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
+    get_event_level_info_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
     get_event_level_info_cmd_->SetGuidance("Get info at the event level");
     get_event_level_info_cmd_->SetParameterName("EventInfoBool", true);
     get_event_level_info_cmd_->SetDefaultValue(0);

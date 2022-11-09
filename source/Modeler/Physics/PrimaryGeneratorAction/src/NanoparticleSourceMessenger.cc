@@ -11,7 +11,7 @@ namespace cpop {
 NanoparticleSourceMessenger::NanoparticleSourceMessenger(NanoparticleSource *source)
     : MessengerBase(),
       source_(source),
-      source_messenger_(make_unique<SourceMessenger>(source))
+      source_messenger_(std::make_unique<SourceMessenger>(source))
 {
 }
 
@@ -20,25 +20,25 @@ void NanoparticleSourceMessenger::BuildCommands(G4String base)
     source_messenger_->BuildCommands(base);
 
     G4String cmd_base = base + "/totalNanoparticle";
-    total_nano_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
+    total_nano_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
     total_nano_cmd_->SetGuidance("Set the number of nanoparticle in the population");
     total_nano_cmd_->SetParameterName("TotalNano", false);
     total_nano_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/particlePerNano";
-    part_per_nano_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
+    part_per_nano_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
     part_per_nano_cmd_->SetGuidance("Set the number of secondaries for one nanoparticle");
     part_per_nano_cmd_->SetParameterName("PartPerNano", false);
     part_per_nano_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/distributionInRegion";
-    nano_per_region_cmd_ = make_unique<G4UIcmdWith3Vector>(cmd_base, this);
+    nano_per_region_cmd_ = std::make_unique<G4UIcmdWith3Vector>(cmd_base, this);
     nano_per_region_cmd_->SetGuidance("Distribute the nanoparticle  in the 3 regions");
     nano_per_region_cmd_->SetParameterName("nNecrosis", "nIntermediary", "nExternal", false);
     nano_per_region_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/distributionInCell";
-    pos_in_cell_cmd_ = make_unique<G4UIcommand>(cmd_base, this);
+    pos_in_cell_cmd_ = std::make_unique<G4UIcommand>(cmd_base, this);
     G4UIparameter* cell_membrane = new G4UIparameter("CellMembrane", 'd', false);
     pos_in_cell_cmd_->SetParameter(cell_membrane);
     G4UIparameter* nucleoplasm = new G4UIparameter("Nucleoplasm", 'd', false);
@@ -50,19 +50,19 @@ void NanoparticleSourceMessenger::BuildCommands(G4String base)
     pos_in_cell_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/maxNanoparticlePerCell";
-    nb_max_nano_per_cell_cmd_ = make_unique<G4UIcmdWith3Vector>(cmd_base, this);
+    nb_max_nano_per_cell_cmd_ = std::make_unique<G4UIcmdWith3Vector>(cmd_base, this);
     nb_max_nano_per_cell_cmd_->SetGuidance("Set the maximum number of nanoparticle that can be attached to a cell");
     nb_max_nano_per_cell_cmd_->SetParameterName("MaxNanoPerCell_Necrosis", "MaxNanoPerCell_Intermediary", "MaxNanoPerCell_External", false);
     nb_max_nano_per_cell_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/cellLabelingPercentagePerRegion";
-    cell_Labeling_cmd_ = make_unique<G4UIcmdWith3Vector>(cmd_base, this);
+    cell_Labeling_cmd_ = std::make_unique<G4UIcmdWith3Vector>(cmd_base, this);
     cell_Labeling_cmd_->SetGuidance("Set the percentage of labeled cells with nanoparticles, per region");
     cell_Labeling_cmd_->SetParameterName("cellLabeling%_Necrosis", "cellLabeling%_Intermediary", "cellLabeling%_External",false);
     cell_Labeling_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/only_one_position_for_all_particles_on_a_cell";
-    only_one_position_for_all_particles_on_a_cell_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
+    only_one_position_for_all_particles_on_a_cell_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
     only_one_position_for_all_particles_on_a_cell_cmd_->SetGuidance("Allow only one position for all particles generated on the same cell");
     only_one_position_for_all_particles_on_a_cell_cmd_->SetParameterName("Only_one_position_for_all_particles_on_a_cell", false);
     only_one_position_for_all_particles_on_a_cell_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);

@@ -18,25 +18,25 @@ void PGA_implMessenger::BuildCommands(G4String base)
     base_ = base;
 
     G4String cmd_base = base + "/addHomogeneous";
-    homogeneous_cmd_ = make_unique<G4UIcmdWithAString>(cmd_base, this);
+    homogeneous_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
     homogeneous_cmd_->SetGuidance("Add a homogeneous source");
     homogeneous_cmd_->SetParameterName("HsourceName", false);
     homogeneous_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     cmd_base = base + "/addNanoparticle";
-    nanoparticle_cmd_ = make_unique<G4UIcmdWithAString>(cmd_base, this);
+    nanoparticle_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
     nanoparticle_cmd_->SetGuidance("Add a nanoparticle source");
     nanoparticle_cmd_->SetParameterName("NsourceName", false);
     nanoparticle_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     cmd_base = base + "/daughterDiffusion";
-    diffusion_cmd_ = make_unique<G4UIcmdWithAString>(cmd_base, this);
+    diffusion_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
     diffusion_cmd_->SetGuidance("Activate daughter diffusion");
     diffusion_cmd_->SetParameterName("Daughterdiffusion", false);
     diffusion_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     cmd_base = base + "/init";
-    init_cmd_ = make_unique<G4UIcmdWithoutParameter>(cmd_base, this);
+    init_cmd_ = std::make_unique<G4UIcmdWithoutParameter>(cmd_base, this);
     init_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 

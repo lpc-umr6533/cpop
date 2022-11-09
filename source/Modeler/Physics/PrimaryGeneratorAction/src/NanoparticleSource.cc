@@ -20,7 +20,7 @@ namespace cpop {
 
 NanoparticleSource::NanoparticleSource(const string &name, const Population &population)
     :Source(name,population),
-       messenger_(make_unique<NanoparticleSourceMessenger>(this))
+       messenger_(std::make_unique<NanoparticleSourceMessenger>(this))
 {
 }
 
@@ -220,7 +220,7 @@ void NanoparticleSource::setNumber_nanoparticle_external(int number_nanoparticle
 
 void NanoparticleSource::setOrganelle_weight(double pCellMembrane, double pNucleoplasm, double pNuclearMembrane, double pCytoplasm)
 {
-    organelle_weight_ = make_unique<OrganellesWeight>(pCellMembrane, pNucleoplasm, pNuclearMembrane, pCytoplasm);
+    organelle_weight_ = std::make_unique<OrganellesWeight>(pCellMembrane, pNucleoplasm, pNuclearMembrane, pCytoplasm);
 }
 
 std::vector<double> NanoparticleSource::getOrganelle_weight()

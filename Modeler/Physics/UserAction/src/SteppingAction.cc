@@ -213,7 +213,7 @@ const Settings::nCell::t_Cell_3* SteppingAction::findCell(const Point_3 &point)
         std::vector<const Settings::nAgent::t_SpatialableAgent_3*> spatialables(sampled_cells.begin(), sampled_cells.end());
 
         int nbCellPerNode = 2000;
-        octree_ = make_unique<Octree<OctreeNodeForSpheroidalCell>>(
+        octree_ = std::make_unique<Octree<OctreeNodeForSpheroidalCell>>(
                                                                       Utils::getBoundingBox(spatialables.begin(), spatialables.end()),
                                                                       &spatialables,
                                                                       nbCellPerNode);

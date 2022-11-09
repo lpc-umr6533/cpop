@@ -17,7 +17,7 @@
 namespace cpop {
 
 Population::Population()
-    :messenger_(make_unique<PopulationMessenger>(this))
+    :messenger_(std::make_unique<PopulationMessenger>(this))
 {
 
 }

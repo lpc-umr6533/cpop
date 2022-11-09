@@ -6,7 +6,7 @@ namespace cpop {
 HomogeneousSourceMessenger::HomogeneousSourceMessenger(HomogeneousSource *source)
     : MessengerBase(),
       source_(source),
-      source_messenger_(make_unique<SourceMessenger>(source))
+      source_messenger_(std::make_unique<SourceMessenger>(source))
 {
 }
 
@@ -15,7 +15,7 @@ void HomogeneousSourceMessenger::BuildCommands(G4String base)
     source_messenger_->BuildCommands(base);
 
     G4String cmd_base = base + "/totalParticle";
-    total_particle_cmd_ = make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
+    total_particle_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
     total_particle_cmd_->SetGuidance("Set number of particles to be generated from this source");
     total_particle_cmd_->SetParameterName("TotalParticle", false);
     total_particle_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);

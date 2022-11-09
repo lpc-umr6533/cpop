@@ -16,7 +16,7 @@ SourceMessenger::SourceMessenger(Source *source)
 void SourceMessenger::BuildCommands(G4String base)
 {
     G4String cmd_base = base + "/particle";
-    particle_cmd_ = make_unique<G4UIcmdWithAString>(cmd_base, this);
+    particle_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
     particle_cmd_->SetGuidance("Set particle to be generated.");
     particle_cmd_->SetParameterName("ParticleName", false);
     G4String candidateList;
@@ -35,7 +35,7 @@ void SourceMessenger::BuildCommands(G4String base)
     particle_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/spectrum";
-    user_spectrum_cmd_ = make_unique<G4UIcmdWithAString>(cmd_base, this);
+    user_spectrum_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
     user_spectrum_cmd_->SetGuidance("Set spectrum file used to get energy (in MeV)");
     user_spectrum_cmd_->SetParameterName("UserSpectrum", false);
     user_spectrum_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);

@@ -37,7 +37,7 @@ void Source::setParticle(G4ParticleDefinition *particle)
 
 void Source::setUser_spectrum(const std::string &user_spectrum_file)
 {
-    user_spectrum_ = make_unique<CPOP_UserSpectrum>(user_spectrum_file);
+    user_spectrum_ = std::make_unique<CPOP_UserSpectrum>(user_spectrum_file);
 }
 
 G4double Source::GetEnergy() const

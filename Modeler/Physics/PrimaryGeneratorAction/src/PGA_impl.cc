@@ -47,8 +47,8 @@ bool PGA_impl::is_init_{false};
 
 PGA_impl::PGA_impl(const Population &population)
     :population_(&population),
-      particle_gun_(make_unique<G4ParticleGun>(1)),
-      messenger_(make_unique<PGA_implMessenger>(this))
+      particle_gun_(std::make_unique<G4ParticleGun>(1)),
+      messenger_(std::make_unique<PGA_implMessenger>(this))
 {
 
 }
@@ -160,7 +160,7 @@ const Settings::nCell::t_Cell_3* PGA_impl::findCell(const Point_3 &point)
         std::vector<const Settings::nAgent::t_SpatialableAgent_3*> spatialables(sampled_cells.begin(), sampled_cells.end());
 
         int nbCellPerNode = 2000;
-        octree_ = make_unique<Octree<OctreeNodeForSpheroidalCell>>(
+        octree_ = std::make_unique<Octree<OctreeNodeForSpheroidalCell>>(
                                                                       Utils::getBoundingBox(spatialables.begin(), spatialables.end()),
                                                                       &spatialables,
                                                                       nbCellPerNode);
@@ -217,7 +217,7 @@ HomogeneousSource &PGA_impl::addHomogeneousSource(const std::string &source_name
 {
     std::lock_guard<std::mutex> lock(add_homogeneous_mutex_);
     if (!homogeneous_source_)
-        homogeneous_source_ = make_unique<HomogeneousSource>(source_name, *population_);
+        homogeneous_source_ = std::make_unique<HomogeneousSource>(source_name, *population_);
 
     return *homogeneous_source_;
 }
@@ -231,7 +231,7 @@ NanoparticleSource &PGA_impl::addNanoparticleSource(const string &source_name)
 {
     std::lock_guard<std::mutex> lock(add_nanoparticle_mutex_);
     if (!nanoparticle_source_)
-        nanoparticle_source_ = make_unique<NanoparticleSource>(source_name, *population_);
+        nanoparticle_source_ = std::make_unique<NanoparticleSource>(source_name, *population_);
     return *nanoparticle_source_;
 }
 

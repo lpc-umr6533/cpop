@@ -10,7 +10,7 @@ namespace cpop {
 
 ActionInitialization::ActionInitialization(const Population &population)
     :G4VUserActionInitialization(),
-      pga_impl_(make_unique<PGA_impl>(population)),
+      pga_impl_(std::make_unique<PGA_impl>(population)),
       population_(&population)
 {
     G4String pga_base = "/cpop/source";

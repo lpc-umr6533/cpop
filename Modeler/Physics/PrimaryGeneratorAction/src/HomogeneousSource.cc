@@ -7,7 +7,7 @@ namespace cpop {
 
 HomogeneousSource::HomogeneousSource(const string &name, const Population &population)
     :Source(name, population),
-      messenger_(make_unique<HomogeneousSourceMessenger>(this))
+      messenger_(std::make_unique<HomogeneousSourceMessenger>(this))
 {
 
 }
