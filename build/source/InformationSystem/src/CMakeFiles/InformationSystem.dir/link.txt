@@ -1,2 +1,0 @@
-/usr/bin/ar qc libInformationSystem.a CMakeFiles/InformationSystem.dir/InformationSystemManager.cc.o
-/usr/bin/ranlib libInformationSystem.a

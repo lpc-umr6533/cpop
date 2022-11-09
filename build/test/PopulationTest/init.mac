@@ -1,8 +1,0 @@
-/cpop/population/verbose 1
-/cpop/population/input population.xml
-/cpop/population/numberFacet 100
-/cpop/population/deltaRef !
-/cpop/population/internalRatio 0.25
-/cpop/population/intermediaryRatio 0.75
-/cpop/population/sampling 12
-/cpop/population/init

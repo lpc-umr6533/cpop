@@ -1,0 +1,4 @@
+build/
+.cache/
+CMakeLists.txt.user
+config/CPOP.sh

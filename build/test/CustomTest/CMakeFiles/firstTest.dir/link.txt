@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wno-unused-variable -Wno-unused-result -DG4USE_STD11 -pipe -m64 -fsigned-char -fPIC -pthread -std=c++11 -Wall -std=c++11  -O3 -DNDEBUG -rdynamic CMakeFiles/firstTest.dir/main.cc.o CMakeFiles/firstTest.dir/testclass.cc.o CMakeFiles/firstTest.dir/test.cc.o -o firstTest 
