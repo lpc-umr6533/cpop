@@ -1,5 +1,5 @@
 /*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
+Copyright (C): Henri Payno, Axel Delsol,
 Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
 
 This software is distributed under the terms
@@ -27,11 +27,11 @@ namespace IO
 	//////////////////////////////////////////////////////////////////////////////
 	namespace OFF
 	{
-		using namespace Settings::Geometry;	
-		using namespace Settings::Geometry::Mesh3D;	
-			
+		using namespace Settings::Geometry;
+		using namespace Settings::Geometry::Mesh3D;
+
 		/// \brief export a polyhedron with a .off format
-		bool exportPolyhedronToOff(Polyhedron_3*, std::ofstream*, std::map<Point_3, unsigned long int, comparePoint_3>&, bool randomColor = true, CGAL::Color pColor = CGAL::WHITE );
+		bool exportPolyhedronToOff(Polyhedron_3*, std::ofstream*, std::map<Point_3, unsigned long int, comparePoint_3>&, bool randomColor = true, CGAL::IO::Color pColor = CGAL::white());
 		/// \brief export a spheroidal cell to the .off format.
 		bool exportSpheroidalCellToOff(SpheroidalCell*, std::ofstream*, std::map<Point_3, unsigned long int, comparePoint_3>&, std::vector<Polyhedron_3*> = std::vector<Polyhedron_3*>() );
 		/// \brief create an off File with the cpop header
