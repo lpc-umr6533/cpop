@@ -1,5 +1,5 @@
 /*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
+Copyright (C): Henri Payno, Axel Delsol,
 Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
 
 This software is distributed under the terms
@@ -24,7 +24,7 @@ class Scheduler
 
 	/// \brief used to served as the comparaison operation between actions
 	/// \todo : make a unitary test to check construction is on the right order
-	/// redefining the set structure in order to have it on this order : 
+	/// redefining the set structure in order to have it on this order :
 	/// 1. EACH BEGIN ITERATION
 	/// 2. punctual action ordered by increasing action's time
 	struct action_timing_comparison
@@ -51,7 +51,7 @@ public:
 	~Scheduler();
 
 	/// \brief schedule a given action to process
-	bool scheduleAction(Action*);	
+	bool scheduleAction(Action*);
 
 	/// \brief return the simulation time
 	inline double getRunningTime() const	{return currentTime;};
