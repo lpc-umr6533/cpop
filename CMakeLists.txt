@@ -12,8 +12,8 @@ cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) # project specific cmake dir
 
-# Set C++ 11
-set(CMAKE_CXX_STANDARD 11)
+# Set C++ 17
+set(CMAKE_CXX_STANDARD 17)
 
 # Project name
 project("CPOP")
@@ -32,14 +32,14 @@ set(VERSION_MINOR "0")
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 
 # Compilation options
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 if(CMAKE_COMPILER_IS_GNUCXX)
 	if (CMAKE_BUILD_TYPE STREQUAL "Release")
-		SET(CMAKE_CXX_FLAGS " -Wno-unused-variable -Wno-unused-result -DG4USE_STD11 -pipe -m64 -fsigned-char -fPIC -pthread -std=c++11")
+		SET(CMAKE_CXX_FLAGS " -Wno-unused-variable -Wno-unused-result -DG4USE_STD11 -pipe -m64 -fsigned-char -fPIC -pthread")
 	endif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	
 	if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-		SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall  -g -std=c++0x ")	
+		SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g")	
 	endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 endif(CMAKE_COMPILER_IS_GNUCXX)

@@ -19,7 +19,7 @@ include(MAS)
 include(Modeler)
 
 # Set C++ 11
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 set(PROJECT_SOURCE
     main.cc
@@ -35,7 +35,7 @@ set(PROJECT_HEADER
 add_executable( cReaderTest ${PROJECT_SOURCE} ${PROJECT_HEADER})
 target_link_libraries(cReaderTest cReader pthread)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -pthread")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread")
 
 #Copy a file
 add_custom_command(TARGET cReaderTest POST_BUILD
