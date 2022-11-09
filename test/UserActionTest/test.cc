@@ -41,7 +41,7 @@ TEST_CASE("Stepping action", "[UserAction]") {
         std::vector<const Settings::nAgent::t_SpatialableAgent_3*> spatialables(sampled_cells.begin(), sampled_cells.end());
 
         int nbCellPerNode = 2000;
-        auto octree = cpop::make_unique<Octree<OctreeNodeForSpheroidalCell>>(
+        auto octree = std::make_unique<Octree<OctreeNodeForSpheroidalCell>>(
                                                                                 Utils::getBoundingBox(spatialables.begin(), spatialables.end()),
                                                                                 &spatialables,
                                                                                 nbCellPerNode);
@@ -88,7 +88,7 @@ TEST_CASE("Stepping action", "[UserAction]") {
         std::vector<const Settings::nAgent::t_SpatialableAgent_3*> spatialables(sampled_cells.begin(), sampled_cells.end());
 
         int nbCellPerNode = 2000;
-        auto octree = cpop::make_unique<Octree<OctreeNodeForSpheroidalCell>>(
+        auto octree = std::make_unique<Octree<OctreeNodeForSpheroidalCell>>(
                                                                                 Utils::getBoundingBox(spatialables.begin(), spatialables.end()),
                                                                                 &spatialables,
                                                                                 nbCellPerNode);
