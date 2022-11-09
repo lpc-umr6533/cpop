@@ -30,7 +30,7 @@ class Scheduler
 	struct action_timing_comparison
 	{
 		/// \brief operator used to order actions
-		bool operator() (const Action* act1, const Action* act2)
+		bool operator() (const Action* act1, const Action* act2) const
 		{
 			if(act1->getFrequency() == Action::EACH_BEGIN_ITERATION ||
 				act1->getFrequency() ==	Action::EACH_END_ITERATION)
