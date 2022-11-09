@@ -240,6 +240,9 @@ ComplexRadiation_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 ComplexRadiation_SOURCE_DIR:STATIC=/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/example/TargetedAlphaTherapy
 
+//git command line client
+GIT_EXECUTABLE:FILEPATH=/usr/bin/git
+
 //The directory containing a CMake configuration file for Geant4.
 Geant4_DIR:PATH=/home/levrague/Documents/apps/geant4.10.05/geant4.10.05_install/lib64/Geant4-10.5.1
 
