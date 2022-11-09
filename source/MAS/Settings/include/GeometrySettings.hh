@@ -42,7 +42,7 @@ namespace Settings
 			/// \brief operator used to make comparaison between two point
 			/// \param p1 first point to compare
 			/// \param p2 second point to compare
-			bool operator()(const Point_3& p1, const Point_3& p2)
+			bool operator()(const Point_3& p1, const Point_3& p2) const
 			{
 				if(p1.x() != p2.x())
 					return p1.x() < p2.x();
