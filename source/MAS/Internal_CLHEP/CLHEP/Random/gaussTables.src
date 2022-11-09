@@ -1,0 +1,566 @@
+// $Id: gaussTables.src,v 1.3 2003/08/13 20:00:12 garren Exp $
+// -*- C++ -*-
+//
+// gaussTables.src
+//
+// This program creates the data tables that RandGauss will use to 
+// interpolate from the flat random R to the gaussian unit normal G.
+// The tables are produced in files gaussTables.cdat.  The data is 
+// organized into values and derivatives (for a cubic spline interpolation)
+// at 5 ranges of values of R:
+//	by 2.0E-13 up to 4.0E-11
+//	by 4.0E-11 up to 1.0E-8
+//	by 1.0E-8  up to 2.0E-6
+//	by 2.0E-6  up to 5.0E-4
+//	by 5.0E-4  up to .5
+//
+// These are included from RandGauss.cc in the fire() routine, for example,
+//	static const double gaussTables[] = {
+//    include "gaussTables.cdat"
+//      }
+//
+// At the end of this file is a lengthy comment describing just what is going
+// on mathematically.
+//
+// main         - Sets up TableInstructions then opens the output file and
+//		  lets writeTabels do its thing.
+// writeTables 	- Driver to create and write the gaussTables.cdat file by
+//		  calling tabulateCDFvsX and then many calls to interpolate.
+// tabulateCDFvsX - Integrate the pdf to create a table of cumulative density
+//		    function (CDF) vs X with uniform spacing in X.
+// interpolate  - Given the CDF values produced by tabulateCDFvsX, find X for
+//		  a specified value of CDF (not necessarily at a node).
+// pdf          - The gaussian distribution probability density function. 
+// approxErrInt - Does an approximation of the error integral.
+//
+// This file need be compiled only once at one location; the gaussTables.cdat
+// generated is completely portable.  Therefore, one time only, gaussTables.src
+// has been renamed gaussTables.cc, and compiled and run to create 
+// gaussTables.cdat.  The source gaussTables.src is provided with CLHEP as a
+// mode of concrete documentation of how those numers were computed.
+//
+// This file is stylistically not suitable for distribution as a reusable 
+// module.
+//
+// 9/21/99   mf	Created, with traces for seeing intermediate results.
+// 9/24/99   mf Traces removed, the results being valid.  The file
+//		gaussTables.cc-trace still contains those traces.
+// 10/25/99  mf	Having been used (from test area) to create gaussTables.cdat, 
+//		gaussTables.cc was renamed .src and moved to Random area.
+// --------------------------------------------------------------
+
+
+#include "CLHEP/Units/PhysicalConstants.h"
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+
+#define IOS_OK
+#ifdef  IOS_OK
+#include <ios.h>
+#endif
+
+using std::cout;
+
+class TableInstructions {
+public:
+  double startingX;		// Value of first X in table of CDF vs X
+				//
+  double intervalX;		// (Uniform) spacing of X's in table of CDF 
+				//
+  int    NCDFvsX;		// Number of entries in table of CDF vs X
+				//
+  int	 NnextXmin;		// Number of X point matching first X point 
+				//   in the next table of CDF vs X
+  double startingCDF;		// Desired first CDF point to fill in table of
+				//    X vs CDF value
+  double intervalCDF;		// (Uniform) spacing in table of X vs CDF
+				//
+  int    NCDF;			// Number of entries in table of X vs CDF 
+};
+
+double pdf (double x);
+
+void writeTables ( std::ostream & output, int nTables, 
+			const TableInstructions tables[] );
+
+void tabulateCDFvsX (double CDFbelow,
+		     double startingX, 
+		     double intervalX,
+		     int N, 
+		     double pdf(double x),
+		     double* CDFTable,
+		     int NnextXmin,
+		     double & nextCDFbelow );
+
+double interpolate ( double yStart, double Yspacing, int N, double* xTable,
+			 double pdf(double xx), double x, int fi, int& newfi );
+
+double approxErrInt (double v);
+
+
+int main() {
+
+  TableInstructions tables[6];
+
+  // Set up for computing each table:
+  //
+  // For each table, we will have about 10000 integration steps
+  // in the actual range, and more outside for safety.
+
+  const double Xstep = .0002;
+  const int    Xints =  500;	// number of steps in an interval of .1
+				// 5000 points per unit X is found to give
+				// the best accuracy.
+
+  //	by 2.0E-13 up to 4.0E-11	200 R values
+
+  tables[0].startingX   = -7.5;		// errInt (-7.5) ~ 3.0E-14
+  tables[0].intervalX   = Xstep;	
+  tables[0].NCDFvsX     = 12*Xints;	// errInt (-6.3) ~ 1.5E-10	
+  tables[0].NnextXmin   =  9*Xints;	// to place it at -6.6
+  tables[0].startingCDF = 2.0E-13;		
+  tables[0].intervalCDF = 2.0E-13;		
+  tables[0].NCDF        = 200;			
+
+  //	by 4.0E-11 up to 1.0E-8		250 R values
+
+  tables[1].startingX   = -6.6;		// errInt (-6.6) ~ 2.1E-11
+  tables[1].intervalX   = Xstep;
+  tables[1].NCDFvsX     = 12*Xints;	// errInt (-5.4) ~ 3.4E-8
+  tables[1].NnextXmin   =  9*Xints;	// to place it at -5.7
+  tables[1].startingCDF = 4.0E-11;	
+  tables[1].intervalCDF = 4.0E-11;	
+  tables[1].NCDF        = 250;		
+
+  //	by 1.0E-8  up to 2.0E-6		200 R values
+
+  tables[2].startingX   = -5.7;		// errInt (-5.7) ~ 6.2E-9
+  tables[2].intervalX   = Xstep;
+  tables[2].NCDFvsX     = 12*Xints;	// errInt (-4.5) ~ 4.0E-6
+  tables[2].NnextXmin   =  9*Xints;	// to place it at -4.8
+  tables[2].startingCDF = 1.0E-8;		
+  tables[2].intervalCDF = 1.0E-8;		
+  tables[2].NCDF        = 200;		
+
+  //	by 2.0E-6  up to 5.0E-4		 250 R values
+
+  tables[3].startingX   = -4.8;		// errInt (-4.8) ~ 8.3E-7
+  tables[3].intervalX   = Xstep;
+  tables[3].NCDFvsX     = 16*Xints;	// errInt (-3.2) ~ 7.4E-4
+  tables[3].NnextXmin   = 12*Xints;	// to place it at -3.6
+  tables[3].startingCDF = 2.0E-6;		
+  tables[3].intervalCDF = 2.0E-6;	
+  tables[3].NCDF        = 250;		
+
+  //	by 5.0E-4  up to .5		1000 R values
+
+  tables[4].startingX   = -3.6;		// errInt (-3.6) ~ 1.7E-4
+  tables[4].intervalX   = Xstep;
+  tables[4].NCDFvsX     = 37*Xints;	// errInt (+0.1) > .5
+  tables[4].NnextXmin   = 0;		// arbitrary, since value won't be used
+  tables[4].startingCDF = 5.0E-4;		
+  tables[4].intervalCDF = 5.0E-4;	
+  tables[4].NCDF        = 1000;			
+
+  //    by 5.0E-4  up to .5 (reverse)	1000 R values
+
+  tables[5].startingX   = 0.0;		
+  tables[5].intervalX   = -Xstep;
+  tables[5].NCDFvsX     = 36*Xints;	// errInt (-3.6) ~ 1.7E-4
+  tables[5].NnextXmin   = 0;		// arbitrary, since value won't be used
+  tables[5].startingCDF = 5.0E-4;		
+  tables[5].intervalCDF = 5.0E-4;	
+  tables[5].NCDF        = 1000;			
+
+  // Open the output file
+
+  std::ofstream output ( "gaussTables.cdat", std::ios::out );
+
+  // Write the tables
+
+  writeTables ( output, 5, tables );
+
+  cout << " Tables completed \n";
+
+  return 0;
+}
+
+double pdf (double x) {
+  return exp(-x*x/2.0)/sqrt(CLHEP::twopi);
+}
+
+
+void writeTables ( std::ostream & output, int nTables, 
+			const TableInstructions tables[] ) {
+  // Write nTables tables out to output, guided by the tables[] instructions.
+
+  double nextCDFbelow = 0;
+
+  for ( int nt = 0; nt < nTables; nt++ ) {
+
+    TableInstructions insts = tables[nt];
+
+    // **** First, tabulate the integrated cdf - which will be matched to r -
+    //	    vs X (the limit of integration) which will be used as the deviate.
+
+    double CDFbelow;
+    if (nt == 0) {
+      CDFbelow = approxErrInt ( insts.startingX );
+    } else {
+      CDFbelow = nextCDFbelow;
+      cout << "approxErrInt(" << insts.startingX << ") = " 
+	   << approxErrInt(insts.startingX) << "   CDFbelow = "
+	   << CDFbelow << "\n";
+    }
+
+    int NCDFvsX = insts.NCDFvsX;
+    double * CDFtable = new double [NCDFvsX];
+    tabulateCDFvsX (CDFbelow, insts.startingX, insts.intervalX, 
+		NCDFvsX, pdf, CDFtable, insts.NnextXmin, nextCDFbelow );
+
+    // CDFtable now contains NCDFvsX points, each representing the CDF
+    // at a point X in a uniformly spaced set of X's.  Also, nextCDFbelow
+    // now contains the CDF at the desired point for the next interval.
+
+    // **** From this table of CDF values, fill in the values of inverse CDF
+    //      at each of the specified r points, by interpolation.  
+
+	// Two things could go wrong here:  
+	// 1- The r points might lie outside the range of f(r) given in the 
+	//    instructions).  In that case, we will report it and punt.
+	// 2- The estimated error of interpolation may be unacceptably large.
+	//    In that case, we could go back and halve the spacing in the table.
+ 	//    However, we have computed in advance the necessary spacing, so
+	//    we this error will always be acceptably small.
+
+    if ( (insts.startingCDF + (insts.NCDF-1)*insts.intervalCDF) > 
+						CDFtable [NCDFvsX-1] ) {
+	cout << "Problem in table " << nt << ": r outside range tabulated\n";
+	exit(1);
+    }
+
+    double * Xtable = new double [insts.NCDF];
+    
+    int fi = 0;
+    int newfi;
+
+    int i;
+    double r;
+    double f;
+    for ( i = 0; i < insts.NCDF; i++ ) {
+      r = insts.startingCDF + i * insts.intervalCDF;
+      f = interpolate 
+		( insts.startingX, insts.intervalX, insts.NCDFvsX, CDFtable, 
+		  pdf, r, fi, newfi );
+      Xtable[i] = f;
+      fi = newfi;
+    }
+
+
+    // **** For just the last table, correct the endpoint by
+    //	    tabulating CDF backward from 0, re-forming the Xtable,
+    //      and takingthe appropriate linear combination of the two.
+    if (nt == nTables-1) {
+      insts = tables[nTables];
+      NCDFvsX = insts.NCDFvsX;
+      tabulateCDFvsX (.5, insts.startingX, insts.intervalX, 
+		NCDFvsX, pdf, CDFtable, insts.NnextXmin, nextCDFbelow );
+      // This table is not usable for the interpolation because it is backward:
+      // reverse it!
+      int n1; int n2;
+      double temp;
+      for ( n1 = 0, n2 = NCDFvsX -1; n1 < n2; n1++, n2-- ) {
+	temp = CDFtable[n1];
+	CDFtable[n1] = CDFtable[n2];
+	CDFtable[n2] = temp;
+      }
+      // Form a second Xtable, just the way you did the first
+      double * Xtable2 = new double [insts.NCDF];
+      fi = 0;
+      for ( i = 0; i < insts.NCDF; i++ ) {
+        r = insts.startingCDF + i * insts.intervalCDF;
+	// Note in interpolation that the MEANING of the dependent (X)
+	// points in the CDFtable does not depend on startingX and
+	// intervalX in the same way as before, since these values would
+	// give the reversed table.
+        f = interpolate 
+		( insts.startingX+insts.intervalX*(insts.NCDFvsX-1), 
+		  -insts.intervalX, insts.NCDFvsX, CDFtable, 
+		  pdf, r, fi, newfi );
+        Xtable2[i] = f;
+        fi = newfi;
+      }
+      // Finally, correct the Xtable based on Xtable2 near .5
+      double top    = insts.startingCDF + (insts.NCDF-1) * insts.intervalCDF;
+      double bottom = insts.startingCDF;
+      for ( i = 0; i < insts.NCDF; i++ ) {
+        r = insts.startingCDF + i * insts.intervalCDF;
+        Xtable[i] = ( Xtable2[i] * (r - bottom) +
+		      Xtable[i]  * (top - r) ) / ( top - bottom );
+      }
+      delete Xtable2;
+    } // End of correction for last table.
+
+    // **** Write this table in the proper format
+    //	    The table has value and derivative; the derivative is given by
+    //	    the reciprocal of the pdf (f(r) at each point.
+
+    output << "\n";
+    for ( i = 0; i < insts.NCDF; i++ ) {
+      double deriv;
+      r = insts.startingCDF + i * insts.intervalCDF;
+      f = Xtable[i];
+      deriv = 1.0/pdf(f);
+      output.setf(ios_base::fixed,ios_base::floatfield);
+      output.precision(17);
+      output << std::setw(25) << f << ",      " 
+		<< std::setw(25) << deriv;
+      output.setf(0,ios_base::floatfield);
+      output.precision(6);
+      output << ",      // " << r << "\n";
+    } 
+
+    output << "\n";
+
+    delete Xtable;
+    delete CDFtable;
+
+  } // Now on to the next table.
+
+} // writeTables 
+
+
+
+void tabulateCDFvsX (double CDFbelow,
+		     double startingX, 
+		     double intervalX,
+		     int N, 
+		     double pdf(double x),
+		     double* CDFtable,
+		     int NnextXmin,
+		     double & nextCDFbelow ) 
+{
+  // Create a table of integral from -infinity to f of pdf(x) dx, where we
+  // assume the integral from -infinity to the startingF is given by rBelow.
+
+  double f = startingX;
+  double integral = CDFbelow;
+  double halfStep = intervalX/2;
+  const double h_6 = intervalX / 6.0;
+
+  double* table = CDFtable;
+
+  double d1;
+  double d_midpt;
+  double d2;
+
+  d1 = pdf(f);
+  *table = integral;
+  table++;
+
+  for ( int i = 1; i<N; i++ ) {
+    d_midpt = pdf(f+halfStep);
+    f += intervalX;
+    d2 = pdf(f);
+    integral += (d1 + 4*d_midpt + d2) * h_6;
+    *table = integral;
+    table++;
+    d1 = d2;
+    if ( i == NnextXmin ) {
+      nextCDFbelow = integral;
+    }
+  } 
+
+} // tabulateCDFvsX 
+
+
+
+double interpolate ( double yStart, double Yspacing, int N, double* xTable,
+			 double pdf(double xx), double x, int fi, int& newfi )
+{
+  // Given a table xTable of X values, for which the corresponding Y values 
+  // are equal to yS, yS + Yspacing, ... yS + (N-1)*Yspacing; and a function
+  // pdf which represents a derivative 
+
+  // Find the highest point j such that x[j] does not exceed x (or
+  // use point N-2 if j is larger than that x[N-2]).  Start from fi; and leave 
+  // newfi as that end point.
+
+  if (xTable[fi]  > x) {
+    cout << "xTable[fi] too large?? \n";
+    cout << "fi = " << fi << " xTable[fi] = " << xTable[fi] 
+	 << " x = " << x << "\n";
+    exit(1);
+  }
+  int j;
+  for ( j = fi; j < N-1; j++ ) {
+    if ( xTable[j] > x ) break;
+  }
+  j = j-1;
+  newfi = j;
+
+  // Perform the interpolation:
+
+  double  y0 = yStart +   j  *Yspacing;
+  double  y1 = yStart + (j+1)*Yspacing;
+  double  d0 = 1.0/pdf(y0);
+  double  d1 = 1.0/pdf(y1);
+
+  double x0 = xTable[j];
+  double x1 = xTable[j+1];
+
+  double  h = x1 - x0;
+
+  double  dx = (x - x0)/h;
+  double  x2 = dx * dx;
+  double  oneMinusX = 1 - dx;
+  double  oneMinusX2 = oneMinusX * oneMinusX;
+
+  double  f0 = (2. * dx + 1.) * oneMinusX2;
+  double  f1 = (3. - 2. * dx) * x2;
+  double  g0 =  h * dx * oneMinusX2;
+  double  g1 =  - h * oneMinusX * x2;
+
+  double answer;
+
+  answer = f0 * y0 + f1 * y1 + g0 * d0 + g1 * d1 ;
+
+  return answer;
+
+} // interpolate 
+
+
+double approxErrInt (double v) {
+
+  // To use this routine, v MUST be negative and for accuracy should be < -4.
+
+  // First approximation is e**(-v**2/2) / ( v* sqrt(2PI) )
+
+  double errInt = exp(-v*v/2);
+  errInt = - errInt / ( v*sqrt(CLHEP::twopi) );
+
+  // correction factor of 
+  // 	(1 - 1/v**2 + 3/v**4 - 3*5/v**6 + ... -3*5*7*9*11*13/v**14)
+
+  double correction = 1;
+  for ( int n = 12; n >= 0; n -= 2 ) {
+    correction = 1.0 - correction*(n+1)/(v*v);
+  }
+
+  errInt *= correction;
+
+  // This is accurate to 1 part in 2000 for v < -4, and one part in 
+  // 50,000 for v < -5.  Since we are using it at v = -7.5, the accuracy is 
+  // a part in 8E-8, but since this is multiplied by 3E-14, the error 
+  // introduced into our returned deviates is about a 2E-21 or less.  This
+  // of course is much less than the machine epsilon.
+
+  //  cout << "errInt (" << v << ") = " << errInt << "\n";
+
+  return errInt;
+}
+
+
+#ifdef STRATEGY
+
+What RandGauss will try to do is, given a value r, produce an estimate
+of f such that 
+
+  integral (-infinity, f, pdf(x)dx) = r,
+
+where pdf(x) is the gaussian distribution exp(-x**2/2)/srqt(2*PI).
+
+Excising details, the strategy is:
+
+The first step is to build up a table of 
+  integral (-infinity, x, pdf(v)dv)  vs  x.
+The table goes in steps of n*some small epsilon.
+(We call it CDFtable, and compute it in tabulateCDFvsX.)
+
+From this table, we can find values of x corresponding to the particular 
+values of cdf that appear in the table.  From this, we can find for a given 
+r the hypthetical X value that would give that r as the cdf.  (This is computed
+in interpolate().)  
+
+Thus we can build a table of inverse_CDF(r) vs r, for r at our desired 
+spaced intervals, by interpolation using each r point.  We call this table 
+Xtable, since the inverse CDF or r is the number that RandGauss needs to return
+as the deviate when supplied with the uniform random r.
+
+We can also place the derivatives of this function in the table; these are
+needed when the distribution is fired.
+
+When RandGauss is fired, we will find the appropriate realm and do cubic spline
+interpolation there.  
+
+
+- - - - - 
+
+The first step is to build up a table of 
+
+  integral (-infinity, x, pdf(v)dv)  vs  x.
+
+This is done by 4-th order numerical integration, using a fine spacing.  
+How do we handle the limit at -infinity?  We will start with some estimate for 
+  integral (-infinity, v, pdf(x)dx) 
+for a fairly negative value of v, as follows:  
+Fortuitously, for reasons of accuracy at small r, we are breaking the 
+problem into multiplt realms anyway.  For each realm of calculation 
+other than the first, we have the integral as computed in the previous realm.  
+For the first realm, we take our largest negative f, and apply the asymptotic
+formulat for the error integral, which is:
+
+  integral (-infinity, v, pdf(x)dx) 
+	= exp(-x**2/2)*(1-1/v**2+3/v**4-3*5/v**6...)/srqt(2*PI*v)
+
+In the range of r this small, all we care about is a reasonable relative 
+error, since the absolute error will be very small (and the tail will thus 
+work properly).  
+
+The table goes in steps of n*some small epsilon.  For the main table, the 
+step size has a natural limit:  The integration error will go as h**4 in each
+step, but will never be smaller than machine_epsilon times the step 
+contribution.  What this tells us is that beyond about some number of (~8000)
+points, your roundoff error is the dominant factor and increasing your 
+granularity will probably hurt more than help.  The observed behavor is that
+the accuracy - measured by the difference between values for N and 2N points - 
+is best at a step size of about 1/5000.
+
+From this table, we can find values of x corresponding to the particular 
+values of cdf that appear in the table.  From this, we can find for a given 
+r the hypothetical X that would be give that r value as the cdf.
+The appropriate interpolation scheme is the cubic spline, since that gives 
+us full accuracy with the spacing already present.  
+
+	[ This step is done in nextInterpolate ]
+
+Thus we can build a table of inverse_CDF(r) vs r, for r at our desired 
+spaced intervals, by interpolation using each r point.  We can also place 
+the derivatives of this function in the table; these are needed when the 
+distribution is fired.  The derivatives are merely 1/pdf(that inverse_CDF).
+In principle, the fire() routine could calculate this; for efficiency, it is
+pre-tabulated.
+
+Although this is a double precision routine, for most values of r, accuracy of
+2**-40 is perfectly OK (in fact, distortion at the level of one part in 2**30
+would be undetectable in several year's running).  However, for very small
+values of r, we need to do a bit better so as to have the correct shape of the
+distribution tail.
+
+So our realms are intervals of roughly 2**-11, -19, -27, -35 and -42.  Since we
+will only need to tabulate up to r = .5, the total data amounts to 32K bytes.
+
+A final subtlety:  We know that when 5=.5, the value of inverse CDF is exactly
+zero.  But the integration leaves it at some small number (3E-12) instead.
+We can fix this without introducing discontinuities by redoing the last table
+starting from the top being exactly 0 and working backward, re-formulating a 
+second table of X vs R, and then taking as our final table a linear combination
+which is the backward one at .5 and the forward one at .0005.
+
+When RandGauss is fired, we will find the appropriate realm and do cubic spline
+interpolation there.  If r < 2**-42, we will instead iteratively apply the 
+asymptotic formula to solve for v; this is time-consuming but would happen only
+a vanishingly small fraction of the time.
+
+#endif

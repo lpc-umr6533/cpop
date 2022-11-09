@@ -1,0 +1,6 @@
+/*!
+ * @page cellProp cell properties
+ * cell properties is needed by cell to know their potential properties, such as life cycles, weights, radii... <BR>
+ * This cell properties will be sued by Distribution systems for example to generate appropriate cells from user request.
+ *
+*/

@@ -1,0 +1,5 @@
+add_subdirectory(Grid)
+add_subdirectory(Mesh)
+add_subdirectory(MeshSubdivision)
+add_subdirectory(Shapes)
+add_subdirectory(SpatialDataStructures)
