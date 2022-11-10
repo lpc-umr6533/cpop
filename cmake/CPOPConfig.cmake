@@ -1,13 +1,12 @@
-#########################################################
-#Copyright (C): Henri Payno, Axel Delsol, 				#
-#Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA	#
-#														#
-#This software is distributed under the terms			#
-#of the GNU Lesser General  Public Licence (LGPL)		#
-#See LICENSE.md for further details						#
-#########################################################
+##########################################################
+# Copyright (C): Henri Payno, Axel Delsol, Alexis Pereda #
+# Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA  #
+#                                                        #
+# This software is distributed under the terms           #
+# of the GNU Lesser General  Public Licence (LGPL)       #
+# See LICENSE.md for further detais                      #
+##########################################################
 # cReader-config.cmake - Package configuration file
-
 
 include(CMakeFindDependencyMacro)
 
@@ -24,12 +23,11 @@ find_dependency(Geant4)
 find_dependency(Qt5Xml)
 find_dependency(ROOT)
 
-
 get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 include(${SELF_DIR}/CPOP.cmake)
 
 set(CPOP_USE_FILE ${CGAL_USE_FILE} ${ROOT_USE_FILE} ${Geant4_USE_FILE})
-set(CPOP_LIB 
+set(CPOP_LIB
 	#~ Qt5::Core
 	#~ Qt5::Xml
 	#~ CLHEP::CLHEP

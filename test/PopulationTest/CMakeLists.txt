@@ -1,82 +1,56 @@
-cmake_minimum_required(VERSION 3.1)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake) # main (top) cmake dir
+cmake_minimum_required(VERSION 3.7)
 
 project(PopulationTest)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake) # main (top) cmake dir
+
 include(ExternalDependencies)
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-    if (CMAKE_BUILD_TYPE STREQUAL "Release")
-        SET(CMAKE_CXX_FLAGS " -Wno-unused-variable -Wno-unused-result -DG4USE_STD11 -pipe -m64 -fsigned-char -fPIC -pthread")
-    endif(CMAKE_BUILD_TYPE STREQUAL "Release")
-
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g")
-    endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-
-endif(CMAKE_COMPILER_IS_GNUCXX)
-
-### Link Information system
 include(InformationSystem)
-
-### Link cReader
 include(cReader)
-#include_directories(../cReader/include)
-
-### -------- Link MAS ----
 include(MAS)
-
-### ------  LINK MODELER  --------
 include(Modeler)
 
-# Set C++ 11
-set(CMAKE_CXX_STANDARD 17)
-
 set(PROJECT_SOURCE
-    main.cc
-    test.cc
-    )
+	main.cc
+	test.cc
+)
 
 set(PROJECT_HEADER
-    )
-set(EXECUTABLE_NAME PopulationTest)
-add_executable( ${EXECUTABLE_NAME} ${PROJECT_SOURCE} ${PROJECT_HEADER})
-target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CATCH_INCLUDE_DIR})
-target_link_libraries(${EXECUTABLE_NAME}
-    cReader
-    InformationSystem
-    Platform_SMA
-    Modeler
-    CGAL
-    CLHEP::CLHEP
-    Qt5::Core
-    Qt5::Xml ${Geant4_LIBRARIES} pthread)
+)
 
-#Copy a file
+set(test_name PopulationTest)
+add_executable(${test_name} ${PROJECT_SOURCE} ${PROJECT_HEADER})
+target_link_libraries(${test_name} PUBLIC
+	cReader
+	InformationSystem
+	Platform_SMA
+	Modeler
+	CGAL
+	CLHEP::CLHEP
+	Qt5::Core
+	Qt5::Xml ${Geant4_LIBRARIES} pthread
+)
+
 set(FILE_TO_COPY
-    population.xml
-    verbose.mac
-    population.mac
-    facet.mac
-    delta.mac
-    internalRatio.mac
-    intermediaryRatio.mac
-    sampling.mac
-    init.mac)
+	population.xml
+	verbose.mac
+	population.mac
+	facet.mac
+	delta.mac
+	internalRatio.mac
+	intermediaryRatio.mac
+	sampling.mac
+	init.mac
+)
 
 foreach(FILE ${FILE_TO_COPY})
-    add_custom_command(TARGET PopulationTest POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_SOURCE_DIR}/${FILE}
-        $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>
-        )
+	add_custom_command(TARGET ${test_name} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		${CMAKE_CURRENT_SOURCE_DIR}/${FILE}
+		$<TARGET_FILE_DIR:${test_name}>
+	)
 endforeach()
 
-
-# TESTING
 include(CTest)
-add_test(NAME PopulationCTEST COMMAND ${EXECUTABLE_NAME} )
-set_tests_properties(PopulationCTEST PROPERTIES 
-    PASS_REGULAR_EXPRESSION "All tests passed"
-    )
+add_test(NAME PopulationCTEST COMMAND ${test_name})
+set_tests_properties(PopulationCTEST PROPERTIES PASS_REGULAR_EXPRESSION "All tests passed")

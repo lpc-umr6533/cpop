@@ -1,5 +1,3 @@
-
-# include Catch 2.0
 include_directories(include)
 
 add_subdirectory(CustomTest)

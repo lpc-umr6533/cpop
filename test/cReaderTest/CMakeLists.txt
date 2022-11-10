@@ -1,53 +1,40 @@
-cmake_minimum_required(VERSION 3.1)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake) # main (top) cmake dir
+cmake_minimum_required(VERSION 3.7)
 
 project(cReaderTest)
 
-### Link Information system
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake) # main (top) cmake dir
+
 include(InformationSystem)
-#include_directories(../InformationSystem/include)
-
-### Link cReader
 include(cReader)
-#include_directories(../cReader/include)
-
-### -------- Link MAS ----
 include(MAS)
-
-### ------  LINK MODELER  --------
 include(Modeler)
 
-# Set C++ 11
-set(CMAKE_CXX_STANDARD 17)
-
 set(PROJECT_SOURCE
-    main.cc
-    customobject.cc
-    test.cc
-    )
+	main.cc
+	customobject.cc
+	test.cc
+)
 
 set(PROJECT_HEADER
-    customsection.hh
-    tests.hh
-    )
+	customsection.hh
+	tests.hh
+)
 
-add_executable( cReaderTest ${PROJECT_SOURCE} ${PROJECT_HEADER})
-target_link_libraries(cReaderTest cReader pthread)
+set(test_name cReaderTest)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread")
+add_executable(${test_name} ${PROJECT_SOURCE} ${PROJECT_HEADER})
 
-#Copy a file
-add_custom_command(TARGET cReaderTest POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${CMAKE_CURRENT_SOURCE_DIR}/testcheck.cfg
-    $<TARGET_FILE_DIR:cReaderTest>
-    )
+target_compile_options(${test_name} PUBLIC -Wall -pthread)
+target_compile_features(${test_name} PUBLIC cxx_std_17)
+target_link_libraries(${test_name} cReader pthread)
 
-# TESTING
+add_custom_command(TARGET ${test_name} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	${CMAKE_CURRENT_SOURCE_DIR}/testcheck.cfg
+	$<TARGET_FILE_DIR:cReaderTest>
+)
+
 include(CTest)
 
-add_test(NAME cReaderCTest COMMAND cReaderTest )
-set_tests_properties(cReaderCTest PROPERTIES 
-    PASS_REGULAR_EXPRESSION "All tests passed"
-    )
+add_test(NAME cReaderCTest COMMAND ${test_name})
+set_tests_properties(cReaderCTest PROPERTIES PASS_REGULAR_EXPRESSION "All tests passed")
