@@ -1,11 +1,11 @@
-#########################################################
-#Copyright (C): Henri Payno, Axel Delsol, 				#
-#Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA	#
-#														#
-#This software is distributed under the terms			#
-#of the GNU Lesser General  Public Licence (LGPL)		#
-#See LICENSE.md for further details						#
-#########################################################
+##########################################################
+# Copyright (C): Henri Payno, Axel Delsol, Alexis Pereda #
+# Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA  #
+#                                                        #
+# This software is distributed under the terms           #
+# of the GNU Lesser General  Public Licence (LGPL)       #
+# See LICENSE.md for further detais                      #
+##########################################################
 set(MODELER_HEADER_DIR ${CMAKE_SOURCE_DIR}/source/Modeler)
 include_directories(${MODELER_HEADER_DIR}/Engine/include)
 include_directories(${MODELER_HEADER_DIR}/Engine/Material/include)
@@ -41,7 +41,6 @@ if(CPOP_IMPORT_INTERNAL_GDML)
 	include_directories(${MODELER_HEADER_DIR}/Engine/G4_sources/geometry/management)
 	include_directories(${MODELER_HEADER_DIR}/Engine/G4_sources/geometry/solid)
 	include_directories(${MODELER_HEADER_DIR}/Engine/G4_sources/geometry/volume)
-	#include_directories(${CPOP_MAS_PATH})
 endif(CPOP_IMPORT_INTERNAL_GDML)
 
 if(NOT WITH_GEANT_4)
