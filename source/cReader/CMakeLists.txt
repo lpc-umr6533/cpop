@@ -35,7 +35,7 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
 	FRAMEWORK FALSE
 	PUBLIC_HEADER "${HEADERS}" # specify the public headers
 )
-target_compile_options(${LIBRARY_NAME} PUBLIC -pipe -march=native)
+target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wextra -pipe -march=native)
 target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_17)
 
 # Says how and where to install software

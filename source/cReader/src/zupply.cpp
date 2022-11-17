@@ -121,15 +121,15 @@ namespace zz
 				// Unicode constants
 				// Leading (high) surrogates: 0xd800 - 0xdbff
 				// Trailing (low) surrogates: 0xdc00 - 0xdfff
-				const uint16_t LEAD_SURROGATE_MIN = 0xd800u;
-				const uint16_t LEAD_SURROGATE_MAX = 0xdbffu;
-				const uint16_t TRAIL_SURROGATE_MIN = 0xdc00u;
-				const uint16_t TRAIL_SURROGATE_MAX = 0xdfffu;
-				const uint16_t LEAD_OFFSET = LEAD_SURROGATE_MIN - (0x10000 >> 10);
-				const uint32_t SURROGATE_OFFSET = 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
+				constexpr uint16_t LEAD_SURROGATE_MIN = 0xd800u;
+				constexpr uint16_t LEAD_SURROGATE_MAX = 0xdbffu;
+				constexpr uint16_t TRAIL_SURROGATE_MIN = 0xdc00u;
+				constexpr uint16_t TRAIL_SURROGATE_MAX = 0xdfffu;
+				constexpr uint16_t LEAD_OFFSET = LEAD_SURROGATE_MIN - (0x10000 >> 10);
+				constexpr uint32_t SURROGATE_OFFSET = 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
 
 				// Maximum valid value for a Unicode code point
-				const uint32_t CODE_POINT_MAX = 0x0010ffffu;
+				constexpr uint32_t CODE_POINT_MAX = 0x0010ffffu;
 
 				template<typename octet_type>
 				inline uint8_t mask8(octet_type oc)
@@ -299,7 +299,7 @@ namespace zz
 			/// The library API - functions intended to be called by the users
 
 			// Byte order mark
-			const uint8_t bom[] = { 0xef, 0xbb, 0xbf };
+			constexpr uint8_t bom[] = { 0xef, 0xbb, 0xbf };
 
 			template <typename octet_iterator>
 			octet_iterator find_invalid(octet_iterator start, octet_iterator end)
@@ -459,8 +459,8 @@ namespace zz
 			{
 				octet_iterator end = it;
 				while (internal::is_trail(*(--it)))
-				if (it < start)
-					throw invalid_utf8(*it); // error - no lead byte in the sequence
+					if (it < start)
+						throw invalid_utf8(*it); // error - no lead byte in the sequence
 				octet_iterator temp = it;
 				return next(temp, end);
 			}
@@ -471,8 +471,8 @@ namespace zz
 			{
 				octet_iterator end = it;
 				while (internal::is_trail(*(--it)))
-				if (it == pass_start)
-					throw invalid_utf8(*it); // error - no lead byte in the sequence
+					if (it == pass_start)
+						throw invalid_utf8(*it); // error - no lead byte in the sequence
 				octet_iterator temp = it;
 				return next(temp, end);
 			}
@@ -613,21 +613,21 @@ namespace zz
 				octet_iterator append(uint32_t cp, octet_iterator result)
 				{
 					if (cp < 0x80)                        // one octet
-						*(result++) = static_cast<char const>(cp);
+						*(result++) = static_cast<char>(cp);
 					else if (cp < 0x800) {                // two octets
-						*(result++) = static_cast<char const>((cp >> 6) | 0xc0);
-						*(result++) = static_cast<char const>((cp & 0x3f) | 0x80);
+						*(result++) = static_cast<char>((cp >> 6) | 0xc0);
+						*(result++) = static_cast<char>((cp & 0x3f) | 0x80);
 					}
-					else if (cp < 0x10000) {              // three octets
-						*(result++) = static_cast<char const>((cp >> 12) | 0xe0);
-						*(result++) = static_cast<char const>(((cp >> 6) & 0x3f) | 0x80);
-						*(result++) = static_cast<char const>((cp & 0x3f) | 0x80);
+					else if (cp < 0x10000) {        // three octets
+						*(result++) = static_cast<char>((cp >> 12) | 0xe0);
+						*(result++) = static_cast<char>(((cp >> 6) & 0x3f) | 0x80);
+						*(result++) = static_cast<char>((cp & 0x3f) | 0x80);
 					}
-					else {                                // four octets
-						*(result++) = static_cast<char const>((cp >> 18) | 0xf0);
-						*(result++) = static_cast<char const>(((cp >> 12) & 0x3f) | 0x80);
-						*(result++) = static_cast<char const>(((cp >> 6) & 0x3f) | 0x80);
-						*(result++) = static_cast<char const>((cp & 0x3f) | 0x80);
+					else {                          // four octets
+						*(result++) = static_cast<char>((cp >> 18) | 0xf0);
+						*(result++) = static_cast<char>(((cp >> 12) & 0x3f) | 0x80);
+						*(result++) = static_cast<char>(((cp >> 6) & 0x3f) | 0x80);
+						*(result++) = static_cast<char>((cp & 0x3f) | 0x80);
 					}
 					return result;
 				}
@@ -1743,18 +1743,18 @@ namespace zz
 						// convert source image with img_n components to one with req_comp components;
 						// avoid switch per pixel, so use switch per scanline and massive macros
 						switch (COMBO(img_n, req_comp)) {
-							CASE(1, 2) dest[0] = src[0], dest[1] = 255; break;
-							CASE(1, 3) dest[0] = dest[1] = dest[2] = src[0]; break;
-							CASE(1, 4) dest[0] = dest[1] = dest[2] = src[0], dest[3] = 255; break;
-							CASE(2, 1) dest[0] = src[0]; break;
-							CASE(2, 3) dest[0] = dest[1] = dest[2] = src[0]; break;
-							CASE(2, 4) dest[0] = dest[1] = dest[2] = src[0], dest[3] = src[1]; break;
-							CASE(3, 4) dest[0] = src[0], dest[1] = src[1], dest[2] = src[2], dest[3] = 255; break;
-							CASE(3, 1) dest[0] = stbi__compute_y(src[0], src[1], src[2]); break;
-							CASE(3, 2) dest[0] = stbi__compute_y(src[0], src[1], src[2]), dest[1] = 255; break;
-							CASE(4, 1) dest[0] = stbi__compute_y(src[0], src[1], src[2]); break;
-							CASE(4, 2) dest[0] = stbi__compute_y(src[0], src[1], src[2]), dest[1] = src[3]; break;
-							CASE(4, 3) dest[0] = src[0], dest[1] = src[1], dest[2] = src[2]; break;
+							CASE(1, 2) { dest[0] = src[0]; dest[1] = 255; } break;
+							CASE(1, 3) { dest[0] = dest[1] = dest[2] = src[0]; } break;
+							CASE(1, 4) { dest[0] = dest[1] = dest[2] = src[0]; dest[3] = 255; } break;
+							CASE(2, 1) { dest[0] = src[0]; } break;
+							CASE(2, 3) { dest[0] = dest[1] = dest[2] = src[0]; } break;
+							CASE(2, 4) { dest[0] = dest[1] = dest[2] = src[0]; dest[3] = src[1]; } break;
+							CASE(3, 4) { dest[0] = src[0]; dest[1] = src[1]; dest[2] = src[2]; dest[3] = 255; } break;
+							CASE(3, 1) { dest[0] = stbi__compute_y(src[0], src[1], src[2]); } break;
+							CASE(3, 2) { dest[0] = stbi__compute_y(src[0], src[1], src[2]); dest[1] = 255; } break;
+							CASE(4, 1) { dest[0] = stbi__compute_y(src[0], src[1], src[2]); } break;
+							CASE(4, 2) { dest[0] = stbi__compute_y(src[0], src[1], src[2]); dest[1] = src[3]; } break;
+							CASE(4, 3) { dest[0] = src[0]; dest[1] = src[1]; dest[2] = src[2]; } break;
 						default: STBI_ASSERT(0);
 						}
 #undef CASE
@@ -1904,8 +1904,8 @@ namespace zz
 					int i, j, k = 0, code;
 					// build size list for each symbol (from JPEG spec)
 					for (i = 0; i < 16; ++i)
-					for (j = 0; j < count[i]; ++j)
-						h->size[k++] = (stbi_uc)(i + 1);
+						for (j = 0; j < count[i]; ++j)
+							h->size[k++] = (stbi_uc)(i + 1);
 					h->size[k] = 0;
 
 					// compute actual symbols (from jpeg spec)
@@ -1958,7 +1958,7 @@ namespace zz
 								// magnitude code followed by receive_extend code
 								int k = ((i << len) & ((1 << FAST_BITS) - 1)) >> (FAST_BITS - magbits);
 								int m = 1 << (magbits - 1);
-								if (k < m) k += (-1 << magbits) + 1;
+								if (k < m) k += (static_cast<unsigned int>(-1) << magbits) + 1;
 								// if the result is small enough, we can fit it in fast_ac table
 								if (k >= -128 && k <= 127)
 									fast_ac[i] = (stbi__int16)((k << 8) + (run << 4) + (len + magbits));
@@ -2016,8 +2016,8 @@ namespace zz
 					// that way we don't need to shift inside the loop.
 					temp = j->code_buffer >> 16;
 					for (k = FAST_BITS + 1;; ++k)
-					if (temp < h->maxcode[k])
-						break;
+						if (temp < h->maxcode[k])
+							break;
 					if (k == 17) {
 						// error! code not found
 						j->code_bits -= 16;
@@ -3073,8 +3073,8 @@ namespace zz
 						int id = stbi__get8(z->s), which;
 						int q = stbi__get8(z->s);
 						for (which = 0; which < z->s->img_n; ++which)
-						if (z->img_comp[which].id == id)
-							break;
+							if (z->img_comp[which].id == id)
+								break;
 						if (which == z->s->img_n) return 0; // no match
 						z->img_comp[which].hd = q >> 4;   if (z->img_comp[which].hd > 3) return stbi__err("bad DC huff", "Corrupt JPEG");
 						z->img_comp[which].ha = q & 15;   if (z->img_comp[which].ha > 3) return stbi__err("bad AC huff", "Corrupt JPEG");
@@ -3123,8 +3123,8 @@ namespace zz
 					for (i = 0; i < s->img_n; ++i) {
 						z->img_comp[i].id = stbi__get8(s);
 						if (z->img_comp[i].id != i + 1)   // JFIF requires
-						if (z->img_comp[i].id != i)  // some version of jpegtran outputs non-JFIF-compliant files!
-							return stbi__err("bad component ID", "Corrupt JPEG");
+							if (z->img_comp[i].id != i)  // some version of jpegtran outputs non-JFIF-compliant files!
+								return stbi__err("bad component ID", "Corrupt JPEG");
 						q = stbi__get8(s);
 						z->img_comp[i].h = (q >> 4);  if (!z->img_comp[i].h || z->img_comp[i].h > 4) return stbi__err("bad H", "Corrupt JPEG");
 						z->img_comp[i].v = q & 15;    if (!z->img_comp[i].v || z->img_comp[i].v > 4) return stbi__err("bad V", "Corrupt JPEG");
@@ -3459,8 +3459,8 @@ namespace zz
 					int i, j;
 					STBI_NOTUSED(in_far);
 					for (i = 0; i < w; ++i)
-					for (j = 0; j < hs; ++j)
-						out[i*hs + j] = in_near[i];
+						for (j = 0; j < hs; ++j)
+							out[i*hs + j] = in_near[i];
 					return out;
 				}
 
@@ -3907,8 +3907,8 @@ namespace zz
 						++sizes[sizelist[i]];
 					sizes[0] = 0;
 					for (i = 1; i < 16; ++i)
-					if (sizes[i] >(1 << i))
-						return stbi__err("bad sizes", "Corrupt PNG");
+						if (sizes[i] >(1 << i))
+							return stbi__err("bad sizes", "Corrupt PNG");
 					code = 0;
 					for (i = 1; i < 16; ++i) {
 						next_code[i] = code;
@@ -3916,7 +3916,7 @@ namespace zz
 						z->firstsymbol[i] = (stbi__uint16)k;
 						code = (code + sizes[i]);
 						if (sizes[i])
-						if (code - 1 >= (1 << i)) return stbi__err("bad codelengths", "Corrupt PNG");
+							if (code - 1 >= (1 << i)) return stbi__err("bad codelengths", "Corrupt PNG");
 						z->maxcode[i] = code << (16 - i); // preshift for inner loop
 						code <<= 1;
 						k += sizes[i];
@@ -3994,8 +3994,8 @@ namespace zz
 					// use jpeg approach, which requires MSbits at top
 					k = stbi__bit_reverse(a->code_buffer, 16);
 					for (s = STBI__ZFAST_BITS + 1;; ++s)
-					if (k < z->maxcode[s])
-						break;
+						if (k < z->maxcode[s])
+							break;
 					if (s == 16) return -1; // invalid code!
 					// code size is s, so:
 					b = (k >> (16 - s)) - z->firstcode[s] + z->firstsymbol[s];
@@ -4165,7 +4165,7 @@ namespace zz
 					if (nlen != (len ^ 0xffff)) return stbi__err("zlib corrupt", "Corrupt PNG");
 					if (a->zbuffer + len > a->zbuffer_end) return stbi__err("read past buffer", "Corrupt PNG");
 					if (a->zout + len > a->zout_end)
-					if (!stbi__zexpand(a, a->zout, len)) return 0;
+						if (!stbi__zexpand(a, a->zout, len)) return 0;
 					memcpy(a->zout, a->zbuffer, len);
 					a->zbuffer += len;
 					a->zout += len;
@@ -4202,7 +4202,7 @@ namespace zz
 				{
 					int final, type;
 					if (parse_header)
-					if (!stbi__parse_zlib_header(a)) return 0;
+						if (!stbi__parse_zlib_header(a)) return 0;
 					a->num_bits = 0;
 					a->code_buffer = 0;
 					do {
@@ -4349,7 +4349,7 @@ namespace zz
 					stbi_uc png_sig[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
 					int i;
 					for (i = 0; i < 8; ++i)
-					if (stbi__get8(s) != png_sig[i]) return stbi__err("bad png sig", "Not a PNG");
+						if (stbi__get8(s) != png_sig[i]) return stbi__err("bad png sig", "Not a PNG");
 					return 1;
 				}
 
@@ -4469,12 +4469,12 @@ namespace zz
 							switch (filter) {
 								// "none" filter turns into a memcpy here; make that explicit.
 							case STBI__F_none:         memcpy(cur, raw, nk); break;
-								CASE(STBI__F_sub)          cur[k] = STBI__BYTECAST(raw[k] + cur[k - filter_bytes]); break;
-								CASE(STBI__F_up)           cur[k] = STBI__BYTECAST(raw[k] + prior[k]); break;
-								CASE(STBI__F_avg)          cur[k] = STBI__BYTECAST(raw[k] + ((prior[k] + cur[k - filter_bytes]) >> 1)); break;
-								CASE(STBI__F_paeth)        cur[k] = STBI__BYTECAST(raw[k] + stbi__paeth(cur[k - filter_bytes], prior[k], prior[k - filter_bytes])); break;
-								CASE(STBI__F_avg_first)    cur[k] = STBI__BYTECAST(raw[k] + (cur[k - filter_bytes] >> 1)); break;
-								CASE(STBI__F_paeth_first)  cur[k] = STBI__BYTECAST(raw[k] + stbi__paeth(cur[k - filter_bytes], 0, 0)); break;
+								CASE(STBI__F_sub)          { cur[k] = STBI__BYTECAST(raw[k] + cur[k - filter_bytes]); } break;
+								CASE(STBI__F_up)           { cur[k] = STBI__BYTECAST(raw[k] + prior[k]); } break;
+								CASE(STBI__F_avg)          { cur[k] = STBI__BYTECAST(raw[k] + ((prior[k] + cur[k - filter_bytes]) >> 1)); } break;
+								CASE(STBI__F_paeth)        { cur[k] = STBI__BYTECAST(raw[k] + stbi__paeth(cur[k - filter_bytes], prior[k], prior[k - filter_bytes])); } break;
+								CASE(STBI__F_avg_first)    { cur[k] = STBI__BYTECAST(raw[k] + (cur[k - filter_bytes] >> 1)); } break;
+								CASE(STBI__F_paeth_first)  { cur[k] = STBI__BYTECAST(raw[k] + stbi__paeth(cur[k - filter_bytes], 0, 0)); } break;
 							}
 #undef CASE
 							raw += nk;
@@ -4486,13 +4486,13 @@ namespace zz
 							for (i = x - 1; i >= 1; --i, cur[img_n] = 255, raw += img_n, cur += out_n, prior += out_n) \
 							for (k = 0; k < img_n; ++k)
 							switch (filter) {
-								CASE(STBI__F_none)         cur[k] = raw[k]; break;
-								CASE(STBI__F_sub)          cur[k] = STBI__BYTECAST(raw[k] + cur[k - out_n]); break;
-								CASE(STBI__F_up)           cur[k] = STBI__BYTECAST(raw[k] + prior[k]); break;
-								CASE(STBI__F_avg)          cur[k] = STBI__BYTECAST(raw[k] + ((prior[k] + cur[k - out_n]) >> 1)); break;
-								CASE(STBI__F_paeth)        cur[k] = STBI__BYTECAST(raw[k] + stbi__paeth(cur[k - out_n], prior[k], prior[k - out_n])); break;
-								CASE(STBI__F_avg_first)    cur[k] = STBI__BYTECAST(raw[k] + (cur[k - out_n] >> 1)); break;
-								CASE(STBI__F_paeth_first)  cur[k] = STBI__BYTECAST(raw[k] + stbi__paeth(cur[k - out_n], 0, 0)); break;
+								CASE(STBI__F_none)         { cur[k] = raw[k]; } break;
+								CASE(STBI__F_sub)          { cur[k] = STBI__BYTECAST(raw[k] + cur[k - out_n]); } break;
+								CASE(STBI__F_up)           { cur[k] = STBI__BYTECAST(raw[k] + prior[k]); } break;
+								CASE(STBI__F_avg)          { cur[k] = STBI__BYTECAST(raw[k] + ((prior[k] + cur[k - out_n]) >> 1)); } break;
+								CASE(STBI__F_paeth)        { cur[k] = STBI__BYTECAST(raw[k] + stbi__paeth(cur[k - out_n], prior[k], prior[k - out_n])); } break;
+								CASE(STBI__F_avg_first)    { cur[k] = STBI__BYTECAST(raw[k] + (cur[k - out_n] >> 1)); } break;
+								CASE(STBI__F_paeth_first)  { cur[k] = STBI__BYTECAST(raw[k] + stbi__paeth(cur[k - out_n], 0, 0)); } break;
 							}
 #undef CASE
 						}
@@ -4866,7 +4866,7 @@ namespace zz
 																		 s->img_out_n = s->img_n;
 																	 if (!stbi__create_png_image(z, z->expanded, raw_len, s->img_out_n, depth, color, interlace)) return 0;
 																	 if (has_trans)
-																	 if (!stbi__compute_transparency(z, tc, s->img_out_n)) return 0;
+																		 if (!stbi__compute_transparency(z, tc, s->img_out_n)) return 0;
 																	 if (is_iphone && stbi__de_iphone_flag && s->img_out_n > 2)
 																		 stbi__de_iphone(z);
 																	 if (pal_img_n) {
@@ -5220,8 +5220,8 @@ namespace zz
 
 					// if alpha channel is all 0s, replace with all 255s
 					if (target == 4 && all_a == 0)
-					for (i = 4 * s->img_x*s->img_y - 1; i >= 0; i -= 4)
-						out[i] = 255;
+						for (i = 4 * s->img_x*s->img_y - 1; i >= 0; i -= 4)
+							out[i] = 255;
 
 					if (flip_vertically) {
 						stbi_uc t;
@@ -5708,8 +5708,8 @@ namespace zz
 				{
 					int i;
 					for (i = 0; i < 4; ++i)
-					if (stbi__get8(s) != (stbi_uc)str[i])
-						return 0;
+						if (stbi__get8(s) != (stbi_uc)str[i])
+							return 0;
 
 					return 1;
 				}
@@ -5801,8 +5801,8 @@ namespace zz
 										int x;
 
 										for (x = 0; x<width; ++x, dest += 4)
-										if (!stbi__readval(s, packet->channel, dest))
-											return 0;
+											if (!stbi__readval(s, packet->channel, dest))
+												return 0;
 										break;
 							}
 
@@ -6296,8 +6296,8 @@ namespace zz
 					const char *signature = "#?RADIANCE\n";
 					int i;
 					for (i = 0; signature[i]; ++i)
-					if (stbi__get8(s) != signature[i])
-						return 0;
+						if (stbi__get8(s) != signature[i])
+							return 0;
 					return 1;
 				}
 
@@ -7366,7 +7366,7 @@ namespace zz
 				{
 					int i;
 					for (i = 0; i < limit && i < 258; ++i)
-					if (a[i] != b[i]) break;
+						if (a[i] != b[i]) break;
 					return i;
 				}
 
@@ -7481,7 +7481,7 @@ namespace zz
 
 					{
 						// compute adler32 on input
-						unsigned int k = 0, s1 = 1, s2 = 0;
+						unsigned int s1 = 1, s2 = 0;
 						int blocklen = (int)(data_len % 5552);
 						j = 0;
 						while (j < data_len) {
@@ -7503,13 +7503,14 @@ namespace zz
 
 				unsigned int stbiw__crc32(unsigned char *buffer, int len)
 				{
-					unsigned int crc_table[256];
+					unsigned int crc_table[256] = {0};
 					unsigned int crc = ~0u;
 					int i, j;
 					if (crc_table[1] == 0)
-					for (i = 0; i < 256; i++)
-					for (crc_table[i] = i, j = 0; j < 8; ++j)
-						crc_table[i] = (crc_table[i] >> 1) ^ (crc_table[i] & 1 ? 0xedb88320 : 0);
+						for (i = 0; i < 256; i++)
+							for (crc_table[i] = i, j = 0; j < 8; ++j)
+								crc_table[i] = (crc_table[i] >> 1) ^ (crc_table[i] & 1 ? 0xedb88320 : 0);
+
 					for (i = 0; i < len; ++i)
 						crc = (crc >> 8) ^ crc_table[buffer[i] ^ (crc & 0xff)];
 					return ~crc;
@@ -8499,7 +8500,7 @@ namespace zz
 					*out_last_pixel = (int)(floor(out_pixel_influence_upperbound - 0.5));
 				}
 
-				void stbir__calculate_coefficients_upsample(stbir__info* stbir_info, stbir_filter filter, float scale, int in_first_pixel, int in_last_pixel, float in_center_of_out, stbir__contributors* contributor, float* coefficient_group)
+				void stbir__calculate_coefficients_upsample(stbir__info*, stbir_filter filter, float scale, int in_first_pixel, int in_last_pixel, float in_center_of_out, stbir__contributors* contributor, float* coefficient_group)
 				{
 					int i;
 					float total_filter = 0;
@@ -8549,7 +8550,7 @@ namespace zz
 					}
 				}
 
-				void stbir__calculate_coefficients_downsample(stbir__info* stbir_info, stbir_filter filter, float scale_ratio, int out_first_pixel, int out_last_pixel, float out_center_of_in, stbir__contributors* contributor, float* coefficient_group)
+				void stbir__calculate_coefficients_downsample(stbir__info*, stbir_filter filter, float scale_ratio, int out_first_pixel, int out_last_pixel, float out_center_of_in, stbir__contributors* contributor, float* coefficient_group)
 				{
 					int i;
 
@@ -8579,7 +8580,7 @@ namespace zz
 					}
 				}
 
-				void stbir__normalize_downsample_coefficients(stbir__info* stbir_info, stbir__contributors* contributors, float* coefficients, stbir_filter filter, float scale_ratio, float shift, int input_size, int output_size)
+				void stbir__normalize_downsample_coefficients(stbir__info*, stbir__contributors* contributors, float* coefficients, stbir_filter filter, float scale_ratio, float, int input_size, int output_size)
 				{
 					int num_contributors = stbir__get_contributors(scale_ratio, filter, input_size, output_size);
 					int num_coefficients = stbir__get_coefficient_width(filter, scale_ratio);
@@ -8729,8 +8730,8 @@ namespace zz
 					if (edge_vertical == STBIR_EDGE_ZERO && (n < 0 || n >= stbir_info->input_h))
 					{
 						for (; x < max_x; x++)
-						for (c = 0; c < channels; c++)
-							decode_buffer[x*channels + c] = 0;
+							for (c = 0; c < channels; c++)
+								decode_buffer[x*channels + c] = 0;
 						return;
 					}
 
@@ -8903,11 +8904,10 @@ namespace zz
 				}
 
 
-				void stbir__resample_horizontal_upsample(stbir__info* stbir_info, int n, float* output_buffer)
+				void stbir__resample_horizontal_upsample(stbir__info* stbir_info, int, float* output_buffer)
 				{
 					int x, k;
 					int output_w = stbir_info->output_w;
-					int kernel_pixel_width = stbir_info->horizontal_filter_pixel_width;
 					int channels = stbir_info->channels;
 					float* decode_buffer = stbir__get_decode_buffer(stbir_info);
 					stbir__contributors* horizontal_contributors = stbir_info->horizontal_contributors;
@@ -8987,12 +8987,10 @@ namespace zz
 					}
 				}
 
-				void stbir__resample_horizontal_downsample(stbir__info* stbir_info, int n, float* output_buffer)
+				void stbir__resample_horizontal_downsample(stbir__info* stbir_info, int, float* output_buffer)
 				{
 					int x, k;
 					int input_w = stbir_info->input_w;
-					int output_w = stbir_info->output_w;
-					int kernel_pixel_width = stbir_info->horizontal_filter_pixel_width;
 					int channels = stbir_info->channels;
 					float* decode_buffer = stbir__get_decode_buffer(stbir_info);
 					stbir__contributors* horizontal_contributors = stbir_info->horizontal_contributors;
@@ -9188,8 +9186,8 @@ namespace zz
 					// build a table of all channels that need colorspace correction, so
 					// we don't perform colorspace correction on channels that don't need it.
 					for (x = 0, num_nonalpha = 0; x < channels; ++x)
-					if (x != alpha_channel || (stbir_info->flags & STBIR_FLAG_ALPHA_USES_COLORSPACE))
-						nonalpha[num_nonalpha++] = x;
+						if (x != alpha_channel || (stbir_info->flags & STBIR_FLAG_ALPHA_USES_COLORSPACE))
+							nonalpha[num_nonalpha++] = x;
 
 #define STBIR__ROUND_INT(f)    ((int)          ((f)+0.5))
 #define STBIR__ROUND_UINT(f)   ((stbir_uint32) ((f)+0.5))
@@ -9327,7 +9325,7 @@ namespace zz
 					}
 				}
 
-				void stbir__resample_vertical_upsample(stbir__info* stbir_info, int n, int in_first_scanline, int in_last_scanline, float in_center_of_out)
+				void stbir__resample_vertical_upsample(stbir__info* stbir_info, int n, int, int, float)
 				{
 					int x, k;
 					int output_w = stbir_info->output_w;
@@ -9348,7 +9346,6 @@ namespace zz
 					float* ring_buffer = stbir_info->ring_buffer;
 					int ring_buffer_begin_index = stbir_info->ring_buffer_begin_index;
 					int ring_buffer_first_scanline = stbir_info->ring_buffer_first_scanline;
-					int ring_buffer_last_scanline = stbir_info->ring_buffer_last_scanline;
 					int ring_buffer_length = stbir_info->ring_buffer_length_bytes / sizeof(float);
 
 					int n0, n1, output_row_start;
@@ -9445,16 +9442,14 @@ namespace zz
 					stbir__encode_scanline(stbir_info, output_w, (char *)output_data + output_row_start, encode_buffer, channels, alpha_channel, decode);
 				}
 
-				void stbir__resample_vertical_downsample(stbir__info* stbir_info, int n, int in_first_scanline, int in_last_scanline, float in_center_of_out)
+				void stbir__resample_vertical_downsample(stbir__info* stbir_info, int n, int, int, float)
 				{
 					int x, k;
 					int output_w = stbir_info->output_w;
-					int output_h = stbir_info->output_h;
 					stbir__contributors* vertical_contributors = stbir_info->vertical_contributors;
 					float* vertical_coefficients = stbir_info->vertical_coefficients;
 					int channels = stbir_info->channels;
 					int kernel_pixel_width = stbir_info->vertical_filter_pixel_width;
-					void* output_data = stbir_info->output_data;
 					float* horizontal_buffer = stbir_info->horizontal_buffer;
 					int coefficient_width = stbir_info->vertical_coefficient_width;
 					int contributor = n + stbir_info->vertical_filter_pixel_margin;
@@ -9462,7 +9457,6 @@ namespace zz
 					float* ring_buffer = stbir_info->ring_buffer;
 					int ring_buffer_begin_index = stbir_info->ring_buffer_begin_index;
 					int ring_buffer_first_scanline = stbir_info->ring_buffer_first_scanline;
-					int ring_buffer_last_scanline = stbir_info->ring_buffer_last_scanline;
 					int ring_buffer_length = stbir_info->ring_buffer_length_bytes / sizeof(float);
 					int n0, n1;
 
@@ -9886,7 +9880,7 @@ namespace zz
 
 
 				int stbir__resize_arbitrary(
-					void *alloc_context,
+					void *,
 					const void* input_data, int input_w, int input_h, int input_stride_in_bytes,
 					void* output_data, int output_w, int output_h, int output_stride_in_bytes,
 					float s0, float t0, float s1, float t1, float *transform,
@@ -10819,27 +10813,27 @@ namespace zz
 		}
 
 		Directory::Directory(std::string root, bool recursive)
-			:root_(root), recursive_(recursive)
+			: recursive_(recursive), root_(root)
 		{
 			resolve();
 		}
 
                 Directory::Directory(std::string root, const std::string pattern, bool recursive)
-			: root_(root), recursive_(recursive)
+			: recursive_(recursive), root_(root)
 		{
 			resolve();
 			filter(pattern);
 		}
 
                 Directory::Directory(std::string root, const std::vector<std::string> patterns, bool recursive)
-                        : root_(root), recursive_(recursive)
+                        : recursive_(recursive), root_(root)
                 {
                         resolve();
                         filter(patterns);
                 }
 
                 Directory::Directory(std::string root, const std::vector<const char*> patterns, bool recursive)
-                        : root_(root), recursive_(recursive)
+                        : recursive_(recursive), root_(root)
                 {
                         resolve();
                         filter(patterns);
@@ -11180,14 +11174,14 @@ namespace zz
 	{
 		namespace consts
 		{
-			static const unsigned		kMaxDateTimeLength = 2048;
-			static const char			*kDateFractionSpecifier = "%frac";
-			static const unsigned	    kDateFractionWidth = 3;
-			static const char			*kTimerPrecisionSecSpecifier = "%sec";
-			static const char			*kTimerPrecisionMsSpecifier = "%ms";
-			static const char			*kTimerPrecisionUsSpecifier = "%us";
-			static const char			*kTimerPrecisionNsSpecifier = "%ns";
-			static const char			*kDateTimeSpecifier = "%datetime";
+			static constexpr unsigned		 kMaxDateTimeLength = 2048;
+			static constexpr char const* kDateFractionSpecifier = "%frac";
+			static constexpr unsigned	   kDateFractionWidth = 3;
+			static constexpr char	const* kTimerPrecisionSecSpecifier = "%sec";
+			static constexpr char	const* kTimerPrecisionMsSpecifier = "%ms";
+			static constexpr char	const* kTimerPrecisionUsSpecifier = "%us";
+			static constexpr char	const* kTimerPrecisionNsSpecifier = "%ns";
+			static constexpr char	const* kDateTimeSpecifier = "%datetime";
 		}
 
 		DateTime::DateTime()
@@ -11364,8 +11358,8 @@ namespace zz
 			const unsigned int l = std::strlen(command);
 			if (l) {
 				char *const ncommand = new char[l + 16];
-				std::strncpy(ncommand, command, l);
-				std::strcpy(ncommand + l, " 2> /dev/null"); // Make command silent.
+				std::strcpy(ncommand, command);
+				std::strcat(ncommand, " 2> /dev/null"); // Make command silent.
 				const int out_val = std::system(ncommand);
 				delete[] ncommand;
 				return out_val;
@@ -11884,7 +11878,7 @@ namespace zz
 			return false;
 		}
 
-		bool path_identical(std::string first, std::string second, bool forceCaseSensitve)
+		bool path_identical(std::string first, std::string second, bool)
 		{
 #if ZUPPLY_OS_WINDOWS
 			if (!forceCaseSensitve)
@@ -12336,8 +12330,8 @@ namespace zz
 		ArgOption::ArgOption(char shortKey, std::string longKey) :
 			shortKey_(shortKey), longKey_(longKey),
 			type_(""), default_(""), required_(false),
-			min_(0), max_(1), once_(false), count_(0),
-			val_(""), size_(0)
+			min_(0), max_(1), size_(0), once_(false),
+			count_(0), val_("")
 		{}
 
 		ArgOption::ArgOption(char shortKey) : ArgOption(shortKey, "")
@@ -12931,7 +12925,7 @@ namespace zz
 	namespace log
 	{
 		ProgBar::ProgBar(unsigned range, std::string info)
-			: ss_(nullptr), info_(info)
+			: info_(info), ss_(nullptr)
 		{
 			range_ = range;
 			pos_ = 0;
