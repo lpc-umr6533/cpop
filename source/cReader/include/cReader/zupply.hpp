@@ -3459,35 +3459,35 @@ namespace zz
 
 		namespace consts
 		{
-			static const char	*kLevelNames[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF"};
-			static const char	*kShortLevelNames[] { "T", "D", "I", "W", "E", "F", "O"};
-			static const char	*kZupplyInternalLoggerName = "zupply";
-			static const int	kAsyncQueueSize = 4096;	//!< asynchrous queue size, must be power of 2
+			static constexpr char	const*kLevelNames[] { "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF"};
+			static constexpr char	const*kShortLevelNames[] { "T", "D", "I", "W", "E", "F", "O"};
+			static constexpr char	const*kZupplyInternalLoggerName = "zupply";
+			static constexpr int	kAsyncQueueSize = 4096;	//!< asynchrous queue size, must be power of 2
 
-			static const char	*kSinkDatetimeSpecifier = "%datetime";
-			static const char	*kSinkLoggerNameSpecifier = "%logger";
-			static const char	*kSinkThreadSpecifier = "%thread";
-			static const char	*kSinkLevelSpecifier = "%level";
-			static const char	*kSinkLevelShortSpecifier = "%lvl";
-			static const char	*kSinkMessageSpecifier = "%msg";
-			static const char	*kStdoutSinkName = "stdout";
-			static const char	*kStderrSinkName = "stderr";
-			static const char	*kSimplefileSinkType = "simplefile";
-			static const char	*kRotatefileSinkType = "rotatefile";
-			static const char	*kOstreamSinkType = "ostream";
-			static const char	*kDefaultLoggerFormat = "[%datetime][T%thread][%logger][%level] %msg";
-			static const char	*kDefaultLoggerDatetimeFormat = "%y-%m-%d %H:%M:%S.%frac";
+			static constexpr char	const*kSinkDatetimeSpecifier = "%datetime";
+			static constexpr char	const*kSinkLoggerNameSpecifier = "%logger";
+			static constexpr char	const*kSinkThreadSpecifier = "%thread";
+			static constexpr char	const*kSinkLevelSpecifier = "%level";
+			static constexpr char	const*kSinkLevelShortSpecifier = "%lvl";
+			static constexpr char	const*kSinkMessageSpecifier = "%msg";
+			static constexpr char	const*kStdoutSinkName = "stdout";
+			static constexpr char	const*kStderrSinkName = "stderr";
+			static constexpr char	const*kSimplefileSinkType = "simplefile";
+			static constexpr char	const*kRotatefileSinkType = "rotatefile";
+			static constexpr char	const*kOstreamSinkType = "ostream";
+			static constexpr char	const*kDefaultLoggerFormat = "[%datetime][T%thread][%logger][%level] %msg";
+			static constexpr char	const*kDefaultLoggerDatetimeFormat = "%y-%m-%d %H:%M:%S.%frac";
 
 			// config file formats
-			static const char	*KConfigGlobalSectionSpecifier = "global";
-			static const char	*KConfigLoggerSectionSpecifier = "loggers";
-			static const char	*KConfigSinkSectionSpecifier = "sinks";
-			static const char	*kConfigFormatSpecifier = "format";
-			static const char	*kConfigLevelsSpecifier = "levels";
-			static const char	*kConfigDateTimeFormatSpecifier = "datetime_format";
-			static const char	*kConfigSinkListSpecifier = "sink_list";
-			static const char	*kConfigSinkTypeSpecifier = "type";
-			static const char	*kConfigSinkFilenameSpecifier = "filename";
+			static constexpr char	const*KConfigGlobalSectionSpecifier = "global";
+			static constexpr char	const*KConfigLoggerSectionSpecifier = "loggers";
+			static constexpr char	const*KConfigSinkSectionSpecifier = "sinks";
+			static constexpr char	const*kConfigFormatSpecifier = "format";
+			static constexpr char	const*kConfigLevelsSpecifier = "levels";
+			static constexpr char	const*kConfigDateTimeFormatSpecifier = "datetime_format";
+			static constexpr char	const*kConfigSinkListSpecifier = "sink_list";
+			static constexpr char	const*kConfigSinkTypeSpecifier = "type";
+			static constexpr char	const*kConfigSinkFilenameSpecifier = "filename";
 		}
 
 		// forward declaration
