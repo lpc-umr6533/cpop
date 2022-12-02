@@ -42,7 +42,7 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
 	DEBUG_POSTFIX "_d"
 )
 
-target_compile_options(${LIBRARY_NAME} PUBLIC -pipe -march=native)
+target_compile_options(${LIBRARY_NAME} PRIVATE -Wall -pipe -march=native)
 target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_17)
 target_link_libraries(${LIBRARY_NAME} PUBLIC Qt5::Core)
 

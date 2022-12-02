@@ -1,5 +1,6 @@
 #include "ClassicUserSpectrum.hh"
 #include "Randomize.hh"
+#include <stdexcept>
 
 using namespace std;
 
@@ -13,7 +14,8 @@ ClassicUserSpectrum::ClassicUserSpectrum(G4String file_to_read)
 	// Read energy and proba
 	file=fopen(file_to_read,"r");
 
-	fscanf(file,"%i %i %f",&dim_spectrum,&mode,&emin_spectrum);
+	if(fscanf(file,"%i %i %f",&dim_spectrum,&mode,&emin_spectrum) != 3)
+		throw std::runtime_error{"ClassicUserSpectrum: bad file format"};
 
 	tab_energy= new G4float[dim_spectrum];
 	tab_proba= new G4float[dim_spectrum];
@@ -21,14 +23,15 @@ ClassicUserSpectrum::ClassicUserSpectrum(G4String file_to_read)
 	nline=0;
 
 	while(nline<dim_spectrum){
-		fscanf(file,"%f %f",&energy_read,&proba_read);
+		if(fscanf(file,"%f %f",&energy_read,&proba_read) != 2)
+			throw std::runtime_error{"ClassicUserSpectrum: bad file format"};
 		tab_energy[nline]=energy_read;
 		tab_proba[nline]=proba_read;
 		nline++;
 	}
 
-	fclose(file);  
-	 
+	fclose(file);
+
 	// Construct proba table
 	sum_proba=0;
 	nline=0;
@@ -82,7 +85,7 @@ G4float ClassicUserSpectrum::GetEnergy() const
 
 G4float ClassicUserSpectrum::GetEnergy(G4double my_rndm) const
 {
-	
+
 	G4double energy=0.;
 	G4int i=0;
 
@@ -98,13 +101,13 @@ G4float ClassicUserSpectrum::GetEnergy(G4double my_rndm) const
 			break;
 		case 2:
 			//Histogram spectrum
-			if(i==0) 
+			if(i==0)
 			{
 				energy=(tab_energy[i]-emin_spectrum)*G4UniformRand()+emin_spectrum;
 			}
-			else 
+			else
 			{
-				energy=(tab_energy[i]-tab_energy[i-1])*G4UniformRand()+tab_energy[i-1];		
+				energy=(tab_energy[i]-tab_energy[i-1])*G4UniformRand()+tab_energy[i-1];
 			}
 			break;
 		case 3:
@@ -156,7 +159,7 @@ G4float ClassicUserSpectrum::GetEnergy(G4double my_rndm) const
 
 G4float ClassicUserSpectrum::GetEnergy(G4double rnd1, G4double rnd2) const
 {
-		
+
 	G4double energy=0.;
 	G4int i=0;
 	G4double my_rndm=rnd1;
@@ -174,7 +177,7 @@ G4float ClassicUserSpectrum::GetEnergy(G4double rnd1, G4double rnd2) const
 		case 2:
 			//Histogram spectrum
 			if(i==0) energy=(tab_energy[0]-emin_spectrum)*rnd2+emin_spectrum;
-			else energy=(tab_energy[i]-tab_energy[i-1])*rnd2+tab_energy[i-1];		
+			else energy=(tab_energy[i]-tab_energy[i-1])*rnd2+tab_energy[i-1];
 			break;
 		case 3:
 			//Interpolated spectrum

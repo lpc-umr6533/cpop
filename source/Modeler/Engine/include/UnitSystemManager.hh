@@ -1,5 +1,5 @@
 /*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
+Copyright (C): Henri Payno, Axel Delsol,
 Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
 
 This software is distributed under the terms
@@ -14,7 +14,7 @@ See LICENSE.md for further details
 	namespace CLHEP
 {
 #ifndef nanogram
-  static double  nanogram = 1.e-12*kilogram;
+  static constexpr double nanogram = 1.e-12*kilogram;
 #endif
 }
 

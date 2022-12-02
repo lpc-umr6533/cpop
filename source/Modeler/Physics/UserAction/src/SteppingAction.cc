@@ -252,6 +252,9 @@ std::string SteppingAction::findRegion(const Settings::nCell::t_Cell_3 *cell)
             return it->name();
         }
     }
+
+		// TODO check validity
+		return {};
 }
 
 void SteppingAction::addTupleRow(const G4Step *step, int cellID, const std::string &organelle, const std::string &region)
