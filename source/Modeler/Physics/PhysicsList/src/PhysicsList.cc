@@ -229,7 +229,7 @@ void PhysicsList::AddPhysicsList(const G4String &name)
 
     } else if (name == "emDNAphysics_opt2") {
         name_ = name;
-        physics_list_ = std::make_unique<G4EmDNAPhysics>(verboseLevel);
+        physics_list_ = std::make_unique<G4EmDNAPhysics_option2>(verboseLevel);
 
         G4cout<<"Entrance in emDNAphysics_opt2"<<G4endl;
 
