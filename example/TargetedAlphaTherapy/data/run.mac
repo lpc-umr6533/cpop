@@ -26,8 +26,8 @@
 
 # set the physics list you want to use.
 # candidates : emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emDNAphysics emDNAphysics_opt2
-/cpop/physics/physicsList emstandard_opt4
-#/cpop/physics/physicsList emDNAphysics_opt2
+#/cpop/physics/physicsList emstandard_opt4
+/cpop/physics/physicsList emDNAphysics_opt2
 
 
 # Those commands are defined in G4EmParametersMessenger.cc
