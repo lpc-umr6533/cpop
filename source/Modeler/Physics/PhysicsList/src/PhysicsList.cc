@@ -76,6 +76,8 @@
 #include "G4LivermoreRayleighModel.hh"
 #include "G4EmParameters.hh"
 #include "G4EmDNAPhysics_option2.hh"
+#include "G4EmDNAPhysics_option4.hh"
+#include "G4EmDNAPhysics_option6.hh"
 // *** Processes and models for Geant4-DNA
 // particles
 #include "G4Electron.hh"
@@ -231,9 +233,15 @@ void PhysicsList::AddPhysicsList(const G4String &name)
         name_ = name;
         physics_list_ = std::make_unique<G4EmDNAPhysics_option2>(verboseLevel);
 
-        G4cout<<"Entrance in emDNAphysics_opt2"<<G4endl;
+    } else if (name == "emDNAphysics_opt4") {
+       name_ = name;
+       physics_list_ = std::make_unique<G4EmDNAPhysics_option4>(verboseLevel);
 
-    }
+   } else if (name == "emDNAphysics_opt6") {
+      name_ = name;
+      physics_list_ = std::make_unique<G4EmDNAPhysics_option6>(verboseLevel);
+
+  }
 
 
 

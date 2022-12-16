@@ -21,7 +21,7 @@ void PhysicsListMessenger::BuildCommands(G4String base)
     select_physics_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
     select_physics_->SetGuidance("Set physics list");
     select_physics_->SetParameterName("PhysicsList", false);
-    G4String candidates = "emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emlowenergy emDNAphysics emDNAphysics_opt2";
+    G4String candidates = "emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emlowenergy emDNAphysics emDNAphysics_opt2 emDNAphysics_opt4 emDNAphysics_opt6";
     select_physics_->SetCandidates(candidates.data());
     select_physics_->AvailableForStates(G4State_PreInit, G4State_Idle);
 

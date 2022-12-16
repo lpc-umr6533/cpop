@@ -12,6 +12,8 @@ cmake_minimum_required(VERSION 3.7)
 project("CPOP")
 set(CPOP_EXPORT ${CMAKE_PROJECT_NAME})
 
+set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) # project specific cmake dir
 
 ### define BUILD TYPE if none specified
