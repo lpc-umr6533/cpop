@@ -28,12 +28,8 @@ include(${SELF_DIR}/CPOP.cmake)
 
 set(CPOP_USE_FILE ${CGAL_USE_FILE} ${ROOT_USE_FILE} ${Geant4_USE_FILE})
 set(CPOP_LIB
-	#~ Qt5::Core
-	#~ Qt5::Xml
-	#~ CLHEP::CLHEP
 	${Geant4_LIBRARIES}
 	${ROOT_LIBRARIES}
-	#~ CGAL 
 	InformationSystem 
 	cReader 
 	Platform_SMA Modeler
