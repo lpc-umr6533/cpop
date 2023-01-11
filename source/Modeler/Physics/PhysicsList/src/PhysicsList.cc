@@ -194,65 +194,43 @@ void PhysicsList::AddPhysicsList(const G4String &name)
     if (name == name_) return;
 
     if (name == "emstandard") {
-
         name_ = name;
         physics_list_ = std::make_unique<G4EmStandardPhysics>(verboseLevel);
-
     } else if (name == "emstandard_opt1") {
-
         name_ = name;
         physics_list_ = std::make_unique<G4EmStandardPhysics_option1>(verboseLevel);
-
     } else if (name == "emstandard_opt2") {
-
         name_ = name;
         physics_list_ = std::make_unique<G4EmStandardPhysics_option2>(verboseLevel);
-
     } else if (name == "emstandard_opt3") {
-
         name_ = name;
         physics_list_ = std::make_unique<G4EmStandardPhysics_option3>(verboseLevel);
-
     } else if (name == "emstandard_opt4") {
-
         name_ = name;
         physics_list_ = std::make_unique<G4EmStandardPhysics_option4>(verboseLevel);
-
     } else if (name == "emlivermore") {
         name_ = name;
         physics_list_ = std::make_unique<G4EmLivermorePhysics>(verboseLevel);
-
     } else if (name == "empenelope") {
         name_ = name;
         physics_list_ = std::make_unique<G4EmPenelopePhysics>(verboseLevel);
-
     } else if (name == "emlowenergy") {
         name_ = name;
         physics_list_ = std::make_unique<G4EmLowEPPhysics>(verboseLevel);
-
     } else if (name == "emDNAphysics") {
         name_ = name;
         physics_list_ = std::make_unique<G4EmDNAPhysics>(verboseLevel);
-
     } else if (name == "emDNAphysics_opt2") {
         name_ = name;
         physics_list_ = std::make_unique<G4EmDNAPhysics_option2>(verboseLevel);
-
     } else if (name == "emDNAphysics_opt4") {
-       name_ = name;
-       physics_list_ = std::make_unique<G4EmDNAPhysics_option4>(verboseLevel);
-
-   } else if (name == "emDNAphysics_opt6") {
-      name_ = name;
-      physics_list_ = std::make_unique<G4EmDNAPhysics_option6>(verboseLevel);
-
-  }
-
-
-
-    else {
-        std::cout << "PhysicsList::AddPhysicsList: <" << name << ">"
-               << " is not defined\n";
+        name_ = name;
+        physics_list_ = std::make_unique<G4EmDNAPhysics_option4>(verboseLevel);
+    } else if (name == "emDNAphysics_opt6") {
+        name_ = name;
+        physics_list_ = std::make_unique<G4EmDNAPhysics_option6>(verboseLevel);
+    } else {
+        std::cout << "PhysicsList::AddPhysicsList: <" << name << ">" << " is not defined\n";
     }
 }
 

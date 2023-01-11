@@ -1,6 +1,6 @@
 # CPOP 2.0
 
-The Cell Population modeler is combined to Geant4 simulations in order to tackle how energy depositions are allocated to cells, especially when enhancing radiation outcomes using high-Z nanoparticles. 
+The Cell Population modeler is combined to Geant4 simulations in order to tackle how energy depositions are allocated to cells, especially when enhancing radiation outcomes using high-Z nanoparticles.
 CPOP is fully interfaced with the Geant4 Monte Carlo toolkit and is able to directly emulate Geant4 simulations after compilation.
 
 CPOP structuration:
@@ -106,3 +106,8 @@ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCGAL_DIR="
 make -j4
 make install
 ```
+
+## Colophon
+
+Tested on:
+- Ubuntu 22.04
