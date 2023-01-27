@@ -511,7 +511,7 @@ int SpheroidalCellMesh::exportToFileGDML(QString pPath, vector<SpheroidalCell*> 
 	// export the G4 world
 	MyGDML_Parser GDMLParser;
 	QString path = pPath + ".gdml";
-	
+
 	std::remove((path.toLocal8Bit()).data());
 	GDMLParser.write(path, physiWorld);
 

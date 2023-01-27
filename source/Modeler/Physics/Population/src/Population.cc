@@ -185,8 +185,6 @@ void Population::loadPopulation()
     //G4cout << "\n int_test" << int_test << G4endl;
     Utils::setBarycenter(spaAgts.begin(), spaAgts.end(), spheroid_centroid());
 
-    QString pathGDML = "../../example/GDML/geom";
-
     // define a mesh
     int error;                        //< error value when create_3DMesh is executed
     voronoi_mesh_ = MeshFactory::getInstance()->create_3DMesh(&error,  dynamic_cast<t_SimulatedSubEnv_3*>( env->getFirstChild() ), MeshTypes::Round_Cell_Tesselation, number_max_facet_poly(), delta_reffinement());
@@ -195,7 +193,9 @@ void Population::loadPopulation()
     std::ofstream masse_file;
     masse_file.open ("../../example/TXT/MassesCell.txt");
 
-    dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->exportToFile(pathGDML,MeshOutFormats::GDML , false);
+    // QString pathGDML = "../../example/GDML/geom";
+    // dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->exportToFile(pathGDML,MeshOutFormats::GDML , false); //Allows to write geometry infomations in .gdml file
+
     std::cout << '\n' << " Masses written in .txt "  <<'\n';
 
 
