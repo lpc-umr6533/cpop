@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 		// Create a population
 
 		std::ofstream fid;
-		fid.open ("../../example/TXT/IDCell.txt");
+		fid.open("../../example/TXT/IDCell.txt");
 
 		cpop::Population population;
 		population.messenger().BuildCommands("/cpop");
@@ -116,6 +116,8 @@ int main(int argc, char** argv)
     G4String command = "/control/execute ";
     UImanager->ApplyCommand(command+macro);
 
+		fid.close();
+
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
 
@@ -125,7 +127,7 @@ int main(int argc, char** argv)
     // Job termination
     // Free the store: user actions, physics_list and detector_description are
     // owned and deleted by the run manager, so they should not be deleted
-    // in the main() program !
+    // in the main() program
     delete runManager;
 
 
