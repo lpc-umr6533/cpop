@@ -88,6 +88,7 @@ void Population::setPopulation_file(const std::string &population_file)
 }
 
 G4int Population::calculateNumberOfCells_InXML_File()
+//VictorLevrague
 {
   QString qstr = QString::fromStdString(population_file_);
   QFile file (qstr);
@@ -120,7 +121,7 @@ G4int Population::calculateNumberOfCells_InXML_File()
 
   }
 
-  nb_cell_xml/=2; //Parce que les deux variables (position et noyaux) du champ CELL vont être comptées
+  nb_cell_xml/=2;  //Both variables (positions and nuclei of CELL tag will be counted)
 
   return nb_cell_xml;
 
@@ -187,13 +188,15 @@ void Population::loadPopulation()
     voronoi_mesh_ = MeshFactory::getInstance()->create_3DMesh(&error,  dynamic_cast<t_SimulatedSubEnv_3*>( env->getFirstChild() ), MeshTypes::Round_Cell_Tesselation, number_max_facet_poly(), delta_reffinement());
     dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->generateMesh();
 
-    std::ofstream masse_file;
-    masse_file.open ("../../example/TXT/MassesCell.txt");
+    std::ofstream masses_cell_file;
+    masses_cell_file.open("MassesCell.txt");
 
-    // QString pathGDML = "../../example/GDML/geom";
-    // dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->exportToFile(pathGDML,MeshOutFormats::GDML , false); //Allows to write geometry infomations in .gdml file
+    //Call of this function allow to write geometry informations in .gdml (HACKED FOR NOW)
+    //A sub call of SpheroidalCell:convertToG4Structure writes the masses of cells in MassesCell.txt
+    dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->exportToFile("",MeshOutFormats::GDML , false);
 
-    std::cout << '\n' << " Masses written in .txt "  <<'\n';
+    masses_cell_file.close();
+    std::cout << '\n' << " Masses of cells written in .txt "  <<'\n';
 
 
 

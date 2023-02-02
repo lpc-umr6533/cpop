@@ -513,7 +513,7 @@ int SpheroidalCellMesh::exportToFileGDML(QString pPath, vector<SpheroidalCell*> 
 	std::remove((path.toLocal8Bit()).data());
 	// GDMLParser.write(path, physiWorld); //TODO : remove the hack to allow gdml writing if wanted
 
-	cout << "\n\n\n GDML written " << endl;
+	//cout << "\n\n\n GDML written " << endl;
 
 	delete physiWorld;
 
