@@ -122,6 +122,7 @@ PhysicsList::PhysicsList()
       messenger_(std::make_unique<PhysicsListMessenger>(this))
 {
     step_max_process_ = new StepMax();
+    fElectronCut=7.4*eV;
 }
 
 void PhysicsList::ConstructParticle()
@@ -181,7 +182,7 @@ void PhysicsList::ConstructProcess()
 
     // Electron capture (as a full process)
     //
-    // AddElectronCapture();
+    AddElectronCapture();
 }
 
 void PhysicsList::AddPhysicsList(const G4String &name)
@@ -285,16 +286,24 @@ void PhysicsList::AddElectronCapture()
     G4String particleName = particle->GetParticleName();
       if (particleName == "e-")
       {
-        G4ElectronCapture* ecap = new G4ElectronCapture("", 10*MeV);
+        G4ElectronCapture* ecap = new G4ElectronCapture("", fElectronCut);
         pmanager->AddDiscreteProcess(ecap);
       }
   }
-  G4cout << "Added Electron Capture" << G4endl;
+  G4cout << "====================================" << G4endl
+  G4cout << "e- cut applied " << G4endl;
+  G4cout << "====================================" << G4endl
 }
 
 StepMax *PhysicsList::step_max_process()
 {
     return step_max_process_;
+}
+
+void PhysicsList::SetElectronCut(G4double value)
+{
+  fElectronCut = value;
+  G4RunManager::GetRunManager()->PhysicsHasBeenModified();
 }
 
 

@@ -34,6 +34,10 @@ public:
 
     StepMax *step_max_process();
 
+    void SetElectronCut(G4double);
+
+    G4double fElectronCut;
+
 private:
     void AddStepMax();
     void AddElectronCapture();

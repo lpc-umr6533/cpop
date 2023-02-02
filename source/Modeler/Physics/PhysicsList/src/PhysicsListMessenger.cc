@@ -31,6 +31,13 @@ void PhysicsListMessenger::BuildCommands(G4String base)
     step_max_cmd_->SetParameterName("mxStep",false);
     step_max_cmd_->SetRange("mxStep>0.");
     step_max_cmd_->SetUnitCategory("Length");
+
+    cmd_base = base + "/electronCut";
+    electron_cut_cmd_ = std::make_unique<G4UIcmdWithADoubleAndUnit>(cmd_base, this);
+    electron_cut_cmd_->SetGuidance("Set energy below which electrons are killed");
+    electron_cut_cmd_->SetParameterName("elCut",false);
+    electron_cut_cmd_->SetRange("elCut>0.");
+    electron_cut_cmd_->SetUnitCategory("Energy");
 }
 
 void PhysicsListMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
@@ -38,7 +45,10 @@ void PhysicsListMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
     if (command == select_physics_.get()) {
         physics_list_->AddPhysicsList(newValue);
     } else if (command == step_max_cmd_.get()) {
-        physics_list_->step_max_process()->SetMaxStep(step_max_cmd_->GetNewDoubleValue(newValue));
+        physics_list_->step_max_process()->SetMaxStep(step_max_cmd_->
+                                                  GetNewDoubleValue(newValue));
+    } else if (command == electron_cut_cmd_.get()) {
+        physics_list_->SetElectronCut(electron_cut_cmd_->GetNewDoubleValue(newValue));
     }
 }
 

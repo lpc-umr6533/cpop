@@ -26,6 +26,8 @@ private:
     std::unique_ptr<G4UIcmdWithAString> select_physics_;
 
     std::unique_ptr<G4UIcmdWithADoubleAndUnit> step_max_cmd_;
+
+    std::unique_ptr<G4UIcmdWithADoubleAndUnit> electron_cut_cmd_;
 };
 
 }
