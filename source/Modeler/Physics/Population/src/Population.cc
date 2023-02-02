@@ -129,9 +129,6 @@ G4int Population::calculateNumberOfCells_InXML_File()
 void Population::loadPopulation()
 {
 
-  ofstream file_pos_emission("../../example/TXT/PosEmission.txt", fstream::app);
-  ofstream file_edep_nucl("../../example/TXT/EdepNucl.txt", fstream::app);
-
     if (number_max_facet_poly() <= 0)
         throw std::runtime_error("nbMaxFacetPerPoly should be strictly positive. Current value : " + to_string(number_max_facet_poly()));
 

@@ -87,7 +87,7 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     if (nanoparticle_source_->only_one_position_for_all_particles_on_a_cell == 0)
       {nanoparticle_source_->eraseFront_position_cell();}
 
-    G4String name_radionuclide = "At211"; //TODO : create a macro command with radionuclide name and associate correspondind half life and energies
+    G4String name_radionuclide = "At211"; //TODO : create a macro command with radionuclide name and associate corresponding half life and energies
 
     if (name_radionuclide.compare("At211")==0)
       { half_life = 0.516;
@@ -107,14 +107,6 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     current_cell_id = nanoparticle_source()->getID_OfCell();
 
    }
-
-    // std::ofstream file_pos_emission;
-    // file_pos_emission.open ("../../example/TXT/PosEmission.txt");
-
-    ofstream file_pos_emission("../../example/TXT/PosEmission.txt", fstream::app);
-
-   	file_pos_emission << G4_particle_position[0] << " " << G4_particle_position[1] << " " << G4_particle_position[2] << endl;
-
     particle_gun_->SetParticlePosition(G4_particle_position);
 
     // Generate a momentum direction
