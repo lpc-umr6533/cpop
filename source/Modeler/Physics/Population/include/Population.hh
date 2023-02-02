@@ -19,7 +19,6 @@
 namespace cpop {
 
 class Population
-/// Victor Levrague : creation of a MassesCell.txt with masses of all nuclei and cells. Also, funtion to count the number of cells present in the xml file ///
 {
 public:
     Population();

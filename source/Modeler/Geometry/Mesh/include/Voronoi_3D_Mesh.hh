@@ -39,8 +39,6 @@ using namespace Settings::Geometry::Mesh3D;
 //////////////////////////////////////////////////////////////////////////////
 class Voronoi_3D_Mesh : public Mesh<double, Point_3, Vector_3>, public Delaunay_3D_SDS
 {
-	/// Victor Levrague : creation of an IDCell.txt file with cells deleted in the conversion from .xml in G4 geometry ///
-
 	using Delaunay_3D_SDS::add;			// overloaded function
 	using Delaunay_3D_SDS::remove;		// overloaded function
 
