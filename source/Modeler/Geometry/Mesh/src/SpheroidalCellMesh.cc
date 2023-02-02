@@ -108,8 +108,6 @@ int SpheroidalCellMesh::exportToFile(QString pPath, MeshOutFormats::outputFormat
 	/// create cell
 	vector<SpheroidalCell*> cells = generateMesh();
 
-
-
 	int error = 0;
 
 	switch(pFormat)
@@ -513,7 +511,7 @@ int SpheroidalCellMesh::exportToFileGDML(QString pPath, vector<SpheroidalCell*> 
 	QString path = pPath + ".gdml";
 
 	std::remove((path.toLocal8Bit()).data());
-	GDMLParser.write(path, physiWorld);
+	// GDMLParser.write(path, physiWorld); //TODO : remove the hack to allow gdml writing if wanted
 
 	cout << "\n\n\n GDML written " << endl;
 
