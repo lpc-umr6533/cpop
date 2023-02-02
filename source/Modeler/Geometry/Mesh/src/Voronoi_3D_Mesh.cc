@@ -307,12 +307,9 @@ void Voronoi_3D_Mesh::removeConflicts()
 
 	RT_3::Finite_edges_iterator itEdge;
 
-	ofstream fid("../../example/TXT/IDCell.txt", fstream::app);
+	ofstream id_cell_file("../../example/TXT/IDCell.txt", fstream::app);
 
-	fid << " " ;
-
-	// auto command = std::string("ls ") + std::string("../../example/TXT/Test1.txt");
-  //   system(command.data());
+	id_cell_file << " " ;
 
 	for(itEdge = delaunay.finite_edges_begin(); itEdge != delaunay.finite_edges_end(); ++itEdge)
 	{
@@ -337,8 +334,7 @@ void Voronoi_3D_Mesh::removeConflicts()
 			{
 				vToRemove = (REMOVE_SMALLEST_WEIGHT ? v2 : v1 );
 			}
-			fid << vToRemove->info()->getID() << " ";
-			// G4cout<< "\n IDCell :  " <<  vToRemove->info()->getID() << " " << G4endl;
+			id_cell_file << vToRemove->info()->getID() << " ";
 			verticesToRemove.insert(vToRemove);
 
 		}

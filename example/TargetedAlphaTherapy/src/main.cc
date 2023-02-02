@@ -88,8 +88,8 @@ int main(int argc, char** argv)
 
 		// Create a population
 
-		std::ofstream fid;
-		fid.open("../../example/TXT/IDCell.txt");
+		std::ofstream id_cell_file;
+		id_cell_file.open("../../example/TXT/IDCell.txt");
 
 		cpop::Population population;
 		population.messenger().BuildCommands("/cpop");
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
     G4String command = "/control/execute ";
     UImanager->ApplyCommand(command+macro);
 
-		fid.close();
+		id_cell_file.close();
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
