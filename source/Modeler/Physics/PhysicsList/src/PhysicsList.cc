@@ -178,6 +178,10 @@ void PhysicsList::ConstructProcess()
     // step limitation (as a full process)
     //
     AddStepMax();
+
+    // Electron capture (as a full process)
+    //
+    // AddElectronCapture();
 }
 
 void PhysicsList::AddPhysicsList(const G4String &name)
@@ -271,12 +275,27 @@ void PhysicsList::AddStepMax()
     }
 }
 
+void PhysicsList::AddElectronCapture()
+{
+  auto theParticleIterator = this->GetParticleIterator();
+  theParticleIterator->reset();
+  while ((*theParticleIterator)()){
+    G4ParticleDefinition* particle = theParticleIterator->value();
+    G4ProcessManager* pmanager = particle->GetProcessManager();
+    G4String particleName = particle->GetParticleName();
+      if (particleName == "e-")
+      {
+        G4ElectronCapture* ecap = new G4ElectronCapture("", 10*MeV);
+        pmanager->AddDiscreteProcess(ecap);
+      }
+  }
+  G4cout << "Added Electron Capture" << G4endl;
+}
+
 StepMax *PhysicsList::step_max_process()
 {
     return step_max_process_;
 }
-
-
 
 
 }

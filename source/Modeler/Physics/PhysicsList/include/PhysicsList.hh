@@ -10,6 +10,7 @@
 #include "G4VUserPhysicsList.hh"
 #include "G4ProcessManager.hh"
 #include "G4ParticleTypes.hh"
+#include "G4ElectronCapture.hh"
 
 namespace  cpop {
 
@@ -35,6 +36,7 @@ public:
 
 private:
     void AddStepMax();
+    void AddElectronCapture();
 
     std::unique_ptr<G4VPhysicsConstructor> physics_list_;
     G4String name_;
