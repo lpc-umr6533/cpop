@@ -79,7 +79,8 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     // Generate a position
     G4ThreeVector G4_particle_position = (source->GetPosition()).front();
 
-    // G4cout << "\n\n\n New particle" << G4endl;
+    //TODO : debug the (source->GetPosition()) call when multiple sources are used in one simulation
+    //(source->GetPosition()) value is well attributed in NanoparticleSource GetPosition(), but the call is PGA_impl.cc fails.
 
     if (nanoparticle_source_)
     {
@@ -107,6 +108,7 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     current_cell_id = nanoparticle_source()->getID_OfCell();
 
    }
+
     particle_gun_->SetParticlePosition(G4_particle_position);
 
     // Generate a momentum direction

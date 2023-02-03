@@ -40,6 +40,7 @@ RunAction::~RunAction()
 void RunAction::BeginOfRunAction(const G4Run * /*run*/)
 {
 
+
     RunAction::CreateHistogram();
 
     // Get analysis manager
@@ -91,7 +92,7 @@ void RunAction::EndOfRunAction(const G4Run * /*run*/)
      G4cout << "******************* Number of cells : " << nb_cell << G4endl;
 
 
-    ////////////////// Allow to get total energy deposited in each nucleus and cell /////////////////////
+    //Allows to get total energy deposited in each nucleus and cell //
 
     if (population->event_level_info_ == 1)
     {

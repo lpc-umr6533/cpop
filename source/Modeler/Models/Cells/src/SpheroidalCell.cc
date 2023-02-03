@@ -168,7 +168,6 @@ Point_3 SpheroidalCell::getSpotOnCellMembrane() const
 		// third version : give a weight depending on triangle area.
 		// go throught all facet until surface area is reach
 		double areaToReach = RandomEngineManager::getInstance()->randd(0., sumMembraneMeshArea);
-		G4cout << "Entrance in GetSpotOrganelle" << G4endl;
 		map<double, Triangle_3>::const_iterator itAreaFacet = areasToFacet.lower_bound(areaToReach);
 
 		assert(itAreaFacet != areasToFacet.end());
@@ -540,6 +539,8 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 
 		assert(lNucleusMat);
 
+		G4int err = 0;
+
 		for(itNucleus = nuclei.begin(); itNucleus != nuclei.end(); ++itNucleus)
 		{
 			QString nucleusName = nucleusNamePrefix + pName + QString::number(iNucleus);
@@ -554,20 +555,21 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 	            pNucleiMap->insert(make_pair(const_cast<const G4LogicalVolume*>(nucPlacement->GetLogicalVolume()), const_cast<const t_Nucleus_3*>(*itNucleus) ));
 	        }
 
-		  //ofstream fw("/home/levrague/Documents/apps/cpop-2.0/cpop-2.0/example/TXT/MassesCell.txt", fstream::app);
-			ofstream fw("../../example/TXT/MassesCell.txt", fstream::app);
+			ofstream fw("MassesCell.txt", fstream::app);
 
 			if (fw.is_open())
 			{
 			    fw << G4BestUnit(((nucPlacement->GetLogicalVolume())->GetMass()), "Mass") <<" ";
 					fw << G4BestUnit((membraneLogicVol->GetMass()), "Mass") << "\n" ;
-					//G4cout<< "\n membraneLogicVol->GetName()  " << membraneLogicVol->GetName() << G4endl;
 			  fw.close();
 			}
-			else cout << "Problem with opening txt file for masses";
+			else err=1;
 
 
 		}
+
+		if (err == 1) {G4cout << "error happened during writing of MassesCell.txt"<<
+								G4endl;}
 	}
 
 	return vpPalcement;

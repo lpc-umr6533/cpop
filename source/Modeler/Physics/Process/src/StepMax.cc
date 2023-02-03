@@ -53,5 +53,3 @@ StepMaxMessenger &StepMax::messenger()
 * */
 
 }
-
-

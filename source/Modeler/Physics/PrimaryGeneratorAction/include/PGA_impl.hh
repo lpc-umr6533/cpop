@@ -29,6 +29,7 @@ namespace cpop {
 class Population;
 class Source;
 class HomogeneousSource;
+class NanoparticleSource;
 
 class PGA_impl
 {

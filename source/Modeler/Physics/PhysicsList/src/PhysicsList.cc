@@ -290,9 +290,9 @@ void PhysicsList::AddElectronCapture()
         pmanager->AddDiscreteProcess(ecap);
       }
   }
-  G4cout << "====================================" << G4endl
+  G4cout << "====================================" << G4endl;
   G4cout << "e- cut applied " << G4endl;
-  G4cout << "====================================" << G4endl
+  G4cout << "====================================" << G4endl;
 }
 
 StepMax *PhysicsList::step_max_process()

@@ -88,7 +88,7 @@ void NanoparticleSource::distribute(int number_nano, const SpheroidRegion &regio
 
     std::vector<int> labeled_cells_id;
 
-    int max_number_nanoparticle_per_cell = 0;
+    int max_number_nanoparticle_per_cell = 1000000;
     double cell_labeling_percentage;
 
     if (region.name() == "Necrosis")
@@ -101,15 +101,15 @@ void NanoparticleSource::distribute(int number_nano, const SpheroidRegion &regio
       {max_number_nanoparticle_per_cell = max_number_nanoparticle_per_cell_external;
        cell_labeling_percentage = cell_labeling_percentage_external_;}
 
-   // G4cout << " max_number_nanoparticle_per_cell*cells_in_region.size() " << max_number_nanoparticle_per_cell*cells_in_region.size() << G4endl;
-   // G4cout << " number_nano " << number_nano << G4endl;
+   G4cout << "Max number nano per cell : " << max_number_nanoparticle_per_cell << G4endl;
 
    if(max_number_nanoparticle_per_cell*cells_in_region.size() < number_nano) {
-        throw std::invalid_argument("Number of particles > Max number of particles per cell * Number of cells");
+        throw std::invalid_argument("Number of particles > Max number of particles per cell * Number of cells."
+                        "Maybe macro command is missing : /cpop/source/gadolinium/maxNanoparticlePerCell");
     }
 
    int nb_nano_per_cell[cells_in_region_size];
-   memset( nb_nano_per_cell, 0, cells_in_region_size*sizeof(int) );
+   memset(nb_nano_per_cell, 0, cells_in_region_size*sizeof(int) );
 
 
    // Particules are distributed on cells following :

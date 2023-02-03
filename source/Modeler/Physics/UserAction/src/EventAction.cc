@@ -146,6 +146,10 @@ void EventAction::EndOfEventAction(const G4Event* Event)
     }
   }
 
+      G4int evt_id = Event->GetEventID();
+
+
+
 
  ////////////////
 

@@ -48,7 +48,12 @@ public:
     void Update() { ++already_generated_; }
     int getID_NanoInfo() {return cell_->getID();}
 
-    std::vector<G4ThreeVector> GetPosition() const {return position_in_cell_;}
+    std::vector<G4ThreeVector> GetPosition() const {
+      // G4cout<< "GetPosition called in NanoSource.hh" << G4endl;
+      // G4cout<< "position in cell x : " << position_in_cell_[0].getX() << G4endl;
+      // G4cout<< "position in cell y : " << position_in_cell_[0].getY() << G4endl;
+      // G4cout<< "position in cell z: " << position_in_cell_[0].getZ() << G4endl;
+      return position_in_cell_;}
 
     /// \brief Position in cell
     std::vector<G4ThreeVector> position_in_cell_;

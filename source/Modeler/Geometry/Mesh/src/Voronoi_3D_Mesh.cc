@@ -307,7 +307,7 @@ void Voronoi_3D_Mesh::removeConflicts()
 
 	RT_3::Finite_edges_iterator itEdge;
 
-	ofstream id_cell_file("../../example/TXT/IDCell.txt", fstream::app);
+	ofstream id_cell_file("IDCell.txt", fstream::app);
 
 	id_cell_file << " " ;
 

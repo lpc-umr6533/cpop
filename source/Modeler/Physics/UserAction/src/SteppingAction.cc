@@ -27,8 +27,6 @@ SteppingAction::SteppingAction(const Population &population, EventAction* eventA
 
 void SteppingAction::UserSteppingAction(const G4Step * step)
 {
-    ofstream file_edep_nucl("../../example/TXT/EdepNucl.txt", fstream::app);
-
     double real_spheroid_radius = population_->spheroid_radius();
 
     double edep = step->GetTotalEnergyDeposit()/CLHEP::keV;
@@ -124,8 +122,6 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
       // Get energy deposited by alphas in nucleus //
       G4double edepStepn = step->GetTotalEnergyDeposit()/CLHEP::keV;
       fEventAction->AddEdepNucl(edepStepn, cell->getID() - 3);
-      //file_edep_nucl << edepStepn << " " << pEdepPos[0] << " " << pEdepPos[1]<< " " << pEdepPos[2] << endl;
-
     }
     //
     if ((PreOrganelle == "cytoplasm") and (cell->hasIn(edep_pos)) and (nameParticle=="alpha+" or nameParticle=="alpha" or nameParticle=="helium"))
