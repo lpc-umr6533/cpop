@@ -21,7 +21,7 @@
 
 # set the physics list you want to use.
 # candidates : emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emDNAphysics
-/cpop/physics/physicsList empenelope
+/cpop/physics/physicsList emstandard_opt4
 
 
 # Those commands are defined in G4EmParametersMessenger.cc
@@ -56,6 +56,12 @@
 # set sampling cell ie number of cell per region to observe
 /cpop/population/sampling 10
 
+# Get info at the stepping level
+/cpop/population/stepInfo 1
+# Get info at the event level
+/cpop/population/eventInfo 0
+##### For now, only one option can be chosen ####
+
 # Initialize cpop
 /cpop/population/init
 
@@ -68,12 +74,12 @@
 # Define sources
 
 # add a gamma source using a user defined spectrum
-/cpop/source/addHomogeneous gamma
-/cpop/source/gamma/particle gamma
-/cpop/source/gamma/spectrum data/phspectrum_spheroid.txt
+#/cpop/source/addHomogeneous gamma
+#/cpop/source/gamma/particle gamma
+#/cpop/source/gamma/spectrum data/phspectrum_spheroid.txt
 
 # number of particles to be generated from this source
-/cpop/source/gamma/totalParticle 10000
+#/cpop/source/gamma/totalParticle 10000
 
 # add a gadolinium source
 /cpop/source/addNanoparticle gadolinium
@@ -93,9 +99,17 @@
 # region order : necrosis intermediary external
 /cpop/source/gadolinium/distributionInRegion  10 10 10
 
-# set the secondaries dsitribution  in a cell contaning a nanoparticle
+# set the secondaries distribution  in a cell contaning a nanoparticle
 # organnelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
 /cpop/source/gadolinium/distributionInCell 1 0 0 0
+
+# set the maximum number of nanoparticle per cell, in each region.
+# region order : necrosis intermediary external
+/cpop/source/gadolinium/maxNanoparticlePerCell 10000 10000 10000
+
+# Activate diffusion of radionuclide's daughter (only for At-211)
+/cpop/source/daughterDiffusion no
+
 
 # initialize the sources
 /cpop/source/init
@@ -114,4 +128,4 @@
 
 # requirement : the value should be equal to 
 # totalParticle + totalNanoparticle * particlePerNano
-/run/beamOn 13000
+/run/beamOn 3000

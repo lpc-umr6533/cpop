@@ -23,6 +23,8 @@
 /run/verbose 0
 # set the maximum step allowed
 /cpop/physics/stepMax 0.0001 mm
+# set the energy below which electrons are killed (default value 7.4 eV)
+#/cpop/physics/electronCut 10 MeV
 
 # set the physics list you want to use.
 # candidates : emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emDNAphysics emDNAphysics_opt2
@@ -116,7 +118,7 @@
 /cpop/source/daughterDiffusion no
 
 
-# set the maximum number of nanoparticle per cell, in each region. If total number of nanoparticle = number of cells * maximum number of nanoparticles per cell, all cells will have the maximum amount of nanoparticles
+# set the maximum number of nanoparticle per cell, in each region.
 # region order : necrosis intermediary external
 /cpop/source/gadolinium/maxNanoparticlePerCell 42 42 42
 

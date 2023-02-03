@@ -34,8 +34,8 @@
 int main(int argc, char** argv)
 {
 		auto start = std::chrono::high_resolution_clock::now();
-		
-		
+
+
     CLHEP::MTwistEngine defaultEngine(time(NULL));
     G4Random::setTheEngine(&defaultEngine);
     //G4int seed = time(NULL);
@@ -100,20 +100,23 @@ int main(int argc, char** argv)
     physicsList->messenger().BuildCommands("/cpop/physics");
     runManager->SetUserInitialization(physicsList);
 
+		G4cout << "Physics List" << G4endl;
+
     // Set custom action to extract informations from the simulation
     cpop::ActionInitialization* actionInitialisation = new cpop::ActionInitialization(population);
     runManager->SetUserInitialization(actionInitialisation);
 
+		G4cout << "Action Initialization" << G4endl;
 
     // Get the pointer to the User Interface manager
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
     G4String command = "/control/execute ";
     UImanager->ApplyCommand(command+macro);
-    
+
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
-                             
-     std::cout << "elapsed time: " << elapsed_seconds.count() << " s\n"; 
+
+     std::cout << "elapsed time: " << elapsed_seconds.count() << " s\n";
 
 
     // Job termination
@@ -121,7 +124,7 @@ int main(int argc, char** argv)
     // owned and deleted by the run manager, so they should not be deleted
     // in the main() program !
     delete runManager;
-                    
+
 
     return 0;
 

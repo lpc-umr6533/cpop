@@ -47,5 +47,5 @@ target_link_libraries(${BINARY_NAME} PUBLIC
   ${CPOP_LIB}
 )
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR}/example/TargetedAlphaTherapy)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output DESTINATION ${CMAKE_BINARY_DIR}/example/TargetedAlphaTherapy)

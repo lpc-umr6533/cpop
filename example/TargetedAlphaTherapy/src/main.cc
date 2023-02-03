@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 		// Create a population
 
 		std::ofstream id_cell_file;
-		id_cell_file.open("../../example/TXT/IDCell.txt");
+		id_cell_file.open("IDCell.txt");
 
 		cpop::Population population;
 		population.messenger().BuildCommands("/cpop");

@@ -38,4 +38,4 @@ target_include_directories(${BINARY_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/in
 target_compile_options(${BINARY_NAME} PUBLIC -Wall -pthread)
 target_link_libraries(${BINARY_NAME} PUBLIC Platform_SMA Modeler)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR}/example/HomogeneousRadiation)
