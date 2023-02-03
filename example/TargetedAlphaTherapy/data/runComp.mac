@@ -13,21 +13,29 @@
 /detector/size 800 um
 
 ########################################################################
+# Seed parameter
+
+/random/setSeeds 123456 1
+
+########################################################################
 # Define the physics process you want to simulate
 /run/particle/verbose 0
 /run/verbose 0
 # set the maximum step allowed
 /cpop/physics/stepMax 0.0001 mm
+# set the energy below which electrons are killed (default value 7.4 eV)
+#/cpop/physics/electronCut 10 MeV
 
 # set the physics list you want to use.
-# candidates : emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emDNAphysics
+# candidates : emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emDNAphysics emDNAphysics_opt2
 /cpop/physics/physicsList emstandard_opt4
+#/cpop/physics/physicsList emDNAphysics_opt2
 
 
 # Those commands are defined in G4EmParametersMessenger.cc
-/process/eLoss/minKinEnergy 100 eV
-/process/eLoss/maxKinEnergy 1 GeV
-/process/em/auger true
+#/process/eLoss/minKinEnergy 100 eV
+#/process/eLoss/maxKinEnergy 1 GeV
+#/process/em/auger true
 
 # Those commands are defined in G4ProductionCutsTableMessenger.cc
 #/cuts/setLowEdge 0.0001 mm
@@ -40,21 +48,21 @@
 /cpop/population/verbose 1
 
 # set the population file (relative path from the current directory)
-/cpop/population/input data/population.xml
+/cpop/population/input data/OneCellInWater.cfg.xml
 
 # set representation parameters
-/cpop/population/numberFacet 100
+/cpop/population/numberFacet 80
 /cpop/population/deltaRef !
 
 # define necrosis, intermediary and external regions
-# Necrosis region     : from 0                   to 0.25*spheroidRadius
-# Intermediary region : from 0.25*spheroidRadius to 0.75*spheroidRadius
-# External region     : from 0.75*spheroidRadius to spheroidRadius
-/cpop/population/internalRatio 0.25
-/cpop/population/intermediaryRatio 0.75
+# Necrosis region     : from 0                   to 0.01*spheroidRadius
+# Intermediary region : from 0.01*spheroidRadius to 0.52*spheroidRadius
+# External region     : from 0.52*spheroidRadius to spheroidRadius
+/cpop/population/internalRatio 0.01
+/cpop/population/intermediaryRatio 0.52
 
 # set sampling cell ie number of cell per region to observe
-/cpop/population/sampling 10
+/cpop/population/sampling !
 
 # Get info at the stepping level
 /cpop/population/stepInfo 1
@@ -73,43 +81,43 @@
 ########################################################################
 # Define sources
 
-# add a gamma source using a user defined spectrum
-#/cpop/source/addHomogeneous gamma
-#/cpop/source/gamma/particle gamma
-#/cpop/source/gamma/spectrum data/phspectrum_spheroid.txt
-
-# number of particles to be generated from this source
-#/cpop/source/gamma/totalParticle 10000
-
-# add a gadolinium source
+# add a particle source
 /cpop/source/addNanoparticle gadolinium
 
-# set the secondaries particle to generate from a nanoparticle
+# set the secondaries particle to generate from a particle
 /cpop/source/gadolinium/particle alpha
-/cpop/source/gadolinium/spectrum data/eSpectrumGBN_550um.spec
+/cpop/source/gadolinium/spectrum data/MonoAlpha_1_78_MeV.spec
 
 # set the number of nanoparticle in the spheroid
-/cpop/source/gadolinium/totalNanoparticle 30
+/cpop/source/gadolinium/totalNanoparticle 1
 
 # set the number of secondaries for one nanoparticle
 /cpop/source/gadolinium/particlePerNano 1
 
+# Allow only one position for all particles generated on the same cell
+/cpop/source/gadolinium/only_one_position_for_all_particles_on_a_cell 0
+
 # set the nanoparticle distribution in each region
 # requirement : the sum of your value must be equal to totalNanoparticle
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/distributionInRegion  10 10 10
+/cpop/source/gadolinium/distributionInRegion  1 0 0
 
 # set the secondaries distribution  in a cell contaning a nanoparticle
-# organnelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
-/cpop/source/gadolinium/distributionInCell 1 0 0 0
+# organelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
+# Nucleoplasm=Nucleus, for Homogeneous : put 0.5 for Nucleoplasm and Cytoplasm
+/cpop/source/gadolinium/distributionInCell 0 1 0 0
+
+# Activate diffusion of radionuclide's daughter
+/cpop/source/daughterDiffusion no
+
 
 # set the maximum number of nanoparticle per cell, in each region.
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/maxNanoparticlePerCell 10000 10000 10000
+/cpop/source/gadolinium/maxNanoparticlePerCell 42 42 42
 
-# Activate diffusion of radionuclide's daughter (only for At-211)
-/cpop/source/daughterDiffusion no
-
+# set the percentage of labeled cells in each region
+# region order : necrosis intermediary external
+/cpop/source/gadolinium/cellLabelingPercentagePerRegion 100 100 100
 
 # initialize the sources
 /cpop/source/init
@@ -118,7 +126,8 @@
 # Set the output file
 
 # defined in G4FileMessenger.cc
-/analysis/setFileName output.root
+/analysis/setFileName output/output.root
+
 
 ########################################################################
 # Start the simulation
@@ -128,4 +137,4 @@
 
 # requirement : the value should be equal to 
 # totalParticle + totalNanoparticle * particlePerNano
-/run/beamOn 30
+/run/beamOn 1

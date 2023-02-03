@@ -173,9 +173,11 @@ void RunAction::CreateHistogram()
      analysisManager->CreateNtupleDColumn("momDirY");
      analysisManager->CreateNtupleDColumn("momDirZ");
      analysisManager->CreateNtupleDColumn("edep");
+     analysisManager->CreateNtupleDColumn("eKin");
      analysisManager->CreateNtupleIColumn("cellID");
      analysisManager->CreateNtupleSColumn("organelle");
      analysisManager->CreateNtupleSColumn("region");
+     analysisManager->CreateNtupleIColumn("eventID");
      analysisManager->FinishNtuple();
    }
    else if ((population->event_level_info_) == 1)

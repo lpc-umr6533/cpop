@@ -50,6 +50,10 @@ public:
 
     G4int ID_Cell_D_Emission;
 
+    G4int evt_id;
+
+    G4int eventID_for_stepping_action;
+
     std::vector<double> fEdepn;
     std::vector<double> fEdepc;
     G4double fEdep_sph;

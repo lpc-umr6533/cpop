@@ -28,6 +28,7 @@ void EventAction::BeginOfEventAction(const G4Event * evt)
 {
     G4int evt_id = evt->GetEventID();
     G4int print_modulo = G4RunManager::GetRunManager()->GetPrintProgress();
+    eventID_for_stepping_action = evt->GetEventID() ;
 
     PreOrganelle = "";
 

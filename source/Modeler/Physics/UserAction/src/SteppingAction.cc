@@ -261,6 +261,8 @@ void SteppingAction::addTupleRow(const G4Step *step, int cellID, const std::stri
     G4ThreeVector momDir = preStepPoint->GetMomentum();
     G4ThreeVector edepPos = preStepPoint->GetPosition();
 
+    G4double eKin = preStepPoint->GetKineticEnergy()/CLHEP::keV;
+
     const Population* population = population_;
 
     if ((population->stepping_level_info_) == 1)
@@ -272,9 +274,11 @@ void SteppingAction::addTupleRow(const G4Step *step, int cellID, const std::stri
     analysisManager->FillNtupleDColumn(4, momDir.y());
     analysisManager->FillNtupleDColumn(5, momDir.z());
     analysisManager->FillNtupleDColumn(6, edep);
-    analysisManager->FillNtupleIColumn(7, cellID);
-    analysisManager->FillNtupleSColumn(8, organelle);
-    analysisManager->FillNtupleSColumn(9, region);
+    analysisManager->FillNtupleDColumn(7, eKin); //in keV
+    analysisManager->FillNtupleIColumn(8, cellID);
+    analysisManager->FillNtupleSColumn(9, organelle);
+    analysisManager->FillNtupleSColumn(10, region);
+    analysisManager->FillNtupleIColumn(11, fEventAction->eventID_for_stepping_action);
     analysisManager->AddNtupleRow();
   }
 }
