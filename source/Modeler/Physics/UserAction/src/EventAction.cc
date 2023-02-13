@@ -138,10 +138,11 @@ void EventAction::EndOfEventAction(const G4Event* Event)
        analysisManager->FillNtupleDColumn(3, ID_Cellule[i]);
        analysisManager->FillNtupleDColumn(4, event_id);
        analysisManager->FillNtupleDColumn(5, ID_Cell_D_Emission);
-       analysisManager->FillNtupleDColumn(6, 0);
+       analysisManager->FillNtupleSColumn(6, FirstVolume);
        analysisManager->FillNtupleDColumn(7, 0);
-       analysisManager->FillNtupleDColumn(8, fEdep_sph); // dans python --> supprimer les doubles en triant suivant eventID
-       analysisManager->FillNtupleDColumn(9, indice_if_diffusion_event);
+       analysisManager->FillNtupleDColumn(8, 0);
+       analysisManager->FillNtupleDColumn(9, fEdep_sph); // dans python --> supprimer les doubles en triant suivant eventID
+       analysisManager->FillNtupleDColumn(10, indice_if_diffusion_event);
 
        analysisManager->AddNtupleRow();
     }

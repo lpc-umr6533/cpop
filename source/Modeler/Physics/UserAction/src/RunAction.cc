@@ -108,10 +108,11 @@ void RunAction::EndOfRunAction(const G4Run * /*run*/)
        analysisManager->FillNtupleDColumn(3, id_cell+3);
        analysisManager->FillNtupleDColumn(4, 0);
        analysisManager->FillNtupleDColumn(5, 0);
-       analysisManager->FillNtupleDColumn(6, fEdepn_tot[id_cell]);
-       analysisManager->FillNtupleDColumn(7, fEdepc_tot[id_cell]);
-       analysisManager->FillNtupleDColumn(8, fEdep_sph_tot);
-       analysisManager->FillNtupleDColumn(9, 2);
+       analysisManager->FillNtupleSColumn(6, "EndOfRun");
+       analysisManager->FillNtupleDColumn(7, fEdepn_tot[id_cell]);
+       analysisManager->FillNtupleDColumn(8, fEdepc_tot[id_cell]);
+       analysisManager->FillNtupleDColumn(9, fEdep_sph_tot);
+       analysisManager->FillNtupleDColumn(10, 2);
 
        analysisManager->AddNtupleRow();
     }
@@ -189,6 +190,7 @@ void RunAction::CreateHistogram()
    analysisManager->CreateNtupleDColumn("ID_Cell");
    analysisManager->CreateNtupleDColumn("eventID");
    analysisManager->CreateNtupleDColumn("Cellule_D_Emission");
+   analysisManager->CreateNtupleSColumn("Organelle_emission");
    analysisManager->CreateNtupleDColumn("fEdepn");
    analysisManager->CreateNtupleDColumn("fEdepc");
    analysisManager->CreateNtupleDColumn("fEdep_sph");

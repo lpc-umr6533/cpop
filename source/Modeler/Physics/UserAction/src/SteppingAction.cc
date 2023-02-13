@@ -87,7 +87,7 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
       {
       // Détecte le premier step de la particule dans le world et permet de renvoyer son volume et énergie d'émission
 
-      fEventAction->FirstVolume = PreOrganelle;
+      fEventAction->FirstVolume = findOrganelle(cell, edep_pos);
       fEventAction->Energie_emission=preStep->GetKineticEnergy()/CLHEP::keV;
       fEventAction->ID_Cell_D_Emission = fPGA_impl->current_cell_id;
       fEventAction->compteur_first_appearance+=1;
