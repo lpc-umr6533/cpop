@@ -2,3 +2,7 @@ build/
 .cache/
 CMakeLists.txt.user
 config/CPOP.sh
+example/GeneratePopulation/IDCell.txt
+example/TargetedAlphaTherapy/output
+example/TargetedAlphaTherapy/IDCell.txt
+example/TargetedAlphaTherapy/MassesCell.txt
