@@ -33,7 +33,8 @@ Additionally, you will need to have some libraries installed. For Debian-likes:
 Download:
 ```bash
 git clone https://github.com/CGAL/cgal
-git checkout release/CGAL-5.0.1
+cd cgal
+git checkout v5.0.1
 ```
 
 Build and install:
@@ -49,6 +50,7 @@ make install
 Download:
 ```bash
 git clone https://gitlab.cern.ch/CLHEP/CLHEP.git
+cd CLHEP
 git checkout CLHEP_2_4_6_1
 ```
 
@@ -66,6 +68,7 @@ make install
 Download:
 ```bash
 git clone https://github.com/root-project/root.git
+cd root
 git checkout v6-26-10
 ```
 
@@ -82,8 +85,9 @@ make install
 
 Download:
 ```bash
-wget -c 'https://gitlab.cern.ch/geant4/geant4/-/archive/v11.1.0.beta/geant4-v11.1.0.beta.tar.gz'
-tar xf geant4-v11.1.0.beta.tar.gz
+git clone https://github.com/Geant4/geant4.git
+cd geant4
+git checkout v11.1.0
 ```
 
 Note: if you want to use CPOP with GATE9, you need to disable Geant4 multithreading.
