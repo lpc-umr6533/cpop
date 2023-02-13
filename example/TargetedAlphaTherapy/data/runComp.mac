@@ -48,7 +48,7 @@
 /cpop/population/verbose 1
 
 # set the population file (relative path from the current directory)
-/cpop/population/input data/OneCellInWater.cfg.xml
+/cpop/population/input data/Neti2007.cfg.xml
 
 # set representation parameters
 /cpop/population/numberFacet 80
@@ -65,9 +65,9 @@
 /cpop/population/sampling !
 
 # Get info at the stepping level
-/cpop/population/stepInfo 1
+/cpop/population/stepInfo 0
 # Get info at the event level
-/cpop/population/eventInfo 0
+/cpop/population/eventInfo 1
 ##### For now, only one option can be chosen ####
 
 # Initialize cpop
@@ -86,10 +86,10 @@
 
 # set the secondaries particle to generate from a particle
 /cpop/source/gadolinium/particle alpha
-/cpop/source/gadolinium/spectrum data/MonoAlpha_1_78_MeV.spec
+/cpop/source/gadolinium/spectrum data/Mono_5_3_MeV.spec
 
 # set the number of nanoparticle in the spheroid
-/cpop/source/gadolinium/totalNanoparticle 1
+/cpop/source/gadolinium/totalNanoparticle 10000
 
 # set the number of secondaries for one nanoparticle
 /cpop/source/gadolinium/particlePerNano 1
@@ -100,12 +100,12 @@
 # set the nanoparticle distribution in each region
 # requirement : the sum of your value must be equal to totalNanoparticle
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/distributionInRegion  1 0 0
+/cpop/source/gadolinium/distributionInRegion  0 10000 0
 
 # set the secondaries distribution  in a cell contaning a nanoparticle
 # organelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
-# Nucleoplasm=Nucleus, for Homogeneous : put 0.5 for Nucleoplasm and Cytoplasm
-/cpop/source/gadolinium/distributionInCell 0 1 0 0
+# Nucleoplasm=Nucleus, for Homogeneous : put same for Nucleoplasm and Cytoplasm
+/cpop/source/gadolinium/distributionInCell 0 0.28 0 0.72
 
 # Activate diffusion of radionuclide's daughter
 /cpop/source/daughterDiffusion no
@@ -117,7 +117,7 @@
 
 # set the percentage of labeled cells in each region
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/cellLabelingPercentagePerRegion 100 100 100
+/cpop/source/gadolinium/cellLabelingPercentagePerRegion 100 50 100
 
 # initialize the sources
 /cpop/source/init
@@ -137,4 +137,4 @@
 
 # requirement : the value should be equal to 
 # totalParticle + totalNanoparticle * particlePerNano
-/run/beamOn 1
+/run/beamOn 10000
