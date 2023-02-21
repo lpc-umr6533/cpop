@@ -52,8 +52,6 @@ void NanoparticleSource::Initialize()
         const Population* population = this->population();
         std::vector<SpheroidRegion> regions = population->regions();
 
-        G4cout << " INVERSE CDF :::::::     " << inverse_cdf_log_normal_distribution (0.5, 0.5, 5) << G4endl;
-
         int number_nano = 0;
         for(const SpheroidRegion& region : regions) {
             if (population->verbose_level() > 0)
@@ -119,19 +117,28 @@ void NanoparticleSource::distribute(int number_nano, const SpheroidRegion &regio
 
    int max_nb_nano_per_cell[cells_in_region_size];
 
-   int index_log_normal_distribution = 1;
+   int mean_ppc = 5;
 
    if (index_log_normal_distribution == 1)
-      {for(int ind_cell = 0 ; ind_cell < cells_in_region_size; ++ind_cell)
-        {;}
-        // { max_nb_nano_per_cell[ind_cell] =
-        //   inverse_cdf_log_normal_distribution(dis(gen), 0.5, number_nano/max_number_nanoparticle_per_cell);
-        //   G4cout << "number_nano/max_number_nanoparticle_per_cell = " << number_nano/max_number_nanoparticle_per_cell << G4endl;
-        //   G4cout << "Max nb_nano in cell " << ind_cell << " = " << max_nb_nano_per_cell[ind_cell] << G4endl;}
+      { number_nano = 0;
+        for(int ind_cell = 0 ; ind_cell < cells_in_region_size; ++ind_cell)
+        {
+          G4float test_var = inverse_cdf_log_normal_distribution(dis(gen), 0.5, mean_ppc);
+          G4cout << "inverse_cdf_log_normal_distribution(dis(gen), 0.5, mean_ppc) : " << inverse_cdf_log_normal_distribution(dis(gen), 0.5, mean_ppc) << G4endl;
+          max_nb_nano_per_cell[ind_cell] =
+              test_var;
+          number_nano = number_nano + max_nb_nano_per_cell[ind_cell] ;
+        }
       }
    else
       {memset(max_nb_nano_per_cell, max_number_nanoparticle_per_cell,
              cells_in_region_size*sizeof(int));}
+
+   G4cout << "number total particules = " << number_nano << G4endl;
+   if (region.name() == "Intermediary")
+     {   G4cout << "nb moyen particules / cellules = " << number_nano/410 << G4endl;}
+   if (region.name() == "External")
+     {   G4cout << "nb moyen particules / cellules = " << number_nano/2659 << G4endl;}
 
 
    // Particules are distributed on cells following :
@@ -143,10 +150,10 @@ void NanoparticleSource::distribute(int number_nano, const SpheroidRegion &regio
     {
       if((labeled_cells_id.size())<(cell_labeling_percentage*cells_in_region_size))
       {
-        //Labeled are chosen randomly in the region
+        //Labeled cells are chosen randomly in the region
         indexCell = RandomEngineManager::getInstance()->randi(0, cells_in_region_size -1);
 
-        while (nb_nano_per_cell[indexCell]>=max_number_nanoparticle_per_cell)
+        while (nb_nano_per_cell[indexCell]>=max_nb_nano_per_cell[indexCell])
          {indexCell = RandomEngineManager::getInstance()->randi(0, cells_in_region_size -1);}
 
         labeled_cells_id.push_back(indexCell);
@@ -161,7 +168,6 @@ void NanoparticleSource::distribute(int number_nano, const SpheroidRegion &regio
 
           cell_nano_.insert({selected_cell, {selected_cell, 1, number_secondary_per_nano_, *organelle_weight_} });
           nb_nano_per_cell[indexCell] +=1 ;
-          //std::cout << "  Number of nano in that cell " << nb_nano_per_cell[indexCell]  <<'\n';
         }
         else
         {
@@ -178,7 +184,7 @@ void NanoparticleSource::distribute(int number_nano, const SpheroidRegion &regio
         //When all cells are labeled, particles are added onmy in those cells
         indexCell = rand() % (labeled_cells_id.size());
 
-        while (nb_nano_per_cell[indexCell]>=max_number_nanoparticle_per_cell)
+        while (nb_nano_per_cell[indexCell]>=max_nb_nano_per_cell[indexCell])
          {indexCell = rand() % (labeled_cells_id.size());}
 
         const Settings::nCell::t_Cell_3 * selected_cell = cells_in_region[indexCell];

@@ -134,7 +134,7 @@ public:
 
     int only_one_position_for_all_particles_on_a_cell = 0;
 
-    int index_log_normal_distribution = 1;
+    int index_log_normal_distribution = 0;
 
     std::vector<double> organelle_weight_vector;
 
