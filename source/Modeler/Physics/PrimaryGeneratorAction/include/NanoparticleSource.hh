@@ -10,6 +10,8 @@
 #include "OrganellesWeight.hh"
 #include "NanoparticleSourceMessenger.hh"
 
+#include <boost/math/special_functions/erf.hpp>
+#include <math.h>
 #include <iostream>
 #include <vector>
 
@@ -132,7 +134,14 @@ public:
 
     int only_one_position_for_all_particles_on_a_cell = 0;
 
+    int index_log_normal_distribution = 1;
+
     std::vector<double> organelle_weight_vector;
+
+    G4float inverse_cdf_log_normal_distribution(G4float u, G4float shape_param,
+    G4float mean_output_value)
+    {return exp(boost::math::erf_inv(2 * u - 1) * shape_param * sqrt(2) + log(mean_output_value) - 0.5 * pow(shape_param,2));}
+}
 
 
 private:
