@@ -141,7 +141,6 @@ public:
     G4float inverse_cdf_log_normal_distribution(G4float u, G4float shape_param,
     G4float mean_output_value)
     {return exp(boost::math::erf_inv(2 * u - 1) * shape_param * sqrt(2) + log(mean_output_value) - 0.5 * pow(shape_param,2));}
-}
 
 
 private:
