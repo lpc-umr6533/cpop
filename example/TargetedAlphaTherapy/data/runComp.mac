@@ -117,7 +117,7 @@
 
 # set the percentage of labeled cells in each region
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/cellLabelingPercentagePerRegion 100 50 100
+/cpop/source/gadolinium/cellLabelingPercentagePerRegion 100 100 100
 
 # initialize the sources
 /cpop/source/init

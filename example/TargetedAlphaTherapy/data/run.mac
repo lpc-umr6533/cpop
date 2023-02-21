@@ -15,7 +15,7 @@
 ########################################################################
 # Seed parameter
 
-/random/setSeeds 123456 1
+/random/setSeeds 123456 4
 
 ########################################################################
 # Define the physics process you want to simulate
@@ -26,8 +26,8 @@
 
 # set the physics list you want to use.
 # candidates : emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emDNAphysics emDNAphysics_opt2
-#/cpop/physics/physicsList emstandard_opt4
-/cpop/physics/physicsList emDNAphysics_opt2
+/cpop/physics/physicsList emstandard_opt4
+#/cpop/physics/physicsList emDNAphysics_opt2
 
 
 # Those commands are defined in G4EmParametersMessenger.cc
@@ -65,9 +65,9 @@
 /cpop/population/sampling !
 
 # Get info at the stepping level
-/cpop/population/stepInfo 0
+/cpop/population/stepInfo 1
 # Get info at the event level
-/cpop/population/eventInfo 1
+/cpop/population/eventInfo 0
 ##### For now, only one option can be chosen ####
 
 # Initialize cpop
@@ -93,7 +93,7 @@
 
 # set the number of nanoparticle in the spheroid
 
-/cpop/source/gadolinium/totalNanoparticle 2
+/cpop/source/gadolinium/totalNanoparticle 20000
 
 # set the number of secondaries for one nanoparticle
 /cpop/source/gadolinium/particlePerNano 1
@@ -104,7 +104,7 @@
 # set the nanoparticle distribution in each region
 # requirement : the sum of your value must be equal to totalNanoparticle
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/distributionInRegion  0 0 2
+/cpop/source/gadolinium/distributionInRegion  0 0 20000
 
 # set the secondaries distribution  in a cell contaning a nanoparticle
 # organelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
@@ -117,7 +117,7 @@
 
 # set the maximum number of nanoparticle per cell, in each region. If total number of nanoparticle = number of cells * maximum number of nanoparticles per cell, all cells will have the maximum amount of nanoparticles
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/maxNanoparticlePerCell 0 7 7
+/cpop/source/gadolinium/maxNanoparticlePerCell 0 10000 10000
 
 # set the percentage of labeled cells in each region
 # region order : necrosis intermediary external
@@ -141,5 +141,4 @@
 
 # requirement : the value should be equal to 
 # totalParticle + totalNanoparticle * particlePerNano
-#/run/beamOn 21483
-/run/beamOn 2
+/run/beamOn 20000
