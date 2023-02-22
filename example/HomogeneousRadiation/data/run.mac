@@ -65,7 +65,7 @@
 /cpop/population/intermediaryRatio 0.75
 
 # set sampling cell ie number of cell per region to observe
-/cpop/population/sampling 10
+/cpop/population/sampling !
 
 # Initialize cpop
 /cpop/population/init
