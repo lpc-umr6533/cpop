@@ -5,7 +5,7 @@ config/CPOP.sh
 example/GeneratePopulation/data/
 example/GeneratePopulation/IDCell.txt
 example/TargetedAlphaTherapy/output/
-example/TargetedAlphaTherapy/data/
+example/TargetedAlphaTherapy/data/run.mac
 example/TargetedAlphaTherapy/IDCell.txt
 example/TargetedAlphaTherapy/MassesCell.txt
 example/TargetedAlphaTherapy/targetedAlphaTherapy
