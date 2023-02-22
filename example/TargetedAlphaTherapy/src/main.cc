@@ -122,7 +122,6 @@ int main(int argc, char** argv)
     std::chrono::duration<double> elapsed_seconds = end - start;
 
      std::cout << "elapsed time: " << elapsed_seconds.count() << " s\n";
-     G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" << G4endl;
 
     // Job termination
     // Free the store: user actions, physics_list and detector_description are

@@ -38,4 +38,3 @@ target_compile_options(${BINARY_NAME} PUBLIC -Wall -pthread)
 target_link_libraries(${BINARY_NAME} PUBLIC Platform_SMA Modeler)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR}/example/TargetedAlphaTherapy)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output DESTINATION ${CMAKE_BINARY_DIR}/example/TargetedAlphaTherapy)
