@@ -82,34 +82,34 @@
 # Define sources
 
 # add a particle source
-/cpop/source/addNanoparticle gadolinium
+/cpop/source/addNanoparticle radionuclide
 
 # set the secondaries particle to generate from a particle
-/cpop/source/gadolinium/particle alpha
+/cpop/source/radionuclide/particle alpha
 
-/cpop/source/gadolinium/spectrum data/At211.spec
-#/cpop/source/gadolinium/spectrum data/Bi213.spec
-#/cpop/source/gadolinium/spectrum data/Po210.spec
+/cpop/source/radionuclide/spectrum data/At211.spec
+#/cpop/source/radionuclide/spectrum data/Bi213.spec
+#/cpop/source/radionuclide/spectrum data/Po210.spec
 
 # set the number of nanoparticle in the spheroid
 
-/cpop/source/gadolinium/totalNanoparticle 20000
+/cpop/source/radionuclide/totalNanoparticle 20000
 
 # set the number of secondaries for one nanoparticle
-/cpop/source/gadolinium/particlePerNano 1
+/cpop/source/radionuclide/particlePerNano 1
 
 # Allow only one position for all particles generated on the same cell
-/cpop/source/gadolinium/only_one_position_for_all_particles_on_a_cell 0
+/cpop/source/radionuclide/only_one_position_for_all_particles_on_a_cell 0
 
 # set the nanoparticle distribution in each region
 # requirement : the sum of your value must be equal to totalNanoparticle
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/distributionInRegion  0 0 20000
+/cpop/source/radionuclide/distributionInRegion  0 0 20000
 
 # set the secondaries distribution  in a cell contaning a nanoparticle
 # organelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
 # Nucleoplasm=Nucleus, for Homogeneous : put 0.5 for Nucleoplasm and Cytoplasm
-/cpop/source/gadolinium/distributionInCell 1 0 0 0
+/cpop/source/radionuclide/distributionInCell 1 0 0 0
 
 # Activate diffusion of radionuclide's daughter
 /cpop/source/daughterDiffusion no
@@ -117,11 +117,11 @@
 
 # set the maximum number of nanoparticle per cell, in each region. If total number of nanoparticle = number of cells * maximum number of nanoparticles per cell, all cells will have the maximum amount of nanoparticles
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/maxNanoparticlePerCell 0 10000 10000
+/cpop/source/radionuclide/maxNanoparticlePerCell 0 10000 10000
 
 # set the percentage of labeled cells in each region
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/cellLabelingPercentagePerRegion 100 100 100
+/cpop/source/radionuclide/cellLabelingPercentagePerRegion 100 100 100
 
 # initialize the sources
 /cpop/source/init
