@@ -10,7 +10,7 @@
 
 #include "Population.hh"
 #include "HomogeneousSource.hh"
-#include "NanoparticleSource.hh"
+#include "DistributedSource.hh"
 
 //
 
@@ -114,7 +114,7 @@ TEST_CASE("Homogeneous source", "[source]") {
     }
 }
 
-TEST_CASE("Nanoparticle source, [source]") {
+TEST_CASE("Distributed source, [source]") {
     CLHEP::MTwistEngine defaultEngineCPOP(1234567);
     RandomEngineManager::getInstance()->setEngine(&defaultEngineCPOP);
 
@@ -128,7 +128,7 @@ TEST_CASE("Nanoparticle source, [source]") {
         population.setNumber_max_facet_poly(100);
         population.setDelta_reffinement(0);
         population.loadPopulation();
-        cpop::NanoparticleSource* source = new cpop::NanoparticleSource("source", population);
+        cpop::DistributedSource* source = new cpop::DistributedSource("source", population);
 
         REQUIRE(source != nullptr);
         REQUIRE(source->source_name() == "source");
@@ -142,7 +142,7 @@ TEST_CASE("Nanoparticle source, [source]") {
         std::string base_name = "/cpop";
         population.messenger().BuildCommands(base_name);
 
-        cpop::NanoparticleSource source{"gadolinium", population};
+        cpop::DistributedSource source{"gadolinium", population};
         G4String base = "/cpop/source/" + source.source_name();
         source.messenger().BuildCommands(base);
 
@@ -156,7 +156,7 @@ TEST_CASE("Nanoparticle source, [source]") {
 
         G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("e-");
         REQUIRE(source.particle() == particle);
-        REQUIRE(source.number_nanoparticle() == 6);
+        REQUIRE(source.number_distributed() == 6);
         REQUIRE(source.number_secondary_per_nano() == 100);
         REQUIRE(source.number_nanoparticle_necrosis() == 1);
         REQUIRE(source.number_nanoparticle_intermediary() == 2);
@@ -171,7 +171,7 @@ TEST_CASE("Nanoparticle source, [source]") {
         std::string base_name = "/cpop";
         population.messenger().BuildCommands(base_name);
 
-        cpop::NanoparticleSource source{"gadolinium", population};
+        cpop::DistributedSource source{"gadolinium", population};
         G4String base = "/cpop/source/" + source.source_name();
         source.messenger().BuildCommands(base);
 
