@@ -1,5 +1,5 @@
-#ifndef NANOPARTICLESOURCE_HH
-#define NANOPARTICLESOURCE_HH
+#ifndef DISTRIBUTEDSOURCE_HH
+#define DISTRIBUTEDSOURCE_HH
 
 #include <memory>
 #include <unordered_map>
@@ -8,7 +8,7 @@
 #include "Source.hh"
 #include "CellSettings.hh"
 #include "OrganellesWeight.hh"
-#include "NanoparticleSourceMessenger.hh"
+#include "DistributedSourceMessenger.hh"
 
 #include <boost/math/special_functions/erf.hpp>
 #include <math.h>
@@ -76,11 +76,11 @@ private:
 
 };
 
-class NanoparticleSource : public Source
+class DistributedSource : public Source
 {
  /// Victor Levrague : modification of the distribute function in order to set a maximum number of particles per cell, and a % of labeled cells ///
 public:
-    NanoparticleSource(const std::string& name, const Population& population);
+    DistributedSource(const std::string& name, const Population& population);
 
     std::vector<G4ThreeVector> GetPosition() override;
     int getID_OfCell();
@@ -90,7 +90,7 @@ public:
     /// \brief Distribute all the nanoparticles in a cell
     void Initialize() override;
 
-    int number_nanoparticle() const;
+    int number_distributed() const;
     void setNumber_nanoparticle(int number_nanoparticle);
     void setNumber_nanoparticle_per_cell_necrosis(int number_nanoparticle_per_cell_arg);
     void setNumber_nanoparticle_per_cell_intermediary(int number_nanoparticle_per_cell_arg);
@@ -115,7 +115,7 @@ public:
 
     std::vector<double> getOrganelle_weight();
 
-    NanoparticleSourceMessenger& messenger();
+    DistributedSourceMessenger& messenger();
 
     int total_particle() const { return number_nanoparticle_*number_secondary_per_nano_;}
 
@@ -183,11 +183,11 @@ private:
     double cell_labeling_percentage_external_;
 
     /// \brief Messenger
-    std::unique_ptr<NanoparticleSourceMessenger> messenger_;
+    std::unique_ptr<DistributedSourceMessenger> messenger_;
 };
 
 }
 
 
 
-#endif // NANOPARTICLESOURCE_HH
+#endif // DISTRIBUTEDSOURCE_HH

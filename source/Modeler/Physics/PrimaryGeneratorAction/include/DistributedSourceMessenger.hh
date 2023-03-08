@@ -1,5 +1,5 @@
-#ifndef NANOPARTICLESOURCEMESSENGER_HH
-#define NANOPARTICLESOURCEMESSENGER_HH
+#ifndef DISTRIBUTEDSOURCEMESSENGER_HH
+#define DISTRIBUTEDSOURCEMESSENGER_HH
 
 #include "G4UIcommand.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -11,19 +11,19 @@
 namespace cpop {
 
 class SourceMessenger;
-class NanoparticleSource;
+class DistributedSource;
 
-class NanoparticleSourceMessenger : public MessengerBase
+class DistributedSourceMessenger : public MessengerBase
 {
   /// Victor Levrague :addition of maximum particle per cell, % of cell labeling and different positions for all particles generated on the same cell ///
 public:
-    NanoparticleSourceMessenger(NanoparticleSource* source);
+    DistributedSourceMessenger(DistributedSource* source);
 
     void BuildCommands(G4String base) override;
     void SetNewValue(G4UIcommand * command , G4String newValue) override;
 
 private:
-    NanoparticleSource* source_;
+    DistributedSource* source_;
 
     // We choose composition over inheritancce to avoid type casting
     std::unique_ptr<SourceMessenger> source_messenger_;
@@ -55,4 +55,4 @@ private:
 
 
 
-#endif // NANOPARTICLESOURCEMESSENGER_HH
+#endif // DISTRIBUTEDSOURCEMESSENGER_HH

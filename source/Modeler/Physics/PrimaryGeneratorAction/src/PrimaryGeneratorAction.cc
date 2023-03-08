@@ -22,9 +22,9 @@ HomogeneousSource* PrimaryGeneratorAction::homogeneous_source() const {
     return pga_impl_->homogeneous_source();
 }
 
-NanoparticleSource *PrimaryGeneratorAction::nanoparticle_source() const
+DistributedSource *PrimaryGeneratorAction::distributed_source() const
 {
-    return pga_impl_->nanoparticle_source();
+    return pga_impl_->distributed_source();
 }
 
 PGA_implMessenger &PrimaryGeneratorAction::messenger()

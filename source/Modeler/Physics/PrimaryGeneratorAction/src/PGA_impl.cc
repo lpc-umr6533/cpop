@@ -37,11 +37,11 @@
 namespace cpop {
 
 std::atomic<int> PGA_impl::nbHomogeneous{0};
-std::atomic<int> PGA_impl::nbNanoparticle{0};
+std::atomic<int> PGA_impl::nbDistributed{0};
 
 std::mutex PGA_impl::generate_primaries_mutex_;
 std::mutex PGA_impl::add_homogeneous_mutex_;
-std::mutex PGA_impl::add_nanoparticle_mutex_;
+std::mutex PGA_impl::add_distributed_mutex_;
 std::mutex PGA_impl::initialize_mutex_;
 bool PGA_impl::is_init_{false};
 
@@ -66,7 +66,7 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     indice_if_diffusion=0;
     nb_essais_diffusion=0;
 
-    // (nanoparticle_source()->organelle_weight_vector).clear();
+    // (distributed_source()->organelle_weight_vector).clear();
 
 
     // We do not need to check if source is nullptr because checkPrecondition() would have thrown an exception
@@ -80,13 +80,13 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     G4ThreeVector G4_particle_position = (source->GetPosition()).front();
 
     //TODO : debug the (source->GetPosition()) call when multiple sources are used in one simulation
-    //(source->GetPosition()) value is well attributed in NanoparticleSource GetPosition(), but the call is PGA_impl.cc fails.
+    //(source->GetPosition()) value is well attributed in DistributedSource GetPosition(), but the call is PGA_impl.cc fails.
 
-    if (nanoparticle_source_)
+    if (distributed_source_)
     {
 
-    if (nanoparticle_source_->only_one_position_for_all_particles_on_a_cell == 0)
-      {nanoparticle_source_->eraseFront_position_cell();}
+    if (distributed_source_->only_one_position_for_all_particles_on_a_cell == 0)
+      {distributed_source_->eraseFront_position_cell();}
 
     G4String name_radionuclide = "At211"; //TODO : create a macro command with radionuclide name and associate corresponding half life and energies
 
@@ -94,18 +94,15 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
       { half_life = 0.516;
       if_Energy_diffusion_vector = {7.4502, 6.8912, 6.5684};}
 
-    if (diffusion_bool && ((nanoparticle_source()->getOrganelle_weight()).at(0) == 1) && (std::find(if_Energy_diffusion_vector.begin(), if_Energy_diffusion_vector.end(), particleEnergy) != if_Energy_diffusion_vector.end()))
-    //if (diffusion_bool && ((nanoparticle_source()->getOrganelle_weight()).at(0) == 1))
+    if (diffusion_bool && ((distributed_source()->getOrganelle_weight()).at(0) == 1) && (std::find(if_Energy_diffusion_vector.begin(), if_Energy_diffusion_vector.end(), particleEnergy) != if_Energy_diffusion_vector.end()))
     {
-      // G4cout << "\n Diffusion activated \n" << G4endl;
       double distance_after_decay = GenerateDistanceAfterDiffusion(GenerateTimeBeforeDecay());
-      // G4cout << "\n Distance after diffusion : " << distance_after_decay << G4endl;
       if (distance_after_decay>1)
       {G4_particle_position = GenerateNewPositionAfterDiffusion(G4_particle_position, distance_after_decay);
        indice_if_diffusion=1;}
     }
 
-    current_cell_id = nanoparticle_source()->getID_OfCell();
+    current_cell_id = distributed_source()->getID_OfCell();
 
    }
 
@@ -121,7 +118,7 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
 bool PGA_impl::HasSource() const
 {
-    return (homogeneous_source_.get() != nullptr) || (nanoparticle_source_.get() != nullptr);
+    return (homogeneous_source_.get() != nullptr) || (distributed_source_.get() != nullptr);
 }
 
 int PGA_impl::TotalEvent() const
@@ -131,8 +128,8 @@ int PGA_impl::TotalEvent() const
     if(homogeneous_source_)
         total += homogeneous_source_->total_particle();
 
-    if(nanoparticle_source_)
-        total += nanoparticle_source_->total_particle();
+    if(distributed_source_)
+        total += distributed_source_->total_particle();
 
     return total;
 }
@@ -142,7 +139,7 @@ void PGA_impl::Initialize()
     std::lock_guard<std::mutex> lock(initialize_mutex_);
     if(!is_init_) {
         if (homogeneous_source_) homogeneous_source_->Initialize();
-        if (nanoparticle_source_) nanoparticle_source_->Initialize();
+        if (distributed_source_) distributed_source_->Initialize();
         is_init_ = true;
     }
 }
@@ -190,16 +187,16 @@ void PGA_impl::checkBeamOn() const
 
         int nbNano = 0;
         int secondPerNano = 0;
-        if ( nanoparticle_source_.get() == nullptr) {
-            error_msg << "  No nanoparticle source has been added'\n";
+        if ( distributed_source_.get() == nullptr) {
+            error_msg << "  No distributed source has been added'\n";
         } else {
-            nbNano = nanoparticle_source_->number_nanoparticle();
-            secondPerNano = nanoparticle_source_->number_secondary_per_nano();
-            error_msg << "  Number of nanoparticle from the source " << nanoparticle_source_->source_name() << " : " << nbNano << '\n';
-            error_msg << "  Number of secondaries for one nanoparticle : " << secondPerNano << '\n';
+            nbNano = distributed_source_->number_distributed();
+            secondPerNano = distributed_source_->number_secondary_per_nano();
+            error_msg << "  Number of distributed sources " << distributed_source_->source_name() << " : " << nbNano << '\n';
+            error_msg << "  Number of secondaries for one source : " << secondPerNano << '\n';
         }
 
-        error_msg << "Expected number of event = NB_Homogeneous + NB_Nanoparticle * Secondaries_Per_Nano \n";
+        error_msg << "Expected number of event = NB_Homogeneous + NB_Distributed * Secondaries_Per_Nano \n";
         error_msg << expected_event << " = " << totalH << " + " << nbNano << " * " << secondPerNano << '\n';
         error_msg << "Try to change your macro with : /run/beamOn " << expected_event << '\n';
 
@@ -221,17 +218,17 @@ HomogeneousSource *PGA_impl::homogeneous_source()
     return homogeneous_source_.get();
 }
 
-NanoparticleSource &PGA_impl::addNanoparticleSource(const string &source_name)
+DistributedSource &PGA_impl::addDistributedSource(const string &source_name)
 {
-    std::lock_guard<std::mutex> lock(add_nanoparticle_mutex_);
-    if (!nanoparticle_source_)
-        nanoparticle_source_ = std::make_unique<NanoparticleSource>(source_name, *population_);
-    return *nanoparticle_source_;
+    std::lock_guard<std::mutex> lock(add_distributed_mutex_);
+    if (!distributed_source_)
+        distributed_source_ = std::make_unique<DistributedSource>(source_name, *population_);
+    return *distributed_source_;
 }
 
-NanoparticleSource *PGA_impl::nanoparticle_source()
+DistributedSource *PGA_impl::distributed_source()
 {
-    return nanoparticle_source_.get();
+    return distributed_source_.get();
 }
 
 Source *PGA_impl::selectSource() const
@@ -241,9 +238,9 @@ Source *PGA_impl::selectSource() const
         return homogeneous_source_.get();
     }
 
-    if (nanoparticle_source_ && nanoparticle_source_->HasLeft()) {
-        ++nbNanoparticle;
-        return nanoparticle_source_.get();
+    if (distributed_source_ && distributed_source_->HasLeft()) {
+        ++nbDistributed;
+        return distributed_source_.get();
     }
 
     return nullptr;

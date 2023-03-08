@@ -29,7 +29,7 @@ private:
     /// \brief Add a homogeneous source
     std::unique_ptr<G4UIcmdWithAString> homogeneous_cmd_;
     /// \brief Add a nanoparticle source
-    std::unique_ptr<G4UIcmdWithAString> nanoparticle_cmd_;
+    std::unique_ptr<G4UIcmdWithAString> distributed_cmd_;
     /// \brief Activer radionuclide's daughter diffusionS
     std::unique_ptr<G4UIcmdWithAString> diffusion_cmd_;
     /// \brief Initialize the sources

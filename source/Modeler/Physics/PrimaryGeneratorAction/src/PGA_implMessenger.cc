@@ -2,7 +2,7 @@
 
 #include "PGA_impl.hh"
 #include "HomogeneousSource.hh"
-#include "NanoparticleSource.hh"
+#include "DistributedSource.hh"
 
 namespace cpop {
 
@@ -23,11 +23,11 @@ void PGA_implMessenger::BuildCommands(G4String base)
     homogeneous_cmd_->SetParameterName("HsourceName", false);
     homogeneous_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    cmd_base = base + "/addNanoparticle";
-    nanoparticle_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
-    nanoparticle_cmd_->SetGuidance("Add a nanoparticle source");
-    nanoparticle_cmd_->SetParameterName("NsourceName", false);
-    nanoparticle_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
+    cmd_base = base + "/addDistributed";
+    distributed_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
+    distributed_cmd_->SetGuidance("Add a distributed source");
+    distributed_cmd_->SetParameterName("NsourceName", false);
+    distributed_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     cmd_base = base + "/daughterDiffusion";
     diffusion_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
@@ -46,8 +46,8 @@ void PGA_implMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
         HomogeneousSource& added_source =  pga_impl_->addHomogeneousSource(newValue.data());
         G4String source_base = base_ + "/" + newValue;
         added_source.messenger().BuildCommands(source_base);
-    } else if (command == nanoparticle_cmd_.get()) {
-        NanoparticleSource& added_source = pga_impl_->addNanoparticleSource(newValue.data());
+    } else if (command == distributed_cmd_.get()) {
+        DistributedSource& added_source = pga_impl_->addDistributedSource(newValue.data());
         G4String source_base = base_ + "/" + newValue;
         added_source.messenger().BuildCommands(source_base);
     } else if (command == diffusion_cmd_.get()) {

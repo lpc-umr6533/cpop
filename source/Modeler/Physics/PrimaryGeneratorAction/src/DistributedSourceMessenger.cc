@@ -1,21 +1,21 @@
-#include "NanoparticleSourceMessenger.hh"
+#include "DistributedSourceMessenger.hh"
 
 #include <sstream>
 
 #include "G4UIparameter.hh"
 
-#include "NanoparticleSource.hh"
+#include "DistributedSource.hh"
 
 namespace cpop {
 
-NanoparticleSourceMessenger::NanoparticleSourceMessenger(NanoparticleSource *source)
+DistributedSourceMessenger::DistributedSourceMessenger(DistributedSource *source)
     : MessengerBase(),
       source_(source),
       source_messenger_(std::make_unique<SourceMessenger>(source))
 {
 }
 
-void NanoparticleSourceMessenger::BuildCommands(G4String base)
+void DistributedSourceMessenger::BuildCommands(G4String base)
 {
     source_messenger_->BuildCommands(base);
 
@@ -69,7 +69,7 @@ void NanoparticleSourceMessenger::BuildCommands(G4String base)
 
 }
 
-void NanoparticleSourceMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
+void DistributedSourceMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
 {
     source_messenger_->SetNewValue(command, newValue);
 
@@ -80,14 +80,14 @@ void NanoparticleSourceMessenger::SetNewValue(G4UIcommand *command, G4String new
     } else if (command == nano_per_region_cmd_.get()) {
         G4ThreeVector vec = nano_per_region_cmd_->GetNew3VectorValue(newValue);
         int sum = vec.x() + vec.y() + vec.z();
-        if (sum != source_->number_nanoparticle()) {
+        if (sum != source_->number_distributed()) {
             std::stringstream msg;
             msg << "Wrong distribution of the nanoparticle in the 3 regions : \n";
             msg << "Necrosis region : " << vec.x() << '\n';
             msg << "Intermediary region : " << vec.y() << '\n';
             msg << "External region : " << vec.z() << '\n';
             msg << "Sum : " << sum << '\n';
-            msg << "Number of nanoparticle : " << source_->number_nanoparticle() << '\n';
+            msg << "Number of nanoparticle : " << source_->number_distributed() << '\n';
             throw std::runtime_error(msg.str());
         }
         source_->setNumber_nanoparticle_necrosis(vec.x());

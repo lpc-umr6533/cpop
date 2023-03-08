@@ -69,7 +69,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
 
 //        // Check pga settings
 //        pga.Initialize();
-//        cpop::NanoparticleSource* source = pga.nanoparticle_source();
+//        cpop::DistributedSource* source = pga.distributed_source();
 //        REQUIRE(source != nullptr);
 
 //        // Check source settings
@@ -102,7 +102,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
         REQUIRE(sourceH->total_particle() == 1000);
 
         // Check pga settings
-        cpop::NanoparticleSource* sourceN = pga.nanoparticle_source();
+        cpop::DistributedSource* sourceN = pga.distributed_source();
         REQUIRE(sourceN != nullptr);
 
         // Check source settings
@@ -126,7 +126,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
         REQUIRE(expected_number_event == pga.TotalEvent());
 
         // Check pga settings
-        cpop::NanoparticleSource* sourceN = pga.nanoparticle_source();
+        cpop::DistributedSource* sourceN = pga.distributed_source();
         REQUIRE(sourceN != nullptr);
 
         // Check pga settings
@@ -142,7 +142,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
 
         REQUIRE(pga.selectSource() == nullptr);
         REQUIRE(cpop::PGA_impl::nbHomogeneous == 1000);
-        REQUIRE(cpop::PGA_impl::nbNanoparticle == 600);
+        REQUIRE(cpop::PGA_impl::nbDistributed == 600);
     }
 
 

@@ -82,7 +82,7 @@
 #/cpop/source/gamma/totalParticle 10000
 
 # add a gadolinium source
-/cpop/source/addNanoparticle gadolinium
+/cpop/source/addDistributed gadolinium
 
 # set the secondaries particle to generate from a nanoparticle
 /cpop/source/gadolinium/particle alpha

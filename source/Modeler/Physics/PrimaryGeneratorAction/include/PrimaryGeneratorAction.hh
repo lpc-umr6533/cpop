@@ -18,7 +18,7 @@ public:
     int TotalEvent() const;
 
     HomogeneousSource* homogeneous_source() const;
-    NanoparticleSource* nanoparticle_source() const;
+    DistributedSource* distributed_source() const;
 
     PGA_implMessenger& messenger();
 

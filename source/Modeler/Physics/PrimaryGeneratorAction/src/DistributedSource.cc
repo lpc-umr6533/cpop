@@ -1,4 +1,4 @@
-#include "NanoparticleSource.hh"
+#include "DistributedSource.hh"
 
 #include "Population.hh"
 #include "RandomEngineManager.hh"
@@ -18,20 +18,20 @@
 
 namespace cpop {
 
-NanoparticleSource::NanoparticleSource(const string &name, const Population &population)
+DistributedSource::DistributedSource(const string &name, const Population &population)
     :Source(name,population),
-       messenger_(std::make_unique<NanoparticleSourceMessenger>(this))
+       messenger_(std::make_unique<DistributedSourceMessenger>(this))
 {
 }
 
-std::vector<G4ThreeVector> NanoparticleSource::GetPosition()
+std::vector<G4ThreeVector> DistributedSource::GetPosition()
 {
     // If this method is called, we know we have something to generate
     // because a source is only selected if HasLeft() returned true
     return getPositionInCell();
 }
 
-void NanoparticleSource::Update()
+void DistributedSource::Update()
 {
     current_cell_->second.Update();
     // Check if we need to go to the next cell
@@ -39,14 +39,14 @@ void NanoparticleSource::Update()
         ++current_cell_;
 }
 
-bool NanoparticleSource::HasLeft()
+bool DistributedSource::HasLeft()
 {
     if (!is_initialized_) return false;
 
     return current_cell_ != cell_nano_.end();
 }
 
-void NanoparticleSource::Initialize()
+void DistributedSource::Initialize()
 {
     if(!is_initialized_) {
         const Population* population = this->population();
@@ -55,7 +55,7 @@ void NanoparticleSource::Initialize()
         int number_nano = 0;
         for(const SpheroidRegion& region : regions) {
             if (population->verbose_level() > 0)
-                std::cout << "Distributing nanoparticle in region : " << region.name() << std::endl;
+                std::cout << "Distributing sources in region : " << region.name() << std::endl;
             number_nano = nanoparticle_in_region(region);
             distribute(number_nano, region);
         }
@@ -66,7 +66,7 @@ void NanoparticleSource::Initialize()
     }
 }
 
-int NanoparticleSource::nanoparticle_in_region(const SpheroidRegion &region) const
+int DistributedSource::nanoparticle_in_region(const SpheroidRegion &region) const
 {
     int res = 0;
     if (region.name() == "Necrosis")
@@ -79,7 +79,7 @@ int NanoparticleSource::nanoparticle_in_region(const SpheroidRegion &region) con
     return res;
 }
 
-void NanoparticleSource::distribute(int number_nano, const SpheroidRegion &region)
+void DistributedSource::distribute(int number_nano, const SpheroidRegion &region)
 {
 
     std::random_device rd;  // Will be used to obtain a seed for the random number engine
@@ -223,14 +223,12 @@ void NanoparticleSource::distribute(int number_nano, const SpheroidRegion &regio
 
 }
 
-std::vector<G4ThreeVector> NanoparticleSource::getPositionInCell() const
+std::vector<G4ThreeVector> DistributedSource::getPositionInCell() const
 {
-    // std::cout << "  NanoparticleSource::getPositionInCell() " << current_cell_->second.GetPosition() << '\n';
-    // return (current_cell_->second.GetPosition()).front();
     return (current_cell_->second.GetPosition());
 }
 
-int NanoparticleSource::getID_OfCell()
+int DistributedSource::getID_OfCell()
 {
   return current_cell_->second.getID_NanoInfo();
 }
@@ -238,99 +236,99 @@ int NanoparticleSource::getID_OfCell()
 
 
 
-int NanoparticleSource::number_nanoparticle_external() const
+int DistributedSource::number_nanoparticle_external() const
 {
     return number_nanoparticle_external_;
 }
 
-void NanoparticleSource::setNumber_nanoparticle_external(int number_nanoparticle_external)
+void DistributedSource::setNumber_nanoparticle_external(int number_nanoparticle_external)
 {
     number_nanoparticle_external_ = number_nanoparticle_external;
 }
 
-void NanoparticleSource::setOrganelle_weight(double pCellMembrane, double pNucleoplasm, double pNuclearMembrane, double pCytoplasm)
+void DistributedSource::setOrganelle_weight(double pCellMembrane, double pNucleoplasm, double pNuclearMembrane, double pCytoplasm)
 {
     organelle_weight_ = std::make_unique<OrganellesWeight>(pCellMembrane, pNucleoplasm, pNuclearMembrane, pCytoplasm);
 }
 
-std::vector<double> NanoparticleSource::getOrganelle_weight()
+std::vector<double> DistributedSource::getOrganelle_weight()
 {
   organelle_weight_vector = {emission_in_membrane_, emission_in_nucleus_, emission_in_nucleus_membrane_, emission_cytoplasm_};
   return organelle_weight_vector;
 }
 
-NanoparticleSourceMessenger &NanoparticleSource::messenger()
+DistributedSourceMessenger &DistributedSource::messenger()
 {
     return *messenger_;
 }
 
-int NanoparticleSource::number_nanoparticle_intermediary() const
+int DistributedSource::number_nanoparticle_intermediary() const
 {
     return number_nanoparticle_intermediary_;
 }
 
-void NanoparticleSource::setNumber_nanoparticle_intermediary(int number_nanoparticle_intermediary)
+void DistributedSource::setNumber_nanoparticle_intermediary(int number_nanoparticle_intermediary)
 {
     number_nanoparticle_intermediary_ = number_nanoparticle_intermediary;
 }
 
-int NanoparticleSource::number_nanoparticle_necrosis() const
+int DistributedSource::number_nanoparticle_necrosis() const
 {
     return number_nanoparticle_necrosis_;
 }
 
-void NanoparticleSource::setNumber_nanoparticle_necrosis(int number_nanoparticle_necrosis)
+void DistributedSource::setNumber_nanoparticle_necrosis(int number_nanoparticle_necrosis)
 {
     number_nanoparticle_necrosis_ = number_nanoparticle_necrosis;
 }
 
-int NanoparticleSource::number_secondary_per_nano() const
+int DistributedSource::number_secondary_per_nano() const
 {
     return number_secondary_per_nano_;
 }
 
-void NanoparticleSource::setNumber_secondary_per_nano(int number_secondary_per_nano)
+void DistributedSource::setNumber_secondary_per_nano(int number_secondary_per_nano)
 {
     number_secondary_per_nano_ = number_secondary_per_nano;
 }
 
-int NanoparticleSource::number_nanoparticle() const
+int DistributedSource::number_distributed() const
 {
     return number_nanoparticle_;
 }
 
-void NanoparticleSource::setNumber_nanoparticle(int number_nanoparticle)
+void DistributedSource::setNumber_nanoparticle(int number_nanoparticle)
 {
     number_nanoparticle_ = number_nanoparticle;
 }
 
-void NanoparticleSource::setNumber_nanoparticle_per_cell_necrosis(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setNumber_nanoparticle_per_cell_necrosis(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_necrosis = number_nanoparticle_per_cell_arg;
 }
 
-void NanoparticleSource::setNumber_nanoparticle_per_cell_intermediary(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setNumber_nanoparticle_per_cell_intermediary(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_intermediary = number_nanoparticle_per_cell_arg;
 }
 
-void NanoparticleSource::setNumber_nanoparticle_per_cell_external(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setNumber_nanoparticle_per_cell_external(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_external = number_nanoparticle_per_cell_arg;
 }
 
-void NanoparticleSource::setCell_Labeling_Percentage_necrosis(double cell_labeling_percentage_arg)
+void DistributedSource::setCell_Labeling_Percentage_necrosis(double cell_labeling_percentage_arg)
 {
   cell_labeling_percentage_necrosis_ = cell_labeling_percentage_arg/100;
 }
 
-void NanoparticleSource::setCell_Labeling_Percentage_intermediary(double cell_labeling_percentage_arg)
+void DistributedSource::setCell_Labeling_Percentage_intermediary(double cell_labeling_percentage_arg)
 {
   cell_labeling_percentage_intermediary_ = cell_labeling_percentage_arg/100;
 
 }
 
-void NanoparticleSource::setCell_Labeling_Percentage_external(double cell_labeling_percentage_arg)
+void DistributedSource::setCell_Labeling_Percentage_external(double cell_labeling_percentage_arg)
 {
   cell_labeling_percentage_external_ = cell_labeling_percentage_arg/100;
 }

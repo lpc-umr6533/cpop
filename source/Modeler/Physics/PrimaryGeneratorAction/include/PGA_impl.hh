@@ -19,7 +19,7 @@
 
 #include "PGA_implMessenger.hh"
 #include "HomogeneousSource.hh"
-#include "NanoparticleSource.hh"
+#include "DistributedSource.hh"
 
 #include "Octree.hh"
 #include "OctreeNodeForSpheroidalCell.hh"
@@ -29,7 +29,7 @@ namespace cpop {
 class Population;
 class Source;
 class HomogeneousSource;
-class NanoparticleSource;
+class DistributedSource;
 
 class PGA_impl
 {
@@ -54,8 +54,8 @@ public:
     HomogeneousSource& addHomogeneousSource(const std::string& source_name);
     HomogeneousSource* homogeneous_source();
 
-    NanoparticleSource& addNanoparticleSource(const std::string& source_name);
-    NanoparticleSource* nanoparticle_source();
+    DistributedSource& addDistributedSource(const std::string& source_name);
+    DistributedSource* distributed_source();
 
     PGA_implMessenger& messenger() {
         return *messenger_;
@@ -69,11 +69,11 @@ public:
 
     std::string findOrganelle(const Settings::nCell::t_Cell_3* cell, const Settings::Geometry::Point_3& point);
 
-    /// \brief Select a source between the homogeneous source and the nanoparticle one
+    /// \brief Select a source between the homogeneous source and the distributed one
     Source *selectSource() const;
 
     static std::atomic<int> nbHomogeneous;
-    static std::atomic<int> nbNanoparticle;
+    static std::atomic<int> nbDistributed;
 
     static void resetFlags() {
         is_init_ = false;
@@ -107,8 +107,8 @@ private:
     /// \brief Source applied homogeneously in the spheroid
     std::unique_ptr<HomogeneousSource> homogeneous_source_;
 
-    /// \brief Nanoparticle source
-    std::unique_ptr<NanoparticleSource> nanoparticle_source_;
+    /// \brief DistributedSource source
+    std::unique_ptr<DistributedSource> distributed_source_;
 
     /// \brief Messenger
     std::unique_ptr<PGA_implMessenger> messenger_;
@@ -120,7 +120,7 @@ private:
     // Thread safe mutex
     static std::mutex generate_primaries_mutex_;
     static std::mutex add_homogeneous_mutex_;
-    static std::mutex add_nanoparticle_mutex_;
+    static std::mutex add_distributed_mutex_;
     static std::mutex initialize_mutex_;
     static bool is_init_;
 };

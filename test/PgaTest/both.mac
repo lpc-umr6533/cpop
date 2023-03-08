@@ -14,7 +14,7 @@
 /cpop/source/electron/totalParticle 1000
 
 # Add a gadolinium source
-/cpop/source/addNanoparticle gadolinium
+/cpop/source/addDistributed gadolinium
 /cpop/source/gadolinium/particle e-
 /cpop/source/gadolinium/spectrum eSpectrum_550um.spec
 /cpop/source/gadolinium/totalNanoparticle 6
