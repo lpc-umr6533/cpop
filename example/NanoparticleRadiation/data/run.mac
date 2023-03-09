@@ -91,8 +91,8 @@
 # set the number of sources in the spheroid
 /cpop/source/gadolinium/totalSource 30
 
-# set the number of secondaries for one nanoparticle
-/cpop/source/gadolinium/particlePerNano 1
+# set the number of particles emitted from one source
+/cpop/source/gadolinium/particlesPerSource 1
 
 # set the nanoparticle distribution in each region
 # requirement : the sum of your value must be equal to totalSoruce
@@ -127,5 +127,5 @@
 /run/printProgress 1000
 
 # requirement : the value should be equal to 
-# totalParticle + totalSource * particlePerNano
+# totalParticle + totalSource * particlesPerSource
 /run/beamOn 30

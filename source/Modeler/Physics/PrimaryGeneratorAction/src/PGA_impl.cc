@@ -185,19 +185,19 @@ void PGA_impl::checkBeamOn() const
             error_msg << "  Number of event from the source " << uniform_source_->source_name() << " : " << totalH << '\n';
         }
 
-        int nbNano = 0;
-        int secondPerNano = 0;
+        int nbSource = 0;
+        int partPerSource = 0;
         if ( distributed_source_.get() == nullptr) {
             error_msg << "  No distributed source has been added'\n";
         } else {
-            nbNano = distributed_source_->number_distributed();
-            secondPerNano = distributed_source_->number_secondary_per_nano();
-            error_msg << "  Number of distributed sources " << distributed_source_->source_name() << " : " << nbNano << '\n';
-            error_msg << "  Number of secondaries for one source : " << secondPerNano << '\n';
+            nbSource = distributed_source_->number_distributed();
+            partPerSource = distributed_source_->number_particles_per_source();
+            error_msg << "  Number of distributed sources " << distributed_source_->source_name() << " : " << nbSource << '\n';
+            error_msg << "  Number of secondaries for one source : " << partPerSource << '\n';
         }
 
-        error_msg << "Expected number of event = NB_Uniform + NB_Distributed * Secondaries_Per_Nano \n";
-        error_msg << expected_event << " = " << totalH << " + " << nbNano << " * " << secondPerNano << '\n';
+        error_msg << "Expected number of event = NB_Uniform + NB_Source * ParticlesPerSource \n";
+        error_msg << expected_event << " = " << totalH << " + " << nbSource << " * " << partPerSource << '\n';
         error_msg << "Try to change your macro with : /run/beamOn " << expected_event << '\n';
 
         throw std::runtime_error(error_msg.str());

@@ -28,7 +28,7 @@ public:
     NanoInfo(const Settings::nCell::t_Cell_3* cell, int nb_nano, int part_per_nano, const OrganellesWeight& organelle_weight)
         : cell_(cell),
           number_nano_(nb_nano),
-          number_secondary_per_nano(part_per_nano)
+          number_particles_per_source(part_per_nano)
     {
         // Pick a random organelle
         auto organelle = organelle_weight.getRandomOrganelle();
@@ -63,14 +63,14 @@ public:
 
 private:
 
-    int totalSecondary() const { return number_nano_*number_secondary_per_nano; }
+    int totalSecondary() const { return number_nano_*number_particles_per_source; }
 
     /// \brief Cell containing nanoparticles
     const Settings::nCell::t_Cell_3* cell_;
     /// \brief Number of nanoparticle in the cell
     int number_nano_ = 0;
     /// \brief Number of secondary particle to generate for one nanoparticle
-    int number_secondary_per_nano = 0;
+    int number_particles_per_source = 0;
     /// \brief Number of secondary particle already generated
     int already_generated_ = 0;
 
@@ -99,8 +99,8 @@ public:
     void setCell_Labeling_Percentage_intermediary(double cell_labeling_percentage_arg);
     void setCell_Labeling_Percentage_external(double cell_labeling_percentage_arg);
 
-    int number_secondary_per_nano() const;
-    void setNumber_secondary_per_nano(int number_secondary_per_nano);
+    int number_particles_per_source() const;
+    void setNumber_particles_per_source(int number_particles_per_source);
 
     int number_nanoparticle_necrosis() const;
     void setNumber_source_necrosis(int number_nanoparticle_necrosis);
@@ -117,7 +117,7 @@ public:
 
     DistributedSourceMessenger& messenger();
 
-    int total_particle() const { return number_nanoparticle_*number_secondary_per_nano_;}
+    int total_particle() const { return number_nanoparticle_*number_particles_per_source_;}
 
     void eraseFront_position_cell()
     {
@@ -163,8 +163,8 @@ private:
     int max_number_nanoparticle_per_cell_intermediary = 0;
     /// \brief Maximum number of nanoparticle per cell to be generated, in external region
     int max_number_nanoparticle_per_cell_external = 0;
-    /// \brief Number of secondary particle to generate for one nanoparticle
-    int number_secondary_per_nano_ = 0;
+    /// \brief Number of particles to generate from one source
+    int number_particles_per_source_ = 0;
     /// \brief Number of nanoparticle in the necrosis region
     int number_nanoparticle_necrosis_ = 0;
     /// \brief Number of nanoparticle in the intermediary region

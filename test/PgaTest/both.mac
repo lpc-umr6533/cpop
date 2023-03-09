@@ -18,7 +18,7 @@
 /cpop/source/gadolinium/particle e-
 /cpop/source/gadolinium/spectrum eSpectrum_550um.spec
 /cpop/source/gadolinium/totalSource 6
-/cpop/source/gadolinium/particlePerNano 100
+/cpop/source/gadolinium/particlesPerSource 100
 # necrosis intermediary external
 /cpop/source/gadolinium/distributionInRegion  1 2 3
 # CellMembrane Nucleoplasm NucleusMembrane Cytoplasm

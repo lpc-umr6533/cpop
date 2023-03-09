@@ -166,7 +166,7 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
           if (this->population()->verbose_level() > 0)
               std::cout << " Inserting nanoparticle in cell with id " << selected_cell->getID()  <<'\n';
 
-          cell_nano_.insert({selected_cell, {selected_cell, 1, number_secondary_per_nano_, *organelle_weight_} });
+          cell_nano_.insert({selected_cell, {selected_cell, 1, number_particles_per_source_, *organelle_weight_} });
           nb_nano_per_cell[indexCell] +=1 ;
         }
         else
@@ -195,7 +195,7 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
           if (this->population()->verbose_level() > 0)
               std::cout << "  Inserting nanoparticle in cell with id " << selected_cell->getID()  <<'\n';
 
-          cell_nano_.insert({selected_cell, {selected_cell, 1, number_secondary_per_nano_, *organelle_weight_} });
+          cell_nano_.insert({selected_cell, {selected_cell, 1, number_particles_per_source_, *organelle_weight_} });
           nb_nano_per_cell[indexCell] +=1 ;
         }
         else
@@ -282,14 +282,14 @@ void DistributedSource::setNumber_source_necrosis(int number_nanoparticle_necros
     number_nanoparticle_necrosis_ = number_nanoparticle_necrosis;
 }
 
-int DistributedSource::number_secondary_per_nano() const
+int DistributedSource::number_particles_per_source() const
 {
-    return number_secondary_per_nano_;
+    return number_particles_per_source_;
 }
 
-void DistributedSource::setNumber_secondary_per_nano(int number_secondary_per_nano)
+void DistributedSource::setNumber_particles_per_source(int number_particles)
 {
-    number_secondary_per_nano_ = number_secondary_per_nano;
+    number_particles_per_source_ = number_particles;
 }
 
 int DistributedSource::number_distributed() const

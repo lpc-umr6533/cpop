@@ -157,7 +157,7 @@ TEST_CASE("Distributed source, [source]") {
         G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("e-");
         REQUIRE(source.particle() == particle);
         REQUIRE(source.number_distributed() == 6);
-        REQUIRE(source.number_secondary_per_nano() == 100);
+        REQUIRE(source.number_particles_per_source() == 100);
         REQUIRE(source.number_nanoparticle_necrosis() == 1);
         REQUIRE(source.number_nanoparticle_intermediary() == 2);
         REQUIRE(source.number_nanoparticle_external() == 3);

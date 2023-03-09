@@ -21,15 +21,17 @@ void DistributedSourceMessenger::BuildCommands(G4String base)
 
     G4String cmd_base = base + "/totalSource";
     total_source_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
-    total_source_cmd_->SetGuidance("Set the number of source in the population");
+    total_source_cmd_->SetGuidance("Set the number of sources in the population");
     total_source_cmd_->SetParameterName("TotalSource", false);
     total_source_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-    cmd_base = base + "/particlePerNano";
-    part_per_nano_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
-    part_per_nano_cmd_->SetGuidance("Set the number of secondaries for one nanoparticle");
-    part_per_nano_cmd_->SetParameterName("PartPerNano", false);
-    part_per_nano_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
+    cmd_base = base + "/particlesPerSource";
+    part_per_source_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base,
+                                                                  this);
+    part_per_source_cmd_->SetGuidance("Set the number of particles emitted from"
+                                      "one source");
+    part_per_source_cmd_->SetParameterName("PartPerNano", false);
+    part_per_source_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/distributionInRegion";
     nano_per_region_cmd_ = std::make_unique<G4UIcmdWith3Vector>(cmd_base, this);
@@ -75,8 +77,8 @@ void DistributedSourceMessenger::SetNewValue(G4UIcommand *command, G4String newV
 
     if (command == total_source_cmd_.get()) {
         source_->setNumber_source(total_source_cmd_->GetNewIntValue(newValue));
-    } else if (command == part_per_nano_cmd_.get()) {
-        source_->setNumber_secondary_per_nano(part_per_nano_cmd_->GetNewIntValue(newValue));
+    } else if (command == part_per_source_cmd_.get()) {
+        source_->setNumber_particles_per_source(part_per_source_cmd_->GetNewIntValue(newValue));
     } else if (command == nano_per_region_cmd_.get()) {
         G4ThreeVector vec = nano_per_region_cmd_->GetNew3VectorValue(newValue);
         int sum = vec.x() + vec.y() + vec.z();

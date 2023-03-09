@@ -94,8 +94,8 @@
 # set the number of sources in the spheroid
 /cpop/source/radionuclide/totalSource 20000
 
-# set the number of secondaries for one nanoparticle
-/cpop/source/radionuclide/particlePerNano 1
+# set the number of particles emitted from one source
+/cpop/source/radionuclide/particlesPerSource 1
 
 # Allow only one position for all particles generated on the same cell
 /cpop/source/radionuclide/only_one_position_for_all_particles_on_a_cell 0
@@ -139,5 +139,5 @@
 /run/printProgress 1000
 
 # requirement : the value should be equal to 
-# totalParticle + totalSource * particlePerNano
+# totalSource * particlesPerSource
 /run/beamOn 20000
