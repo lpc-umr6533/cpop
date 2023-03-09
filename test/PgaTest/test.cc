@@ -7,7 +7,7 @@
 #include "G4Electron.hh"
 
 #include "Population.hh"
-#include "HomogeneousSource.hh"
+#include "UniformSource.hh"
 //#include "Source.hh"
 #include "PGA_impl.hh"
 
@@ -22,7 +22,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
     G4Electron::Electron();
     cpop::PGA_impl::resetFlags();
 
-//    SECTION("Homogeneous") {
+//    SECTION("Uniform") {
 //        cpop::PGA_impl pga(population);
 //        pga.messenger().BuildCommands("/cpop/source");
 //        REQUIRE(pga.TotalEvent() == 0);
@@ -46,7 +46,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
 
 
 //        // Check pga settings
-//        cpop::HomogeneousSource* source = pga.homogeneous_source();
+//        cpop::UniformSource* source = pga.uniform_source();
 //        REQUIRE(source != nullptr);
 
 //        // Check source settings
@@ -91,7 +91,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
         UImanager->ApplyCommand(command+macro);
 
         // Check pga settings
-        cpop::HomogeneousSource* sourceH = pga.homogeneous_source();
+        cpop::UniformSource* sourceH = pga.uniform_source();
         REQUIRE(sourceH != nullptr);
 
         // Check source settings
@@ -130,7 +130,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
         REQUIRE(sourceN != nullptr);
 
         // Check pga settings
-        cpop::HomogeneousSource* sourceH = pga.homogeneous_source();
+        cpop::UniformSource* sourceH = pga.uniform_source();
         REQUIRE(sourceH != nullptr);
 
         for(int i = 0 ; i < expected_number_event; ++i) {
@@ -141,7 +141,7 @@ TEST_CASE("Primary Generator Action test", "[PGA]") {
         }
 
         REQUIRE(pga.selectSource() == nullptr);
-        REQUIRE(cpop::PGA_impl::nbHomogeneous == 1000);
+        REQUIRE(cpop::PGA_impl::nbUniform == 1000);
         REQUIRE(cpop::PGA_impl::nbDistributed == 600);
     }
 

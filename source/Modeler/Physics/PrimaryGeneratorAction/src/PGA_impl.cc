@@ -36,11 +36,11 @@
 
 namespace cpop {
 
-std::atomic<int> PGA_impl::nbHomogeneous{0};
+std::atomic<int> PGA_impl::nbUniform{0};
 std::atomic<int> PGA_impl::nbDistributed{0};
 
 std::mutex PGA_impl::generate_primaries_mutex_;
-std::mutex PGA_impl::add_homogeneous_mutex_;
+std::mutex PGA_impl::add_uniform_mutex_;
 std::mutex PGA_impl::add_distributed_mutex_;
 std::mutex PGA_impl::initialize_mutex_;
 bool PGA_impl::is_init_{false};
@@ -118,15 +118,15 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
 bool PGA_impl::HasSource() const
 {
-    return (homogeneous_source_.get() != nullptr) || (distributed_source_.get() != nullptr);
+    return (uniform_source_.get() != nullptr) || (distributed_source_.get() != nullptr);
 }
 
 int PGA_impl::TotalEvent() const
 {
     int total = 0;
 
-    if(homogeneous_source_)
-        total += homogeneous_source_->total_particle();
+    if(uniform_source_)
+        total += uniform_source_->total_particle();
 
     if(distributed_source_)
         total += distributed_source_->total_particle();
@@ -138,7 +138,7 @@ void PGA_impl::Initialize()
 {
     std::lock_guard<std::mutex> lock(initialize_mutex_);
     if(!is_init_) {
-        if (homogeneous_source_) homogeneous_source_->Initialize();
+        if (uniform_source_) uniform_source_->Initialize();
         if (distributed_source_) distributed_source_->Initialize();
         is_init_ = true;
     }
@@ -178,11 +178,11 @@ void PGA_impl::checkBeamOn() const
         error_msg << "Below indicates how the expected number of event has been computed. \n";
 
         int totalH = 0;
-        if ( homogeneous_source_.get() == nullptr) {
-            error_msg << "  No homogeneous source has been added\n";
+        if ( uniform_source_.get() == nullptr) {
+            error_msg << "  No uniform source has been added\n";
         } else {
-            totalH = homogeneous_source_->total_particle();
-            error_msg << "  Number of event from the source " << homogeneous_source_->source_name() << " : " << totalH << '\n';
+            totalH = uniform_source_->total_particle();
+            error_msg << "  Number of event from the source " << uniform_source_->source_name() << " : " << totalH << '\n';
         }
 
         int nbNano = 0;
@@ -196,7 +196,7 @@ void PGA_impl::checkBeamOn() const
             error_msg << "  Number of secondaries for one source : " << secondPerNano << '\n';
         }
 
-        error_msg << "Expected number of event = NB_Homogeneous + NB_Distributed * Secondaries_Per_Nano \n";
+        error_msg << "Expected number of event = NB_Uniform + NB_Distributed * Secondaries_Per_Nano \n";
         error_msg << expected_event << " = " << totalH << " + " << nbNano << " * " << secondPerNano << '\n';
         error_msg << "Try to change your macro with : /run/beamOn " << expected_event << '\n';
 
@@ -204,18 +204,18 @@ void PGA_impl::checkBeamOn() const
     }
 }
 
-HomogeneousSource &PGA_impl::addHomogeneousSource(const std::string &source_name)
+UniformSource &PGA_impl::addUniformSource(const std::string &source_name)
 {
-    std::lock_guard<std::mutex> lock(add_homogeneous_mutex_);
-    if (!homogeneous_source_)
-        homogeneous_source_ = std::make_unique<HomogeneousSource>(source_name, *population_);
+    std::lock_guard<std::mutex> lock(add_uniform_mutex_);
+    if (!uniform_source_)
+        uniform_source_ = std::make_unique<UniformSource>(source_name, *population_);
 
-    return *homogeneous_source_;
+    return *uniform_source_;
 }
 
-HomogeneousSource *PGA_impl::homogeneous_source()
+UniformSource *PGA_impl::uniform_source()
 {
-    return homogeneous_source_.get();
+    return uniform_source_.get();
 }
 
 DistributedSource &PGA_impl::addDistributedSource(const string &source_name)
@@ -233,9 +233,9 @@ DistributedSource *PGA_impl::distributed_source()
 
 Source *PGA_impl::selectSource() const
 {
-    if (homogeneous_source_ && homogeneous_source_->HasLeft()) {
-        ++nbHomogeneous;
-        return homogeneous_source_.get();
+    if (uniform_source_ && niform_source_->HasLeft()) {
+        ++nbUniform;
+        return uniform_source_.get();
     }
 
     if (distributed_source_ && distributed_source_->HasLeft()) {

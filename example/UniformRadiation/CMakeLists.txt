@@ -8,8 +8,8 @@
 ##########################################################
 cmake_minimum_required(VERSION 3.7)
 
-project(HomogeneousRadiation)
-set(BINARY_NAME homogeneousRadiation)
+project(UniformRadiation)
+set(BINARY_NAME uniformRadiation)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake) # main (top) cmake dir
 
@@ -34,4 +34,4 @@ target_include_directories(${BINARY_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/in
 target_compile_options(${BINARY_NAME} PUBLIC -Wall -pthread)
 target_link_libraries(${BINARY_NAME} PUBLIC Platform_SMA Modeler)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR}/example/HomogeneousRadiation)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR}/example/UniformRadiation)

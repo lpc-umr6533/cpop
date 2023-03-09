@@ -17,7 +17,7 @@ public:
     void GeneratePrimaries(G4Event* event) override;
     int TotalEvent() const;
 
-    HomogeneousSource* homogeneous_source() const;
+    UniformSource* uniform_source() const;
     DistributedSource* distributed_source() const;
 
     PGA_implMessenger& messenger();

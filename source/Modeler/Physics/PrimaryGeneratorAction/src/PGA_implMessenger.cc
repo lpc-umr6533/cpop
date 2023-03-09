@@ -1,7 +1,7 @@
 #include "PGA_implMessenger.hh"
 
 #include "PGA_impl.hh"
-#include "HomogeneousSource.hh"
+#include "UniformSource.hh"
 #include "DistributedSource.hh"
 
 namespace cpop {
@@ -17,13 +17,13 @@ void PGA_implMessenger::BuildCommands(G4String base)
     // Save the base for source.BuildCommands()
     base_ = base;
 
-    G4String cmd_base = base + "/addHomogeneous";
-    homogeneous_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
-    homogeneous_cmd_->SetGuidance("Add a homogeneous source");
-    homogeneous_cmd_->SetParameterName("HsourceName", false);
-    homogeneous_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
+    G4String cmd_base = base + "/addUniform";
+    uniform_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
+    uniform_cmd_->SetGuidance("Add a uniform source");
+    uniform_cmd_->SetParameterName("HsourceName", false);
+    uniform_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    cmd_base = base + "/addDistributed";
+    cmd_base = base + "/addDistribution";
     distributed_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
     distributed_cmd_->SetGuidance("Add a distributed source");
     distributed_cmd_->SetParameterName("NsourceName", false);
@@ -42,8 +42,8 @@ void PGA_implMessenger::BuildCommands(G4String base)
 
 void PGA_implMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
 {
-    if (command == homogeneous_cmd_.get()) {
-        HomogeneousSource& added_source =  pga_impl_->addHomogeneousSource(newValue.data());
+    if (command == uniform_cmd_.get()) {
+        UniformSource& added_source =  pga_impl_->addUniformSource(newValue.data());
         G4String source_base = base_ + "/" + newValue;
         added_source.messenger().BuildCommands(source_base);
     } else if (command == distributed_cmd_.get()) {

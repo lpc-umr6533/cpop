@@ -9,12 +9,12 @@
 #include "G4Electron.hh"
 
 #include "Population.hh"
-#include "HomogeneousSource.hh"
+#include "UniformSource.hh"
 #include "DistributedSource.hh"
 
 //
 
-TEST_CASE("Homogeneous source", "[source]") {
+TEST_CASE("Uniform source", "[source]") {
 
     CLHEP::MTwistEngine defaultEngineCPOP(1234567);
     RandomEngineManager::getInstance()->setEngine(&defaultEngineCPOP);
@@ -29,7 +29,7 @@ TEST_CASE("Homogeneous source", "[source]") {
     G4Electron::Electron();
 
     SECTION("Constructor") {
-        cpop::HomogeneousSource* source = new cpop::HomogeneousSource("source", population);
+        cpop::UniformSource* source = new cpop::UniformSource("source", population);
 
         REQUIRE(source != nullptr);
         REQUIRE(source->source_name() == "source");
@@ -41,7 +41,7 @@ TEST_CASE("Homogeneous source", "[source]") {
     }
 
     SECTION("Set particle") {
-        cpop::HomogeneousSource source{"electron", population};
+        cpop::UniformSource source{"electron", population};
 
         G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("e-");
         REQUIRE(particle != nullptr);
@@ -51,14 +51,14 @@ TEST_CASE("Homogeneous source", "[source]") {
     }
 
     SECTION("Set number of particle to generate") {
-        cpop::HomogeneousSource source{"electron", population};
+        cpop::UniformSource source{"electron", population};
 
         source.setTotal_particle(10000);
         REQUIRE(source.total_particle() == 10000);
     }
 
     SECTION("Momentum") {
-        cpop::HomogeneousSource source{"electron", population};
+        cpop::UniformSource source{"electron", population};
 
         int number_particle = 10000;
 
@@ -76,7 +76,7 @@ TEST_CASE("Homogeneous source", "[source]") {
     }
 
     SECTION("Generation inside the spheroid") {
-        cpop::HomogeneousSource source{"electron", population};
+        cpop::UniformSource source{"electron", population};
 
         int number_particle = 10000;
         source.setTotal_particle(number_particle);
@@ -98,11 +98,11 @@ TEST_CASE("Homogeneous source", "[source]") {
     }
 
     SECTION("Messenger") {
-        cpop::HomogeneousSource source{"electron", population};
+        cpop::UniformSource source{"electron", population};
         G4String base = "/cpop/source/" + source.source_name();
         source.messenger().BuildCommands(base);
 
-        std::string macro = "homogeneous.mac";
+        std::string macro = "uniform.mac";
         // Get the pointer to the User Interface manager
         G4UImanager* UImanager = G4UImanager::GetUIpointer();
         G4String command = "/control/execute ";

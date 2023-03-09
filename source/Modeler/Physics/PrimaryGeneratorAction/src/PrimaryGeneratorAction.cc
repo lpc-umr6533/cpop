@@ -18,8 +18,8 @@ int PrimaryGeneratorAction::TotalEvent() const
     return pga_impl_->TotalEvent();
 }
 
-HomogeneousSource* PrimaryGeneratorAction::homogeneous_source() const {
-    return pga_impl_->homogeneous_source();
+UniformSource* PrimaryGeneratorAction::uniform_source() const {
+    return pga_impl_->uniform_source();
 }
 
 DistributedSource *PrimaryGeneratorAction::distributed_source() const

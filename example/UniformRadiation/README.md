@@ -1,4 +1,4 @@
-# HomogeneousRadiation
+# UniformRadiation
 
 This example shows you how to apply radiation exposure on a cell population using Geant4.
 

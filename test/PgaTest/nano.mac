@@ -8,7 +8,7 @@
 /cpop/population/init
 
 # Add a gadolinium source
-/cpop/source/addDistributed gadolinium
+/cpop/source/addDistribution gadolinium
 /cpop/source/gadolinium/particle e-
 /cpop/source/gadolinium/spectrum eSpectrum_550um.spec
 /cpop/source/gadolinium/totalNanoparticle 6

@@ -1,17 +1,17 @@
-#ifndef HOMOGENEOUSSOURCE_HH
-#define HOMOGENEOUSSOURCE_HH
+#ifndef UNIFORMSOURCE_HH
+#define UNIFORMSOURCE_HH
 
 #include "Source.hh"
-#include "HomogeneousSourceMessenger.hh"
+#include "UniformSourceMessenger.hh"
 
 namespace cpop {
 
 class Population;
 
-class HomogeneousSource : public Source
+class UniformSource : public Source
 {
 public:
-    HomogeneousSource(const std::string& name, const Population& population);
+    UniformSource(const std::string& name, const Population& population);
 
     int total_particle() const;
     void setTotal_particle(int total_particle);
@@ -22,7 +22,7 @@ public:
 
     int already_generated() const;
 
-    HomogeneousSourceMessenger& messenger();
+    UniformSourceMessenger& messenger();
 
 private:
     /// \brief Number of particles to be generated
@@ -30,9 +30,9 @@ private:
     /// \brief Number of particles already generated
     int already_generated_ = 0;
     /// \brief Messenger
-    std::unique_ptr<HomogeneousSourceMessenger> messenger_;
+    std::unique_ptr<UniformSourceMessenger> messenger_;
 };
 
 }
 
-#endif // HOMOGENEOUSSOURCE_HH
+#endif // UNIFORMSOURCE_HH

@@ -8,13 +8,13 @@
 /cpop/population/init
 
 # Add a electron source
-/cpop/source/addHomogeneous electron
+/cpop/source/addUniform electron
 /cpop/source/electron/particle e-
 /cpop/source/electron/spectrum eSpectrum_550um.spec
 /cpop/source/electron/totalParticle 1000
 
 # Add a gadolinium source
-/cpop/source/addDistributed gadolinium
+/cpop/source/addDistribution gadolinium
 /cpop/source/gadolinium/particle e-
 /cpop/source/gadolinium/spectrum eSpectrum_550um.spec
 /cpop/source/gadolinium/totalNanoparticle 6

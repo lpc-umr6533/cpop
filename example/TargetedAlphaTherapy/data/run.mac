@@ -82,7 +82,7 @@
 # Define sources
 
 # add a particle source
-/cpop/source/addDistributed radionuclide
+/cpop/source/addDistribution radionuclide
 
 # set the secondaries particle to generate from a particle
 /cpop/source/radionuclide/particle alpha

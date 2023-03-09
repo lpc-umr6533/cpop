@@ -79,7 +79,7 @@
 # Define sources
 
 # add a gamma source using a user defined spectrum
-/cpop/source/addHomogeneous gamma
+/cpop/source/addUniform gamma
 /cpop/source/gamma/particle gamma
 /cpop/source/gamma/spectrum data/phspectrum_spheroid.txt
 

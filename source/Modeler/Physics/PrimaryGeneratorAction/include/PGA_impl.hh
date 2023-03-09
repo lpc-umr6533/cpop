@@ -18,7 +18,7 @@
 #include "Population.hh"
 
 #include "PGA_implMessenger.hh"
-#include "HomogeneousSource.hh"
+#include "UniformSource.hh"
 #include "DistributedSource.hh"
 
 #include "Octree.hh"
@@ -28,7 +28,7 @@ namespace cpop {
 
 class Population;
 class Source;
-class HomogeneousSource;
+class UniformSource;
 class DistributedSource;
 
 class PGA_impl
@@ -51,8 +51,8 @@ public:
 
     void ActivateDiffusion(G4String diffusion_string);
 
-    HomogeneousSource& addHomogeneousSource(const std::string& source_name);
-    HomogeneousSource* homogeneous_source();
+    UniformSource& addUniformSource(const std::string& source_name);
+    UniformSource* uniform_source();
 
     DistributedSource& addDistributedSource(const std::string& source_name);
     DistributedSource* distributed_source();
@@ -69,10 +69,10 @@ public:
 
     std::string findOrganelle(const Settings::nCell::t_Cell_3* cell, const Settings::Geometry::Point_3& point);
 
-    /// \brief Select a source between the homogeneous source and the distributed one
+    /// \brief Select a source between the uniform source and the distributed one
     Source *selectSource() const;
 
-    static std::atomic<int> nbHomogeneous;
+    static std::atomic<int> nbUniform;
     static std::atomic<int> nbDistributed;
 
     static void resetFlags() {
@@ -104,8 +104,8 @@ private:
     /// \brief Particle gun to generate particles
     std::unique_ptr<G4ParticleGun>  particle_gun_;
 
-    /// \brief Source applied homogeneously in the spheroid
-    std::unique_ptr<HomogeneousSource> homogeneous_source_;
+    /// \brief Source applied uniformly in the spheroid
+    std::unique_ptr<UniformSource> uniform_source_;
 
     /// \brief DistributedSource source
     std::unique_ptr<DistributedSource> distributed_source_;
@@ -119,7 +119,7 @@ private:
 
     // Thread safe mutex
     static std::mutex generate_primaries_mutex_;
-    static std::mutex add_homogeneous_mutex_;
+    static std::mutex add_uniform_mutex_;
     static std::mutex add_distributed_mutex_;
     static std::mutex initialize_mutex_;
     static bool is_init_;

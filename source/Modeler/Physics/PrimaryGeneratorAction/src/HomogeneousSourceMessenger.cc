@@ -1,16 +1,16 @@
-#include "HomogeneousSourceMessenger.hh"
-#include "HomogeneousSource.hh"
+#include "UniformSourceMessenger.hh"
+#include "UniformSource.hh"
 
 namespace cpop {
 
-HomogeneousSourceMessenger::HomogeneousSourceMessenger(HomogeneousSource *source)
+UniformSourceMessenger::UniformSourceMessenger(UniformSource *source)
     : MessengerBase(),
       source_(source),
       source_messenger_(std::make_unique<SourceMessenger>(source))
 {
 }
 
-void HomogeneousSourceMessenger::BuildCommands(G4String base)
+void UniformSourceMessenger::BuildCommands(G4String base)
 {
     source_messenger_->BuildCommands(base);
 
@@ -21,7 +21,7 @@ void HomogeneousSourceMessenger::BuildCommands(G4String base)
     total_particle_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
-void HomogeneousSourceMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
+void UniformSourceMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
 {
     source_messenger_->SetNewValue(command, newValue);
 

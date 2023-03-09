@@ -74,7 +74,7 @@
 # Define sources
 
 # add a gamma source using a user defined spectrum
-#/cpop/source/addHomogeneous gamma
+#/cpop/source/addUniform gamma
 #/cpop/source/gamma/particle gamma
 #/cpop/source/gamma/spectrum data/phspectrum_spheroid.txt
 
@@ -82,7 +82,7 @@
 #/cpop/source/gamma/totalParticle 10000
 
 # add a gadolinium source
-/cpop/source/addDistributed gadolinium
+/cpop/source/addDistribution gadolinium
 
 # set the secondaries particle to generate from a nanoparticle
 /cpop/source/gadolinium/particle alpha

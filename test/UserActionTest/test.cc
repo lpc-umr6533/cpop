@@ -5,7 +5,7 @@
 #include "G4UImanager.hh"
 
 #include "Population.hh"
-#include "HomogeneousSource.hh"
+#include "UniformSource.hh"
 #include "CGAL_Utils.hh"
 #include "CellSettings.hh"
 #include "AgentSettings.hh"
@@ -35,7 +35,7 @@ TEST_CASE("Stepping action", "[UserAction]") {
         G4String command = "/control/execute ";
         UImanager->ApplyCommand(command+macro);
 
-        cpop::HomogeneousSource source{"source", population};
+        cpop::UniformSource source{"source", population};
 
         std::vector<const Settings::nCell::t_Cell_3*> sampled_cells = population.sampled_cells();
         std::vector<const Settings::nAgent::t_SpatialableAgent_3*> spatialables(sampled_cells.begin(), sampled_cells.end());
@@ -82,7 +82,7 @@ TEST_CASE("Stepping action", "[UserAction]") {
         G4String command = "/control/execute ";
         UImanager->ApplyCommand(command+macro);
 
-        cpop::HomogeneousSource source{"source", population};
+        cpop::UniformSource source{"source", population};
 
         std::vector<const Settings::nCell::t_Cell_3*> sampled_cells = population.sampled_cells();
         std::vector<const Settings::nAgent::t_SpatialableAgent_3*> spatialables(sampled_cells.begin(), sampled_cells.end());

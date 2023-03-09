@@ -1,28 +1,28 @@
-#include "HomogeneousSource.hh"
+#include "UniformSource.hh"
 
 #include "Population.hh"
 #include "Randomize.hh"
 
 namespace cpop {
 
-HomogeneousSource::HomogeneousSource(const string &name, const Population &population)
+UniformSource::UniformSource(const string &name, const Population &population)
     :Source(name, population),
-      messenger_(std::make_unique<HomogeneousSourceMessenger>(this))
+      messenger_(std::make_unique<UniformSourceMessenger>(this))
 {
 
 }
 
-int HomogeneousSource::total_particle() const
+int UniformSource::total_particle() const
 {
     return total_particle_;
 }
 
-void HomogeneousSource::setTotal_particle(int total_particle)
+void UniformSource::setTotal_particle(int total_particle)
 {
     total_particle_ = total_particle;
 }
 
-std::vector<G4ThreeVector> HomogeneousSource::GetPosition()
+std::vector<G4ThreeVector> UniformSource::GetPosition()
 {
     G4double spheroid_radius = this->population()->spheroid_radius();
 
@@ -42,22 +42,22 @@ std::vector<G4ThreeVector> HomogeneousSource::GetPosition()
     return position;
 }
 
-void HomogeneousSource::Update()
+void UniformSource::Update()
 {
     ++already_generated_;
 }
 
-bool HomogeneousSource::HasLeft()
+bool UniformSource::HasLeft()
 {
     return already_generated_ < total_particle_;
 }
 
-int HomogeneousSource::already_generated() const
+int UniformSource::already_generated() const
 {
     return already_generated_;
 }
 
-HomogeneousSourceMessenger &HomogeneousSource::messenger()
+UniformSourceMessenger &UniformSource::messenger()
 {
     return *messenger_;
 }
