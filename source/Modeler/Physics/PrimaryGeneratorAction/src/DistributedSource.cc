@@ -109,7 +109,7 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
 
    if(max_number_nanoparticle_per_cell*cells_in_region.size() < number_nano) {
         throw std::invalid_argument("Number of particles > Max number of particles per cell * Number of cells."
-                        "Maybe macro command is missing : /cpop/source/gadolinium/maxNanoparticlePerCell");
+                        "Maybe macro command is missing : /cpop/source/gadolinium/maxSourcesPerCell");
     }
 
    int nb_nano_per_cell[cells_in_region_size];
@@ -302,17 +302,17 @@ void DistributedSource::setNumber_source(int number_nanoparticle)
     number_nanoparticle_ = number_nanoparticle;
 }
 
-void DistributedSource::setNumber_source_per_cell_necrosis(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setMax_number_source_per_cell_necrosis(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_necrosis = number_nanoparticle_per_cell_arg;
 }
 
-void DistributedSource::setNumber_source_per_cell_intermediary(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setMax_number_source_per_cell_intermediary(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_intermediary = number_nanoparticle_per_cell_arg;
 }
 
-void DistributedSource::setNumber_source_per_cell_external(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setMax_number_source_per_cell_external(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_external = number_nanoparticle_per_cell_arg;
 }

@@ -51,11 +51,11 @@ void DistributedSourceMessenger::BuildCommands(G4String base)
     pos_in_cell_cmd_->SetParameter(cytoplasm);
     pos_in_cell_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-    cmd_base = base + "/maxNanoparticlePerCell";
-    nb_max_nano_per_cell_cmd_ = std::make_unique<G4UIcmdWith3Vector>(cmd_base, this);
-    nb_max_nano_per_cell_cmd_->SetGuidance("Set the maximum number of nanoparticle that can be attached to a cell");
-    nb_max_nano_per_cell_cmd_->SetParameterName("MaxNanoPerCell_Necrosis", "MaxNanoPerCell_Intermediary", "MaxNanoPerCell_External", false);
-    nb_max_nano_per_cell_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
+    cmd_base = base + "/maxSourcesPerCell";
+    max_sources_per_cell_cmd_ = std::make_unique<G4UIcmdWith3Vector>(cmd_base, this);
+    max_sources_per_cell_cmd_->SetGuidance("Set the maximum number of sources that can be attached to a cell");
+    max_sources_per_cell_cmd_->SetParameterName("MaxSourcePerCell_Necrosis", "MaxSourcesPerCell_Intermediary", "MaxSourcesPerCell_External", false);
+    max_sources_per_cell_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/cellLabelingPercentagePerRegion";
     cell_Labeling_cmd_ = std::make_unique<G4UIcmdWith3Vector>(cmd_base, this);
@@ -111,12 +111,11 @@ void DistributedSourceMessenger::SetNewValue(G4UIcommand *command, G4String newV
 
         source_->setOrganelle_weight(cell_membrane, nucleoplasm, nucleo_membrane, cytoplasm);
     }
-    else if (command == nb_max_nano_per_cell_cmd_.get()) {
-      G4ThreeVector vec = nb_max_nano_per_cell_cmd_->GetNew3VectorValue(newValue);
-      //source_->setNumber_source_per_cell(nb_max_nano_per_cell_cmd_->GetNewIntValue(newValue));
-      source_->setNumber_source_per_cell_necrosis(vec.x());
-      source_->setNumber_source_per_cell_intermediary(vec.y());
-      source_->setNumber_source_per_cell_external(vec.z());
+    else if (command == max_sources_per_cell_cmd_.get()) {
+      G4ThreeVector vec = max_sources_per_cell_cmd_->GetNew3VectorValue(newValue);
+      source_->setMax_number_source_per_cell_necrosis(vec.x());
+      source_->setMax_number_source_per_cell_intermediary(vec.y());
+      source_->setMax_number_source_per_cell_external(vec.z());
    }
    else if (command == cell_Labeling_cmd_.get()) {
       G4ThreeVector vec = cell_Labeling_cmd_->GetNew3VectorValue(newValue);

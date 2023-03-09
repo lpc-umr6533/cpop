@@ -103,9 +103,9 @@
 # organnelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
 /cpop/source/gadolinium/distributionInCell 1 0 0 0
 
-# set the maximum number of nanoparticle per cell, in each region.
+# set the maximum number of sources per cell, in each region.
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/maxNanoparticlePerCell 10000 10000 10000
+/cpop/source/gadolinium/maxSourcesPerCell 10000 10000 10000
 
 # Activate diffusion of radionuclide's daughter (only for At-211)
 /cpop/source/daughterDiffusion no

@@ -37,8 +37,8 @@ private:
     std::unique_ptr<G4UIcmdWith3Vector> nano_per_region_cmd_;
     /// \brief Define the secondaries repartition in a cell
     std::unique_ptr<G4UIcommand> pos_in_cell_cmd_;
-    /// \brief Maximum number of nanoparticle per cell to be generated, in each region
-    std::unique_ptr<G4UIcmdWith3Vector> nb_max_nano_per_cell_cmd_;
+    /// \brief Maximum number of sources per cell to be generated, in each region
+    std::unique_ptr<G4UIcmdWith3Vector> max_sources_per_cell_cmd_;
     /// \brief Percentage of labeled cells, in each region
     std::unique_ptr<G4UIcmdWith3Vector> cell_Labeling_cmd_;
     /// \brief Set the number of nanoparticle in the population

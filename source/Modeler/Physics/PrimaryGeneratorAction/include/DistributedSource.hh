@@ -92,9 +92,9 @@ public:
 
     int number_distributed() const;
     void setNumber_source(int number_nanoparticle);
-    void setNumber_source_per_cell_necrosis(int number_nanoparticle_per_cell_arg);
-    void setNumber_source_per_cell_intermediary(int number_nanoparticle_per_cell_arg);
-    void setNumber_source_per_cell_external(int number_nanoparticle_per_cell_arg);
+    void setMax_number_source_per_cell_necrosis(int number_nanoparticle_per_cell_arg);
+    void setMax_number_source_per_cell_intermediary(int number_nanoparticle_per_cell_arg);
+    void setMax_number_source_per_cell_external(int number_nanoparticle_per_cell_arg);
     void setCell_Labeling_Percentage_necrosis(double cell_labeling_percentage_arg);
     void setCell_Labeling_Percentage_intermediary(double cell_labeling_percentage_arg);
     void setCell_Labeling_Percentage_external(double cell_labeling_percentage_arg);

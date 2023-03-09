@@ -114,9 +114,9 @@
 /cpop/source/daughterDiffusion no
 
 
-# set the maximum number of nanoparticle per cell, in each region. If total number of nanoparticle = number of cells * maximum number of nanoparticles per cell, all cells will have the maximum amount of nanoparticles
+# set the maximum number of sources per cell, in each region. If total number of nanoparticle = number of cells * maximum number of nanoparticles per cell, all cells will have the maximum amount of nanoparticles
 # region order : necrosis intermediary external
-/cpop/source/radionuclide/maxNanoparticlePerCell 0 10000 10000
+/cpop/source/radionuclide/maxSourcesPerCell 0 10000 10000
 
 # set the percentage of labeled cells in each region
 # region order : necrosis intermediary external
