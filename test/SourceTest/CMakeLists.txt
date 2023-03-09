@@ -37,7 +37,7 @@ set(FILE_TO_COPY
 	population.xml
 	display.py
 	printParticlePosition.C
-	homogeneous.mac
+	uniform.mac
 	eSpectrum_550um.spec
 	nanoparticle1.mac
 	nanoparticle2.mac
