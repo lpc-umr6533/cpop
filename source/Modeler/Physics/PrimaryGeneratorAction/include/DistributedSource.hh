@@ -91,10 +91,10 @@ public:
     void Initialize() override;
 
     int number_distributed() const;
-    void setNumber_nanoparticle(int number_nanoparticle);
-    void setNumber_nanoparticle_per_cell_necrosis(int number_nanoparticle_per_cell_arg);
-    void setNumber_nanoparticle_per_cell_intermediary(int number_nanoparticle_per_cell_arg);
-    void setNumber_nanoparticle_per_cell_external(int number_nanoparticle_per_cell_arg);
+    void setNumber_source(int number_nanoparticle);
+    void setNumber_source_per_cell_necrosis(int number_nanoparticle_per_cell_arg);
+    void setNumber_source_per_cell_intermediary(int number_nanoparticle_per_cell_arg);
+    void setNumber_source_per_cell_external(int number_nanoparticle_per_cell_arg);
     void setCell_Labeling_Percentage_necrosis(double cell_labeling_percentage_arg);
     void setCell_Labeling_Percentage_intermediary(double cell_labeling_percentage_arg);
     void setCell_Labeling_Percentage_external(double cell_labeling_percentage_arg);
@@ -103,13 +103,13 @@ public:
     void setNumber_secondary_per_nano(int number_secondary_per_nano);
 
     int number_nanoparticle_necrosis() const;
-    void setNumber_nanoparticle_necrosis(int number_nanoparticle_necrosis);
+    void setNumber_source_necrosis(int number_nanoparticle_necrosis);
 
     int number_nanoparticle_intermediary() const;
-    void setNumber_nanoparticle_intermediary(int number_nanoparticle_intermediary);
+    void setNumber_source_intermediary(int number_nanoparticle_intermediary);
 
     int number_nanoparticle_external() const;
-    void setNumber_nanoparticle_external(int number_nanoparticle_external);
+    void setNumber_source_external(int number_nanoparticle_external);
 
     void setOrganelle_weight(double pCellMembrane, double pNucleoplasm, double pNuclearMembrane, double pCytoplasm );
 

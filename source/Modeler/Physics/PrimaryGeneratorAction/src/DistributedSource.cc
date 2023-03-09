@@ -241,7 +241,7 @@ int DistributedSource::number_nanoparticle_external() const
     return number_nanoparticle_external_;
 }
 
-void DistributedSource::setNumber_nanoparticle_external(int number_nanoparticle_external)
+void DistributedSource::setNumber_source_external(int number_nanoparticle_external)
 {
     number_nanoparticle_external_ = number_nanoparticle_external;
 }
@@ -267,7 +267,7 @@ int DistributedSource::number_nanoparticle_intermediary() const
     return number_nanoparticle_intermediary_;
 }
 
-void DistributedSource::setNumber_nanoparticle_intermediary(int number_nanoparticle_intermediary)
+void DistributedSource::setNumber_source_intermediary(int number_nanoparticle_intermediary)
 {
     number_nanoparticle_intermediary_ = number_nanoparticle_intermediary;
 }
@@ -277,7 +277,7 @@ int DistributedSource::number_nanoparticle_necrosis() const
     return number_nanoparticle_necrosis_;
 }
 
-void DistributedSource::setNumber_nanoparticle_necrosis(int number_nanoparticle_necrosis)
+void DistributedSource::setNumber_source_necrosis(int number_nanoparticle_necrosis)
 {
     number_nanoparticle_necrosis_ = number_nanoparticle_necrosis;
 }
@@ -297,22 +297,22 @@ int DistributedSource::number_distributed() const
     return number_nanoparticle_;
 }
 
-void DistributedSource::setNumber_nanoparticle(int number_nanoparticle)
+void DistributedSource::setNumber_source(int number_nanoparticle)
 {
     number_nanoparticle_ = number_nanoparticle;
 }
 
-void DistributedSource::setNumber_nanoparticle_per_cell_necrosis(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setNumber_source_per_cell_necrosis(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_necrosis = number_nanoparticle_per_cell_arg;
 }
 
-void DistributedSource::setNumber_nanoparticle_per_cell_intermediary(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setNumber_source_per_cell_intermediary(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_intermediary = number_nanoparticle_per_cell_arg;
 }
 
-void DistributedSource::setNumber_nanoparticle_per_cell_external(int number_nanoparticle_per_cell_arg)
+void DistributedSource::setNumber_source_per_cell_external(int number_nanoparticle_per_cell_arg)
 {
     max_number_nanoparticle_per_cell_external = number_nanoparticle_per_cell_arg;
 }

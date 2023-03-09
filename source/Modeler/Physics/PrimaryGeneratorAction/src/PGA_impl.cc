@@ -233,7 +233,7 @@ DistributedSource *PGA_impl::distributed_source()
 
 Source *PGA_impl::selectSource() const
 {
-    if (uniform_source_ && niform_source_->HasLeft()) {
+    if (uniform_source_ && uniform_source_->HasLeft()) {
         ++nbUniform;
         return uniform_source_.get();
     }

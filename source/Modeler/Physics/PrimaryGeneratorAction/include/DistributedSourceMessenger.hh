@@ -29,8 +29,8 @@ private:
     std::unique_ptr<SourceMessenger> source_messenger_;
 
     // Commands
-    /// \brief Set the number of nanoparticle in the population
-    std::unique_ptr<G4UIcmdWithAnInteger> total_nano_cmd_;
+    /// \brief Set the number of distributed sources in the population
+    std::unique_ptr<G4UIcmdWithAnInteger> total_source_cmd_;
     /// \brief Set the number of secondary particle to be generated for one nanoparticle
     std::unique_ptr<G4UIcmdWithAnInteger> part_per_nano_cmd_;
     /// \brief Distribute the nanoparticle in the 3 regions

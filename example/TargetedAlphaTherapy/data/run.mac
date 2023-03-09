@@ -91,9 +91,8 @@
 #/cpop/source/radionuclide/spectrum data/Bi213.spec
 #/cpop/source/radionuclide/spectrum data/Po210.spec
 
-# set the number of nanoparticle in the spheroid
-
-/cpop/source/radionuclide/totalNanoparticle 20000
+# set the number of sources in the spheroid
+/cpop/source/radionuclide/totalSource 20000
 
 # set the number of secondaries for one nanoparticle
 /cpop/source/radionuclide/particlePerNano 1
@@ -102,7 +101,7 @@
 /cpop/source/radionuclide/only_one_position_for_all_particles_on_a_cell 0
 
 # set the nanoparticle distribution in each region
-# requirement : the sum of your value must be equal to totalNanoparticle
+# requirement : the sum of your value must be equal to totalSource
 # region order : necrosis intermediary external
 /cpop/source/radionuclide/distributionInRegion  0 0 20000
 
@@ -140,5 +139,5 @@
 /run/printProgress 1000
 
 # requirement : the value should be equal to 
-# totalParticle + totalNanoparticle * particlePerNano
+# totalParticle + totalSource * particlePerNano
 /run/beamOn 20000

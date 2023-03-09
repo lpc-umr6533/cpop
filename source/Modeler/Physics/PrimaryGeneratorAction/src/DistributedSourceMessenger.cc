@@ -19,11 +19,11 @@ void DistributedSourceMessenger::BuildCommands(G4String base)
 {
     source_messenger_->BuildCommands(base);
 
-    G4String cmd_base = base + "/totalNanoparticle";
-    total_nano_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
-    total_nano_cmd_->SetGuidance("Set the number of nanoparticle in the population");
-    total_nano_cmd_->SetParameterName("TotalNano", false);
-    total_nano_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
+    G4String cmd_base = base + "/totalSource";
+    total_source_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
+    total_source_cmd_->SetGuidance("Set the number of source in the population");
+    total_source_cmd_->SetParameterName("TotalSource", false);
+    total_source_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     cmd_base = base + "/particlePerNano";
     part_per_nano_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
@@ -73,8 +73,8 @@ void DistributedSourceMessenger::SetNewValue(G4UIcommand *command, G4String newV
 {
     source_messenger_->SetNewValue(command, newValue);
 
-    if (command == total_nano_cmd_.get()) {
-        source_->setNumber_nanoparticle(total_nano_cmd_->GetNewIntValue(newValue));
+    if (command == total_source_cmd_.get()) {
+        source_->setNumber_source(total_source_cmd_->GetNewIntValue(newValue));
     } else if (command == part_per_nano_cmd_.get()) {
         source_->setNumber_secondary_per_nano(part_per_nano_cmd_->GetNewIntValue(newValue));
     } else if (command == nano_per_region_cmd_.get()) {
@@ -90,9 +90,9 @@ void DistributedSourceMessenger::SetNewValue(G4UIcommand *command, G4String newV
             msg << "Number of nanoparticle : " << source_->number_distributed() << '\n';
             throw std::runtime_error(msg.str());
         }
-        source_->setNumber_nanoparticle_necrosis(vec.x());
-        source_->setNumber_nanoparticle_intermediary(vec.y());
-        source_->setNumber_nanoparticle_external(vec.z());
+        source_->setNumber_source_necrosis(vec.x());
+        source_->setNumber_source_intermediary(vec.y());
+        source_->setNumber_source_external(vec.z());
     } else if (command == pos_in_cell_cmd_.get()) {
         double cell_membrane;
         double nucleoplasm;
@@ -111,10 +111,10 @@ void DistributedSourceMessenger::SetNewValue(G4UIcommand *command, G4String newV
     }
     else if (command == nb_max_nano_per_cell_cmd_.get()) {
       G4ThreeVector vec = nb_max_nano_per_cell_cmd_->GetNew3VectorValue(newValue);
-      //source_->setNumber_nanoparticle_per_cell(nb_max_nano_per_cell_cmd_->GetNewIntValue(newValue));
-      source_->setNumber_nanoparticle_per_cell_necrosis(vec.x());
-      source_->setNumber_nanoparticle_per_cell_intermediary(vec.y());
-      source_->setNumber_nanoparticle_per_cell_external(vec.z());
+      //source_->setNumber_source_per_cell(nb_max_nano_per_cell_cmd_->GetNewIntValue(newValue));
+      source_->setNumber_source_per_cell_necrosis(vec.x());
+      source_->setNumber_source_per_cell_intermediary(vec.y());
+      source_->setNumber_source_per_cell_external(vec.z());
    }
    else if (command == cell_Labeling_cmd_.get()) {
       G4ThreeVector vec = cell_Labeling_cmd_->GetNew3VectorValue(newValue);

@@ -88,14 +88,14 @@
 /cpop/source/gadolinium/particle alpha
 /cpop/source/gadolinium/spectrum data/eSpectrumGBN_550um.spec
 
-# set the number of nanoparticle in the spheroid
-/cpop/source/gadolinium/totalNanoparticle 30
+# set the number of sources in the spheroid
+/cpop/source/gadolinium/totalSource 30
 
 # set the number of secondaries for one nanoparticle
 /cpop/source/gadolinium/particlePerNano 1
 
 # set the nanoparticle distribution in each region
-# requirement : the sum of your value must be equal to totalNanoparticle
+# requirement : the sum of your value must be equal to totalSoruce
 # region order : necrosis intermediary external
 /cpop/source/gadolinium/distributionInRegion  10 10 10
 
@@ -127,5 +127,5 @@
 /run/printProgress 1000
 
 # requirement : the value should be equal to 
-# totalParticle + totalNanoparticle * particlePerNano
+# totalParticle + totalSource * particlePerNano
 /run/beamOn 30

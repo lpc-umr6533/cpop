@@ -26,9 +26,9 @@ private:
     G4String base_;
 
     // Commands
-    /// \brief Add a homogeneous source
-    std::unique_ptr<G4UIcmdWithAString> homogeneous_cmd_;
-    /// \brief Add a nanoparticle source
+    /// \brief Add a uniform source
+    std::unique_ptr<G4UIcmdWithAString> uniform_cmd_;
+    /// \brief Add a distributed source
     std::unique_ptr<G4UIcmdWithAString> distributed_cmd_;
     /// \brief Activer radionuclide's daughter diffusionS
     std::unique_ptr<G4UIcmdWithAString> diffusion_cmd_;

@@ -17,7 +17,7 @@
 /cpop/source/addDistribution gadolinium
 /cpop/source/gadolinium/particle e-
 /cpop/source/gadolinium/spectrum eSpectrum_550um.spec
-/cpop/source/gadolinium/totalNanoparticle 6
+/cpop/source/gadolinium/totalSource 6
 /cpop/source/gadolinium/particlePerNano 100
 # necrosis intermediary external
 /cpop/source/gadolinium/distributionInRegion  1 2 3
