@@ -173,7 +173,7 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
         {
           if (this->population()->verbose_level() > 0)
               std::cout << "  Adding nanoparticle to cell with id  " << selected_cell->getID() << '\n';
-          already_selected->second.AddNanoparticle();
+          already_selected->second.addDistributedSource();
           if (only_one_position_for_all_particles_on_a_cell == 0)
           {already_selected->second.AddParticlePosition(*organelle_weight_);}
           nb_nano_per_cell[indexCell] +=1 ;
@@ -202,7 +202,7 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
         {
           if (this->population()->verbose_level() > 0)
               std::cout << "  Adding nanoparticle to cell with id  " << selected_cell->getID() << '\n';
-          already_selected->second.AddNanoparticle();
+          already_selected->second.addDistributedSource();
           if (only_one_position_for_all_particles_on_a_cell == 0)
           {already_selected->second.AddParticlePosition(*organelle_weight_);}
           nb_nano_per_cell[indexCell] +=1 ;

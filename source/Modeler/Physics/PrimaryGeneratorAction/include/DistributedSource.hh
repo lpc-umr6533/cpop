@@ -39,7 +39,7 @@ public:
     }
 
     bool HasLeft() const { return already_generated_ < totalSecondary(); }
-    void AddNanoparticle(int inc = 1) { number_nano_ += inc; }
+    void addDistributedSource(int inc = 1) { number_nano_ += inc; }
     void AddParticlePosition(OrganellesWeight& organelle_weight)
     { auto organelle = organelle_weight.getRandomOrganelle();
 
