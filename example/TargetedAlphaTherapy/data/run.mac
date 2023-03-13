@@ -47,8 +47,8 @@
 
 # set the population file (relative path from the current directory)
 #/cpop/population/input data/Radius95um_25CP.cfg.xml
-#/cpop/population/input data/Radius95um_50CP.cfg.xml
-/cpop/population/input data/Radius95um_75CP.cfg.xml
+/cpop/population/input data/Radius95um_50CP.cfg.xml
+#/cpop/population/input data/Radius95um_75CP.cfg.xml
 
 # set representation parameters
 /cpop/population/numberFacet 80
@@ -84,37 +84,38 @@
 # add a particle source
 /cpop/source/addDistribution radionuclide
 
-# set the secondaries particle to generate from a particle
+# set the primary particles to send from a source
 /cpop/source/radionuclide/particle alpha
 
-/cpop/source/radionuclide/spectrum data/At211.spec
-#/cpop/source/radionuclide/spectrum data/Bi213.spec
-#/cpop/source/radionuclide/spectrum data/Po210.spec
+/cpop/source/radionuclide/spectrum data/At211.txt
+#/cpop/source/radionuclide/spectrum data/Bi213.txt
+#/cpop/source/radionuclide/spectrum data/Po210.txt
 
 # set the number of sources in the spheroid
-/cpop/source/radionuclide/totalSource 20000
+/cpop/source/radionuclide/totalSource 2000
 
 # set the number of particles emitted from one source
 /cpop/source/radionuclide/particlesPerSource 1
 
-# Allow only one position for all particles generated on the same cell
+# set to 1 to have all sources in a cell located in the same place
+# set to 0 for a random distribution of sources in a cell
 /cpop/source/radionuclide/only_one_position_for_all_particles_on_a_cell 0
 
-# set the nanoparticle distribution in each region
+# set the source distribution in each region
 # requirement : the sum of your value must be equal to totalSource
 # region order : necrosis intermediary external
-/cpop/source/radionuclide/distributionInRegion  0 0 20000
+/cpop/source/radionuclide/distributionInRegion  0 0 2000
 
-# set the secondaries distribution  in a cell contaning a nanoparticle
-# organelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
-# Nucleoplasm=Nucleus, for Homogeneous : put 0.5 for Nucleoplasm and Cytoplasm
+# set the sources distribution in a cell containing a source
+# organelle order : CellMembrane Nucleus NucleusMembrane Cytoplasm
+# Put a float proportion between 0 and 1 
 /cpop/source/radionuclide/distributionInCell 1 0 0 0
 
-# Activate diffusion of radionuclide's daughter
+# Activate diffusion of radionuclide's daughter (for At-211 only)
 /cpop/source/daughterDiffusion no
 
 
-# set the maximum number of sources per cell, in each region. If total number of nanoparticle = number of cells * maximum number of nanoparticles per cell, all cells will have the maximum amount of nanoparticles
+# set the maximum number of sources per cell, in each region.
 # region order : necrosis intermediary external
 /cpop/source/radionuclide/maxSourcesPerCell 0 10000 10000
 
@@ -140,4 +141,4 @@
 
 # requirement : the value should be equal to 
 # totalSource * particlesPerSource
-/run/beamOn 20000
+/run/beamOn 2000

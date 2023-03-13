@@ -86,7 +86,7 @@
 
 # set the secondaries particle to generate from a nanoparticle
 /cpop/source/gadolinium/particle alpha
-/cpop/source/gadolinium/spectrum data/eSpectrumGBN_550um.spec
+/cpop/source/gadolinium/spectrum data/eSpectrumGBN_550um.txt
 
 # set the number of sources in the spheroid
 /cpop/source/gadolinium/totalSource 30
@@ -94,18 +94,19 @@
 # set the number of particles emitted from one source
 /cpop/source/gadolinium/particlesPerSource 1
 
-# set the nanoparticle distribution in each region
-# requirement : the sum of your value must be equal to totalSoruce
+# set the source distribution in each region
+# requirement : the sum of your value must be equal to totalSource
 # region order : necrosis intermediary external
 /cpop/source/gadolinium/distributionInRegion  10 10 10
 
-# set the secondaries distribution  in a cell contaning a nanoparticle
-# organnelle order : CellMembrane Nucleoplasm NucleusMembrane Cytoplasm
-/cpop/source/gadolinium/distributionInCell 1 0 0 0
+# set the sources distribution in a cell containing a source
+# organelle order : CellMembrane Nucleus NucleusMembrane Cytoplasm
+# Put a float proportion between 0 and 1 
+/cpop/source/radionuclide/distributionInCell 1 0 0 0
 
 # set the maximum number of sources per cell, in each region.
 # region order : necrosis intermediary external
-/cpop/source/gadolinium/maxSourcesPerCell 10000 10000 10000
+/cpop/source/radionuclide/maxSourcesPerCell 10000 10000 10000
 
 # Activate diffusion of radionuclide's daughter (only for At-211)
 /cpop/source/daughterDiffusion no
