@@ -18,7 +18,7 @@ cpop-2.0/
 
 To build CPOP, you need:
 - [Qt5](https://www.qt.io/);
-- [CGAL 5.0.1](https://www.cgal.org/);
+- [CGAL 5.5.1](https://www.cgal.org/);
 - [CLHEP 2.4.6.1](http://proj-clhep.web.cern.ch/proj-clhep/);
 - [Root 6.26.10](https://root.cern.ch/);
 - [Geant4 11.1.0](https://geant4.web.cern.ch/).
@@ -34,7 +34,7 @@ Download:
 ```bash
 git clone https://github.com/CGAL/cgal
 cd cgal
-git checkout v5.0.1
+git checkout v5.5.1
 ```
 
 Build and install:
