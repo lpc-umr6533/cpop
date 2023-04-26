@@ -30,7 +30,7 @@ private:
     std::unique_ptr<G4UIcmdWithAString> uniform_cmd_;
     /// \brief Add a distributed source
     std::unique_ptr<G4UIcmdWithAString> distributed_cmd_;
-    /// \brief Activer radionuclide's daughter diffusionS
+    /// \brief Activate radionuclide's daughter diffusion
     std::unique_ptr<G4UIcmdWithAString> diffusion_cmd_;
     /// \brief Initialize the sources
     std::unique_ptr<G4UIcmdWithoutParameter> init_cmd_;

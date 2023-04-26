@@ -50,7 +50,6 @@ PGA_impl::PGA_impl(const Population &population)
       particle_gun_(std::make_unique<G4ParticleGun>(1)),
       messenger_(std::make_unique<PGA_implMessenger>(this))
 {
-
 }
 
 void PGA_impl::GeneratePrimaries(G4Event *event)
@@ -109,11 +108,24 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     particle_gun_->SetParticlePosition(G4_particle_position);
 
     // Generate a momentum direction
-    particle_gun_->SetParticleMomentumDirection(source->GetMomentum());
+    G4ThreeVector direction = source->GetMomentum();
+    particle_gun_->SetParticleMomentumDirection(direction);
+    //
+    if (population_->writePositionsDirectionsTxt)
+    {writePositionsDirectionsTxt(G4_particle_position, direction);}
     // Generate a primary vertex
     particle_gun_->GeneratePrimaryVertex(event);
     // Update the source
     source->Update();
+}
+
+void PGA_impl::writePositionsDirectionsTxt(G4ThreeVector position,
+                                           G4ThreeVector direction)
+{
+  ofstream file("positionsDirections.txt", fstream::app);
+  if (file.is_open())
+  {file << G4BestUnit(position, "Length") << " " << direction << "\n";
+   file.close();}
 }
 
 bool PGA_impl::HasSource() const
@@ -169,6 +181,9 @@ void PGA_impl::checkBeamOn() const
     int total_event = manager->GetCurrentRun()->GetNumberOfEventToBeProcessed();
     // Number of event by adding the source
     int expected_event = this->TotalEvent();
+
+    G4cout << "Nb of events to be processed: " << total_event << G4endl;
+    G4cout << "Nb of expected events: " << expected_event << G4endl;
 
     if(total_event != expected_event) { // Throw an exception with a nice output because we are good people
         std::stringstream error_msg;

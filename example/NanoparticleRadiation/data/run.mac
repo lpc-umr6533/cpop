@@ -85,7 +85,7 @@
 /cpop/source/addDistribution gadolinium
 
 # set the secondaries particle to generate from a nanoparticle
-/cpop/source/gadolinium/particle alpha
+/cpop/source/gadolinium/particle e-
 /cpop/source/gadolinium/spectrum data/eSpectrumGBN_550um.txt
 
 # set the number of sources in the spheroid

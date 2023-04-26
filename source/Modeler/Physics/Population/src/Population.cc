@@ -216,6 +216,10 @@ void Population::loadPopulation()
     if(verbose_level() > 0){
         printPopulationInfo();
     }
+
+    if (writePositionsDirectionsTxt)
+    {  std::ofstream positions_directions_file;
+       positions_directions_file.open("positionsDirections.txt");}
 }
 
 void Population::printPopulationInfo()
@@ -332,6 +336,19 @@ void Population::set_Stepping_level_info_bool(int stepping_level_info_arg)
 void Population::set_Event_level_info_bool(int event_level_info_arg)
 {
   event_level_info_ = event_level_info_arg;
+}
+
+void Population::EnableWritingPositionsDirections(G4String choice)
+{
+  if (choice.compare("yes")==0)
+  {writePositionsDirectionsTxt = true;}
+  else if (choice.compare("no")==0)
+  {writePositionsDirectionsTxt = false;}
+  else
+  { std::stringstream error_msg;
+    error_msg << "Chose yes or no for the choice of writing positions"
+                      "and directions in a txt file";
+   throw std::runtime_error(error_msg.str());}
 }
 
 }

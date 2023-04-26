@@ -85,6 +85,12 @@ void PopulationMessenger::BuildCommands(G4String base)
     get_event_level_info_cmd_->SetDefaultValue(0);
     get_event_level_info_cmd_->AvailableForStates(G4State_PreInit);
 
+    cmd_base = cmd_base + "/writePositionsDirectionsTxt";
+    positions_directions_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
+    positions_directions_cmd_->SetGuidance("Write positions and directions of particles in .txt");
+    positions_directions_cmd_->SetParameterName("WritingPositionsDirectionsPrimaries", false);
+    positions_directions_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 
 }
 
@@ -111,6 +117,8 @@ void PopulationMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
         population_->set_Stepping_level_info_bool(get_stepping_level_info_cmd_->GetNewIntValue(newValue));
     } else if (command == get_event_level_info_cmd_.get()) {
         population_->set_Event_level_info_bool(get_event_level_info_cmd_->GetNewIntValue(newValue));
+    } else if (command == positions_directions_cmd_.get()) {
+        population_->EnableWritingPositionsDirections(newValue);
     }
 
 

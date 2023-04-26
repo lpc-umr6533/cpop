@@ -568,7 +568,7 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 
 		}
 
-		if (err == 1) {G4cout << "error happened during writing of MassesCell.txt"<<
+		if (err) {G4cout << "error happened during writing of MassesCell.txt"<<
 								G4endl;}
 	}
 

@@ -43,7 +43,8 @@ private:
     std::unique_ptr<G4UIcmdWithAnInteger> number_sampling_cmd_;
     /// \brief Initialize population and regions
     std::unique_ptr<G4UIcmdWithoutParameter> init_cmd_;
-
+    /// \brief Enable writing of particles positions and directions in a .txt
+    std::unique_ptr<G4UIcmdWithAString> positions_directions_cmd_;
     /// \brief Bool to get info at the stepping level, i.e.  all energy deposited and positions for each step
     std::unique_ptr<G4UIcmdWithAnInteger> get_stepping_level_info_cmd_;
     /// \brief  Bool to get info at the event level, i.e.  all entrance and exit energies of alpha particles in nuclei

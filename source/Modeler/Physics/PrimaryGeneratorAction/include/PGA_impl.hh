@@ -65,7 +65,11 @@ public:
     double GenerateTimeBeforeDecay();
     double GenerateDistanceAfterDiffusion(double timeBeforeDecay);
 
-    G4ThreeVector GenerateNewPositionAfterDiffusion(G4ThreeVector previousPosition, double diffusion_distance);
+    void writePositionsDirectionsTxt(G4ThreeVector position,
+                                     G4ThreeVector direction);
+
+    G4ThreeVector GenerateNewPositionAfterDiffusion(G4ThreeVector previousPosition,
+                                                    double diffusion_distance);
 
     std::string findOrganelle(const Settings::nCell::t_Cell_3* cell, const Settings::Geometry::Point_3& point);
 
