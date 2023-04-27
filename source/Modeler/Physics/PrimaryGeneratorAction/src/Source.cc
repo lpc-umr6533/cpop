@@ -5,6 +5,8 @@
 
 #include "Population.hh"
 
+#include "G4IonTable.hh"
+
 
 namespace cpop {
 
@@ -33,6 +35,17 @@ G4ParticleDefinition *Source::particle() const
 void Source::setParticle(G4ParticleDefinition *particle)
 {
     particle_ = particle;
+}
+
+void Source::setIon(G4int atomic_number, G4int atomic_mass)
+{
+   G4IonTable* ionTable = G4IonTable::GetIonTable();
+   ion_ = ionTable->GetIon(atomic_number, atomic_mass);
+}
+
+G4ParticleDefinition *Source::ion() const
+{
+    return ion_;
 }
 
 void Source::setUser_spectrum(const std::string &user_spectrum_file)

@@ -40,6 +40,15 @@ void SourceMessenger::BuildCommands(G4String base)
     user_spectrum_cmd_->SetParameterName("UserSpectrum", false);
     user_spectrum_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
+    cmd_base = base + "/ion";
+    ion_cmd_ = std::make_unique<G4UIcommand>(cmd_base, this);
+    ion_cmd_->SetGuidance("Set ion to be generated.");
+    G4UIparameter* atomic_number = new G4UIparameter("Z", 'd', false);
+    ion_cmd_->SetParameter(atomic_number);
+    G4UIparameter* atomic_mass = new G4UIparameter("A", 'd', false);
+    ion_cmd_->SetParameter(atomic_mass);
+    ion_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
+
 
 }
 
@@ -56,6 +65,15 @@ void SourceMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
         }
     } else if (command == user_spectrum_cmd_.get()) {
         source_->setUser_spectrum(newValue.data());
+    } else if (command == ion_cmd_.get()) {
+      G4int atomic_number;
+      G4int atomic_mass;
+
+      std::istringstream is(newValue.data());
+      is >> atomic_number >> atomic_mass;
+
+      source_->setIon(atomic_number, atomic_mass);
+
     }
 }
 

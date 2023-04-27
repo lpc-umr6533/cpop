@@ -28,6 +28,8 @@ private:
     // Commands
     /// \brief Set particle to be generated
     std::unique_ptr<G4UIcmdWithAString> particle_cmd_;
+    /// \brief Set ion to be generated
+    std::unique_ptr<G4UIcommand> ion_cmd_;
     /// \brief Set spectrum file
     std::unique_ptr<G4UIcmdWithAString> user_spectrum_cmd_;
     /// \brief Particle table

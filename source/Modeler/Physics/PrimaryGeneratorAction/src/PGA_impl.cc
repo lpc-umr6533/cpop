@@ -32,6 +32,8 @@
 
 #include <cmath>
 
+#include "G4IonTable.hh"
+
 #define square(a)  (a)*(a)
 
 namespace cpop {
@@ -67,11 +69,16 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
     // (distributed_source()->organelle_weight_vector).clear();
 
+    G4IonTable* ionTable = G4IonTable::GetIonTable();
+    G4ParticleDefinition* lithium7 = ionTable->GetIon(3, 7);
 
     // We do not need to check if source is nullptr because checkPrecondition() would have thrown an exception
     Source* source = selectSource();
-    // Get the particle from the source
-    particle_gun_->SetParticleDefinition(source->particle());
+    // Get the particle or ion from the source
+    if (source->ion())
+    {particle_gun_->SetParticleDefinition(source->ion());}
+    else if (source->particle())
+    {particle_gun_->SetParticleDefinition(source->particle());}
     // Generate an energy
     G4double particleEnergy = source->GetEnergy();
     particle_gun_->SetParticleEnergy(particleEnergy);
@@ -118,6 +125,7 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     // Update the source
     source->Update();
 }
+
 
 void PGA_impl::writePositionsDirectionsTxt(G4ThreeVector position,
                                            G4ThreeVector direction)

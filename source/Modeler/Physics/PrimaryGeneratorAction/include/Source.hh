@@ -7,6 +7,7 @@
 #include "G4ThreeVector.hh"
 
 #include "CPOP_UserSpectrum.hh"
+#include "G4IonTable.hh"
 class G4ParticleDefinition;
 
 // Use G4 naming convention when methods are meant to be used by the users (or dev)
@@ -26,6 +27,9 @@ public:
 
     G4ParticleDefinition *particle() const;
     void setParticle(G4ParticleDefinition *particle);
+
+    G4ParticleDefinition *ion() const;
+    void setIon(G4int atomic_number, G4int atomic_mass);
 
     void setUser_spectrum(const std::string& user_spectrum_file);
 
@@ -61,6 +65,8 @@ private:
     std::unique_ptr<CPOP_UserSpectrum> user_spectrum_;
     /// \brief Particle sent by this source
     G4ParticleDefinition* particle_ = nullptr;
+    /// \brief Ion sent by this source
+    G4ParticleDefinition* ion_ = nullptr;
 };
 
 }

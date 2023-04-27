@@ -80,6 +80,11 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
 
     auto cell = findCell(edep_pos);
 
+      if (step->IsFirstStepInVolume())
+
+      {G4cout << "NameParticle: " << nameParticle << G4endl;
+      G4cout << "Ek: " << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;}
+
 
     if (step->IsFirstStepInVolume() and (nameParticle=="alpha+" or nameParticle=="alpha" or nameParticle=="helium") and ((fEventAction->compteur_first_appearance)==0) )
     {
