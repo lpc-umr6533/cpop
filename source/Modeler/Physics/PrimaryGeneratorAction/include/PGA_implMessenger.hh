@@ -32,6 +32,11 @@ private:
     std::unique_ptr<G4UIcmdWithAString> distributed_cmd_;
     /// \brief Activate radionuclide's daughter diffusion
     std::unique_ptr<G4UIcmdWithAString> diffusion_cmd_;
+    /// \brief Use a txt file to choose postions and directions of primary particles
+    std::unique_ptr<G4UIcommand> posi_direc_txt_cmd_;
+    /// \brief Choose Li7 spectrum if the energy of the
+    ///usePositionsDirectionsTxt file contained Helium energies from BNCT reaction
+    std::unique_ptr<G4UIcmdWithAString> li7_BNCT_cmd_;
     /// \brief Initialize the sources
     std::unique_ptr<G4UIcmdWithoutParameter> init_cmd_;
 };

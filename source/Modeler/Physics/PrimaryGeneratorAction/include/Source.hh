@@ -50,6 +50,8 @@ public:
     /// \brief Tell if the source has generated all its particles
     virtual bool HasLeft() = 0;
 
+    int line_number_positions_directions_file = 1;
+
 protected:
     /// \brief Generate uniformely a 3D point on the unit sphere using G.Marsaglia method
     G4ThreeVector randSphere() const;

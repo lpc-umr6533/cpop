@@ -69,9 +69,6 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
     // (distributed_source()->organelle_weight_vector).clear();
 
-    G4IonTable* ionTable = G4IonTable::GetIonTable();
-    G4ParticleDefinition* lithium7 = ionTable->GetIon(3, 7);
-
     // We do not need to check if source is nullptr because checkPrecondition() would have thrown an exception
     Source* source = selectSource();
     // Get the particle or ion from the source
@@ -80,10 +77,9 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     else if (source->particle())
     {particle_gun_->SetParticleDefinition(source->particle());}
     // Generate an energy
-    G4double particleEnergy = source->GetEnergy();
-    particle_gun_->SetParticleEnergy(particleEnergy);
+    particleEnergy = source->GetEnergy();
     // Generate a position
-    G4ThreeVector G4_particle_position = (source->GetPosition()).front();
+    G4_particle_position = (source->GetPosition()).front();
 
     //TODO : debug the (source->GetPosition()) call when multiple sources are used in one simulation
     //(source->GetPosition()) value is well attributed in DistributedSource GetPosition(), but the call is PGA_impl.cc fails.
@@ -112,14 +108,23 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
    }
 
-    particle_gun_->SetParticlePosition(G4_particle_position);
+    direction = source->GetMomentum();
 
+    if (li7_BNCT_spectra)
+    {setPositionsDirections(name_info_primaries_file, name_method_for_info_primaries);}
+
+    particle_gun_->SetParticlePosition(G4_particle_position);
+    // Choose an energy
+    if (li7_BNCT_spectra)
+    {energySpectraLithium7BNCT();}
+    particle_gun_->SetParticleEnergy(particleEnergy);
     // Generate a momentum direction
-    G4ThreeVector direction = source->GetMomentum();
     particle_gun_->SetParticleMomentumDirection(direction);
     //
-    if (population_->writePositionsDirectionsTxt)
-    {writePositionsDirectionsTxt(G4_particle_position, direction);}
+    source->line_number_positions_directions_file +=1;
+    //
+    if (population_->writeInfoPrimariesTxt)
+    {writingInfoPrimariesTxt(G4_particle_position, direction, particleEnergy);}
     // Generate a primary vertex
     particle_gun_->GeneratePrimaryVertex(event);
     // Update the source
@@ -127,13 +132,83 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 }
 
 
-void PGA_impl::writePositionsDirectionsTxt(G4ThreeVector position,
-                                           G4ThreeVector direction)
+void PGA_impl::writingInfoPrimariesTxt(G4ThreeVector position,
+                                       G4ThreeVector direction,
+                                       G4double energy)
 {
-  ofstream file("positionsDirections.txt", fstream::app);
+  ofstream file("infoPrimaries.txt", fstream::app);
   if (file.is_open())
-  {file << G4BestUnit(position, "Length") << " " << direction << "\n";
+  {file << G4BestUnit(position, "Length") << " " << direction << " " <<
+   G4BestUnit(energy, "Energy")  << "\n";
    file.close();}
+}
+
+void PGA_impl::readInfoPrimariesTxt(int i, G4String name_file) {
+    ifstream infile(name_file);
+    string line;
+
+    // read the ith line
+    for (int j = 0; j < i; j++) {
+        if (!getline(infile, line)) {
+            // error handling if i is greater than the number of lines in the file
+            cerr << "Error: the file does not have " << i << " lines." << endl;
+            return;
+        }
+    }
+
+  // parse the line and create the two vectors
+    istringstream parser(line);
+    double x, y, z;
+    string vec_direction_str;
+    char delimiter_char;
+    string delimiter_string;
+    parser >> x >> y >> z >> delimiter_string >> vec_direction_str
+     >> energy_from_txt;
+
+    vec_direction_str = vec_direction_str.substr(1,
+                                                vec_direction_str.length() - 2);
+    istringstream vec_direction_parser(vec_direction_str);
+    double u, v, w;
+    vec_direction_parser >> u >> delimiter_char >> v >> delimiter_char >> w;
+
+    vec_position = G4ThreeVector(x, y, z);
+    vec_direction = G4ThreeVector(u, v, w);
+
+    // G4cout << "vec_position: " << vec_position << G4endl;
+    // G4cout << "vec_direction: " << vec_direction << G4endl;
+    // G4cout << "energy_from_txt: " << energy_from_txt << G4endl;
+}
+
+void PGA_impl::setPositionsDirections(G4String name_file, G4String name_method)
+{
+  Source* source = selectSource();
+  readInfoPrimariesTxt(source->line_number_positions_directions_file,
+     name_file);
+
+  if (name_method.compare("SamePositions_OppositeDirections")==0)
+  {
+    G4_particle_position = vec_position;
+    direction = - vec_direction;
+  }
+  else if (name_method.compare("SamePositions_SameDirections")==0)
+  {
+    G4_particle_position = vec_position;
+    direction = vec_direction;
+  }
+  else
+  {cerr << "Error: this method name is not correct" << endl;}
+}
+
+void PGA_impl::energySpectraLithium7BNCT()
+{
+  if (energy_from_txt == 1.78/CLHEP::MeV)
+  {
+    particleEnergy = 1.01/CLHEP::MeV;
+  }
+  else if (energy_from_txt == 1.47/CLHEP::MeV)
+  {
+    particleEnergy = 0.84/CLHEP::MeV;
+  }
 }
 
 bool PGA_impl::HasSource() const

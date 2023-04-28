@@ -15,6 +15,9 @@
 
 #include <G4AnalysisManager.hh>
 
+#include <G4UnitsTable.hh>
+
+
 namespace cpop {
 
 SteppingAction::SteppingAction(const Population &population, EventAction* eventAction, PGA_impl &pga_impl)
@@ -64,6 +67,7 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
       (fEventAction->indice_if_diffusion_event) = 1;
     }
 
+    G4Track* track = step->GetTrack();
 
     G4ThreeVector pEdepPos = step->GetPreStepPoint()->GetPosition();
     double check_distance = pEdepPos[0]*pEdepPos[0] + pEdepPos[1]*pEdepPos[1] + pEdepPos[2]*pEdepPos[2];
@@ -80,18 +84,25 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
 
     auto cell = findCell(edep_pos);
 
-    if (step->IsFirstStepInVolume() and (nameParticle=="alpha+" or nameParticle=="alpha" or nameParticle=="helium") and ((fEventAction->compteur_first_appearance)==0) )
+    if (step->IsFirstStepInVolume())
+    {
+      G4cout << "Posi" << G4BestUnit(pEdepPos, "Length") << G4endl;
+      G4cout << "fEventAction->FirstVolume" << fEventAction->FirstVolume << G4endl;
+      G4cout << "Ek" << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
+    }
+
+    if (step->IsFirstStepInVolume() and (track->GetParentID() == 0) and ((fEventAction->compteur_first_appearance)==0) )
     {
       if (cell && cell->hasIn(edep_pos))
       {
       // Détecte le premier step de la particule dans le world et permet de renvoyer son volume et énergie d'émission
 
       fEventAction->FirstVolume = findOrganelle(cell, edep_pos);
+      G4cout << "Energie_emission" << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
       fEventAction->Energie_emission=preStep->GetKineticEnergy()/CLHEP::keV;
       fEventAction->ID_Cell_D_Emission = fPGA_impl->current_cell_id;
       fEventAction->compteur_first_appearance+=1;
-
-    }
+      }
 
     else
     {
@@ -116,14 +127,14 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
     G4String PreLVName ;
     PreLVName= step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName();
 
-    if ((PreOrganelle == "nucleus") and (nameParticle=="alpha+" or nameParticle=="alpha" or nameParticle=="helium"))
+    if ((PreOrganelle == "nucleus") and (track->GetParentID() == 0))
     {
       // Get energy deposited by alphas in nucleus //
       G4double edepStepn = step->GetTotalEnergyDeposit()/CLHEP::keV;
       fEventAction->AddEdepNucl(edepStepn, cell->getID() - 3);
     }
     //
-    if ((PreOrganelle == "cytoplasm") and (cell->hasIn(edep_pos)) and (nameParticle=="alpha+" or nameParticle=="alpha" or nameParticle=="helium"))
+    if ((PreOrganelle == "cytoplasm") and (cell->hasIn(edep_pos)) and (track->GetParentID() == 0))
     {
       // Get energy deposited by alphas in cytoplasm //
       G4double edepStepc = step->GetTotalEnergyDeposit()/CLHEP::keV;
@@ -134,7 +145,7 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
     preCellID = cell->getID();
 
 
-    if ((PostOrganelle == "nucleus") and step->IsFirstStepInVolume() and (nameParticle=="alpha+" or nameParticle=="alpha" or nameParticle=="helium") )
+    if ((PostOrganelle == "nucleus") and step->IsFirstStepInVolume() and (track->GetParentID() == 0) )
     {
       // Détecte quand une particule rentre dans (ou est émise depuis) un noyau pour la première fois, et gère le cas où la particule s'arrête dans ce noyau après y avoir été émise
 
@@ -159,9 +170,9 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
     }
 
 
-    if ((PreOrganelle != "nucleus") and (PostOrganelle == "nucleus") and (nameParticle=="alpha+" or nameParticle=="alpha" or nameParticle=="helium"))
+    if ((PreOrganelle != "nucleus") and (PostOrganelle == "nucleus") and (track->GetParentID() == 0))
     {
-
+      G4cout << "Ei: " << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
       fEventAction->Ei.push_back(preStep->GetKineticEnergy()/CLHEP::keV);
       fEventAction->tailleEi += 1;
       fEventAction->compteurArretdsNoyauApresGenDansLeNoyau -= 1;
@@ -173,9 +184,9 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
     }
 
 
-    if ((PreOrganelle == "nucleus") and (PostOrganelle == "cytoplasm") and (nameParticle=="alpha+" or nameParticle=="alpha" or nameParticle=="helium"))
+    if ((PreOrganelle == "nucleus") and (PostOrganelle == "cytoplasm") and (track->GetParentID() == 0))
     {
-
+      G4cout << "Ef: " << postStep->GetKineticEnergy()/CLHEP::keV << G4endl;
       fEventAction->Ef.push_back(postStep->GetKineticEnergy()/CLHEP::keV)  ;
       fEventAction->tailleEf+=1;
 

@@ -217,9 +217,10 @@ void Population::loadPopulation()
         printPopulationInfo();
     }
 
-    if (writePositionsDirectionsTxt)
-    {  std::ofstream positions_directions_file;
-       positions_directions_file.open("positionsDirections.txt");}
+    if (writeInfoPrimariesTxt)
+    {std::ofstream infos_primaries_file_to_write;
+     infos_primaries_file_to_write.open("infoPrimaries.txt");}
+
 }
 
 void Population::printPopulationInfo()
@@ -338,16 +339,16 @@ void Population::set_Event_level_info_bool(int event_level_info_arg)
   event_level_info_ = event_level_info_arg;
 }
 
-void Population::EnableWritingPositionsDirections(G4String choice)
+void Population::enableWritingInfoPrimariesTxt(G4String choice)
 {
   if (choice.compare("yes")==0)
-  {writePositionsDirectionsTxt = true;}
+  {writeInfoPrimariesTxt = true;}
   else if (choice.compare("no")==0)
-  {writePositionsDirectionsTxt = false;}
+  {writeInfoPrimariesTxt = false;}
   else
   { std::stringstream error_msg;
-    error_msg << "Chose yes or no for the choice of writing positions"
-                      "and directions in a txt file";
+    error_msg << "Chose yes or no for the choice of writing information"
+                      "about primaries in a txt file";
    throw std::runtime_error(error_msg.str());}
 }
 

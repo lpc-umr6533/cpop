@@ -65,8 +65,30 @@ public:
     double GenerateTimeBeforeDecay();
     double GenerateDistanceAfterDiffusion(double timeBeforeDecay);
 
-    void writePositionsDirectionsTxt(G4ThreeVector position,
-                                     G4ThreeVector direction);
+    void writingInfoPrimariesTxt(G4ThreeVector position,
+                                 G4ThreeVector direction,
+                                 G4double energy);
+
+    void readInfoPrimariesTxt(int i, G4String name_file);
+
+    void setPositionsDirections(G4String name_file, G4String name_method);
+
+    void SetTxtInfoPrimariesName_and_MethodName(G4String name_file, G4String name_method)
+    {
+      name_info_primaries_file = name_file;
+      name_method_for_info_primaries = name_method;
+    }
+
+    void energySpectraLithium7BNCT();
+
+    void SetLi7BNCTSpectrumBool(G4String string_bool)
+    {
+      if (string_bool.compare("yes")==0)
+      {li7_BNCT_spectra = true;}
+      else if (string_bool.compare("no")==0)
+      {li7_BNCT_spectra = false;}
+    }
+
 
     G4ThreeVector GenerateNewPositionAfterDiffusion(G4ThreeVector previousPosition,
                                                     double diffusion_distance);
@@ -96,6 +118,19 @@ public:
     double half_life;
 
     G4ThreeVector new_G4_particle_position;
+
+    G4ThreeVector vec_position;
+    G4ThreeVector vec_direction;
+
+    G4ThreeVector direction;
+    G4ThreeVector G4_particle_position;
+    G4double particleEnergy;
+    G4double energy_from_txt;
+
+    G4String name_info_primaries_file;
+    G4String name_method_for_info_primaries;
+
+    bool li7_BNCT_spectra;
 
 
 private:
