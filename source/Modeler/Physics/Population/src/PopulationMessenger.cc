@@ -85,7 +85,7 @@ void PopulationMessenger::BuildCommands(G4String base)
     get_event_level_info_cmd_->SetDefaultValue(0);
     get_event_level_info_cmd_->AvailableForStates(G4State_PreInit);
 
-    cmd_base = cmd_base + "/writeInfosPrimariesTxt";
+    cmd_base = cmd_base + "/writeInfoPrimariesTxt";
     infos_primaries_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
     infos_primaries_cmd_->SetGuidance("Write positions,"
      "directions and energy of primary particles in .txt");

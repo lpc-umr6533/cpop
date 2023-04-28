@@ -70,6 +70,9 @@
 /cpop/population/eventInfo 1
 ##### For now, only one option can be chosen ####
 
+#Write positions, directions and energies of primary particles in a .txt
+/cpop/population/writeInfoPrimariesTxt yes
+
 # Initialize cpop
 /cpop/population/init
 
@@ -85,14 +88,17 @@
 /cpop/source/addDistribution radionuclide
 
 # set the primary particles to send from a source
-/cpop/source/radionuclide/particle alpha
+#/cpop/source/radionuclide/particle alpha
 
-/cpop/source/radionuclide/spectrum data/At211.txt
+/cpop/source/radionuclide/ion 3 7
+
+#/cpop/source/radionuclide/spectrum data/At211.txt
 #/cpop/source/radionuclide/spectrum data/Bi213.txt
 #/cpop/source/radionuclide/spectrum data/Po210.txt
+/cpop/source/radionuclide/spectrum data/HeliumBNCT.txt
 
 # set the number of sources in the spheroid
-/cpop/source/radionuclide/totalSource 2000
+/cpop/source/radionuclide/totalSource 200
 
 # set the number of particles emitted from one source
 /cpop/source/radionuclide/particlesPerSource 1
@@ -104,15 +110,24 @@
 # set the source distribution in each region
 # requirement : the sum of your value must be equal to totalSource
 # region order : necrosis intermediary external
-/cpop/source/radionuclide/distributionInRegion  0 0 2000
+/cpop/source/radionuclide/distributionInRegion  0 0 200
 
 # set the sources distribution in a cell containing a source
 # organelle order : CellMembrane Nucleus NucleusMembrane Cytoplasm
 # Put a float proportion between 0 and 1 
-/cpop/source/radionuclide/distributionInCell 1 0 0 0
+/cpop/source/radionuclide/distributionInCell 0 1 0 0
 
 # Activate diffusion of radionuclide's daughter (for At-211 only)
 /cpop/source/daughterDiffusion no
+
+#Choose a txt file with positions and directions and choose a method to use them on
+#the primaries  of your simulation
+#methods: SamePositions_SameDirections, SamePositions_OppositeDirections 
+/cpop/source/usePositionsDirectionsTxt infoPrimaries2.txt SamePositions_OppositeDirections
+
+
+#Doesn't work without PositionsDirectionsTxt
+/cpop/source/EmitLi7BNCTSpectrum yes
 
 
 # set the maximum number of sources per cell, in each region.
@@ -141,4 +156,4 @@
 
 # requirement : the value should be equal to 
 # totalSource * particlesPerSource
-/run/beamOn 2000
+/run/beamOn 200
