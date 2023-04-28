@@ -113,14 +113,14 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     if (li7_BNCT_spectra)
     {setPositionsDirections(name_info_primaries_file, name_method_for_info_primaries);}
 
-    G4cout << "G4_particle_position: " << G4_particle_position << G4endl;
+    // G4cout << "G4_particle_position: " << G4_particle_position << G4endl;
     particle_gun_->SetParticlePosition(G4_particle_position);
     // Choose an energy
     if (li7_BNCT_spectra)
     {energySpectraLithium7BNCT();}
     particle_gun_->SetParticleEnergy(particleEnergy);
     // Generate a momentum direction
-    G4cout << "direction: " << direction << G4endl;
+    // G4cout << "direction: " << direction << G4endl;
     particle_gun_->SetParticleMomentumDirection(direction);
     //
     source->line_number_positions_directions_file +=1;
@@ -179,8 +179,8 @@ void PGA_impl::readInfoPrimariesTxt(int i, G4String name_file) {
     {cerr << "Error: converts the values to um in the txt file. WIP: generalize that" << endl;}
     vec_direction = G4ThreeVector(u, v, w);
 
-    G4cout << "vec_position: " << vec_position << G4endl;
-    G4cout << "vec_direction: " << vec_direction << G4endl;
+    // G4cout << "vec_position: " << vec_position << G4endl;
+    // G4cout << "vec_direction: " << vec_direction << G4endl;
     // G4cout << "energy_from_txt: " << energy_from_txt << G4endl;
 }
 

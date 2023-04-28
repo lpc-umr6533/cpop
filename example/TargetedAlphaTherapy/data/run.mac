@@ -123,11 +123,11 @@
 #Choose a txt file with positions and directions and choose a method to use them on
 #the primaries  of your simulation
 #methods: SamePositions_SameDirections, SamePositions_OppositeDirections 
-/cpop/source/usePositionsDirectionsTxt infoPrimaries2.txt SamePositions_OppositeDirections
+#/cpop/source/usePositionsDirectionsTxt infoPrimaries2.txt SamePositions_OppositeDirections
 
 
-#Doesn't work without PositionsDirectionsTxt
-/cpop/source/EmitLi7BNCTSpectrum yes
+#Doesn't work without PositionsDirectionsTxt. Experimental: WIP
+#/cpop/source/EmitLi7BNCTSpectrum yes
 
 
 # set the maximum number of sources per cell, in each region.

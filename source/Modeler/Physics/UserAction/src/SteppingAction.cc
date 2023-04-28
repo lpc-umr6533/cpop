@@ -84,12 +84,12 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
 
     auto cell = findCell(edep_pos);
 
-    if (step->IsFirstStepInVolume())
-    {
-      G4cout << "Posi" << G4BestUnit(pEdepPos, "Length") << G4endl;
-      G4cout << "fEventAction->FirstVolume" << fEventAction->FirstVolume << G4endl;
-      G4cout << "Ek" << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
-    }
+    // if (step->IsFirstStepInVolume())
+    // {
+    //   G4cout << "Posi" << G4BestUnit(pEdepPos, "Length") << G4endl;
+    //   G4cout << "fEventAction->FirstVolume" << fEventAction->FirstVolume << G4endl;
+    //   G4cout << "Ek" << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
+    // }
 
     if (step->IsFirstStepInVolume() and (track->GetParentID() == 0) and ((fEventAction->compteur_first_appearance)==0) )
     {
@@ -98,7 +98,7 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
       // Détecte le premier step de la particule dans le world et permet de renvoyer son volume et énergie d'émission
 
       fEventAction->FirstVolume = findOrganelle(cell, edep_pos);
-      G4cout << "Energie_emission" << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
+      // G4cout << "Energie_emission" << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
       fEventAction->Energie_emission=preStep->GetKineticEnergy()/CLHEP::keV;
       fEventAction->ID_Cell_D_Emission = fPGA_impl->current_cell_id;
       fEventAction->compteur_first_appearance+=1;
@@ -172,7 +172,7 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
 
     if ((PreOrganelle != "nucleus") and (PostOrganelle == "nucleus") and (track->GetParentID() == 0))
     {
-      G4cout << "Ei: " << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
+      // G4cout << "Ei: " << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
       fEventAction->Ei.push_back(preStep->GetKineticEnergy()/CLHEP::keV);
       fEventAction->tailleEi += 1;
       fEventAction->compteurArretdsNoyauApresGenDansLeNoyau -= 1;
@@ -186,7 +186,7 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
 
     if ((PreOrganelle == "nucleus") and (PostOrganelle == "cytoplasm") and (track->GetParentID() == 0))
     {
-      G4cout << "Ef: " << postStep->GetKineticEnergy()/CLHEP::keV << G4endl;
+      // G4cout << "Ef: " << postStep->GetKineticEnergy()/CLHEP::keV << G4endl;
       fEventAction->Ef.push_back(postStep->GetKineticEnergy()/CLHEP::keV)  ;
       fEventAction->tailleEf+=1;
 
