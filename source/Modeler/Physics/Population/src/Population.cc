@@ -219,7 +219,7 @@ void Population::loadPopulation()
 
     if (writeInfoPrimariesTxt)
     {std::ofstream infos_primaries_file_to_write;
-     infos_primaries_file_to_write.open("infoPrimaries.txt");}
+     infos_primaries_file_to_write.open(name_file_primaries);}
 
 }
 
@@ -339,10 +339,11 @@ void Population::set_Event_level_info_bool(int event_level_info_arg)
   event_level_info_ = event_level_info_arg;
 }
 
-void Population::enableWritingInfoPrimariesTxt(G4String choice)
+void Population::enableWritingInfoPrimariesTxt(G4String choice, G4String name_file)
 {
   if (choice.compare("yes")==0)
-  {writeInfoPrimariesTxt = true;}
+  {writeInfoPrimariesTxt = true;
+  name_file_primaries = name_file;}
   else if (choice.compare("no")==0)
   {writeInfoPrimariesTxt = false;}
   else

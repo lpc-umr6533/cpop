@@ -126,7 +126,8 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     source->line_number_positions_directions_file +=1;
     //
     if (population_->writeInfoPrimariesTxt)
-    {writingInfoPrimariesTxt(G4_particle_position, direction, particleEnergy);}
+    {writingInfoPrimariesTxt(G4_particle_position, direction, particleEnergy,
+                              population_->name_file_primaries);}
     // Generate a primary vertex
     particle_gun_->GeneratePrimaryVertex(event);
     // Update the source
@@ -136,9 +137,10 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
 void PGA_impl::writingInfoPrimariesTxt(G4ThreeVector position,
                                        G4ThreeVector direction,
-                                       G4double energy)
+                                       G4double energy,
+                                       G4String name_file)
 {
-  ofstream file("infoPrimaries.txt", fstream::app);
+  ofstream file(name_file, fstream::app);
   if (file.is_open())
   {file << G4BestUnit(position, "Length") << " " << direction << " " <<
    G4BestUnit(energy, "Energy")  << "\n";
@@ -176,7 +178,7 @@ void PGA_impl::readInfoPrimariesTxt(int i, G4String name_file) {
     if (unit.compare("um")==0)
     {vec_position = G4ThreeVector(x * 0.001, y * 0.001, z * 0.001);}
     else
-    {cerr << "Error: converts the values to um in the txt file. WIP: generalize that" << endl;}
+    {cerr << "Error: converts the values to um in the txt file. WIP: doing it in code" << endl;}
     vec_direction = G4ThreeVector(u, v, w);
 
     // G4cout << "vec_position: " << vec_position << G4endl;

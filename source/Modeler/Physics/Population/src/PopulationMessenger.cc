@@ -86,10 +86,14 @@ void PopulationMessenger::BuildCommands(G4String base)
     get_event_level_info_cmd_->AvailableForStates(G4State_PreInit);
 
     cmd_base = cmd_base + "/writeInfoPrimariesTxt";
-    infos_primaries_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
+    infos_primaries_cmd_ = std::make_unique<G4UIcommand>(cmd_base, this);
     infos_primaries_cmd_->SetGuidance("Write positions,"
      "directions and energy of primary particles in .txt");
-    infos_primaries_cmd_->SetParameterName("WritingInfosPrimaries", false);
+    G4UIparameter* bool_info_primaries = new G4UIparameter("bool_info_primaries",
+                                                          's', false);
+    infos_primaries_cmd_->SetParameter(bool_info_primaries);
+    G4UIparameter* name_file = new G4UIparameter("name_file", 's', false);
+    infos_primaries_cmd_->SetParameter(name_file);
     infos_primaries_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 
@@ -119,7 +123,12 @@ void PopulationMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
     } else if (command == get_event_level_info_cmd_.get()) {
         population_->set_Event_level_info_bool(get_event_level_info_cmd_->GetNewIntValue(newValue));
     } else if (command == infos_primaries_cmd_.get()) {
-        population_->enableWritingInfoPrimariesTxt(newValue);
+        G4String bool_writing;
+        G4String name_file;
+
+        std::istringstream is(newValue.data());
+        is >> bool_writing >> name_file;
+        population_->enableWritingInfoPrimariesTxt(bool_writing, name_file);
     }
 
 

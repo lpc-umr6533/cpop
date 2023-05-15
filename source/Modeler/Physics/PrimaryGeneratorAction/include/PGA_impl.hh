@@ -67,7 +67,8 @@ public:
 
     void writingInfoPrimariesTxt(G4ThreeVector position,
                                  G4ThreeVector direction,
-                                 G4double energy);
+                                 G4double energy,
+                                 G4String name_file);
 
     void readInfoPrimariesTxt(int i, G4String name_file);
 

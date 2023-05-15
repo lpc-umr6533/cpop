@@ -61,7 +61,7 @@ public:
 
     G4int calculateNumberOfCells_InXML_File();
 
-    void enableWritingInfoPrimariesTxt(G4String choice);
+    void enableWritingInfoPrimariesTxt(G4String choice, G4String name_file);
 
     void set_Stepping_level_info_bool(int stepping_level_info_arg);
     void set_Event_level_info_bool(int event_level_info_arg);
@@ -81,6 +81,8 @@ public:
     G4int event_level_info_ = 0;
     bool writeInfoPrimariesTxt = false;
     bool usePositionsDirectionsFile = false;
+
+    G4String name_file_primaries;
 
 private:
 
