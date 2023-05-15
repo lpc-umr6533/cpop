@@ -71,7 +71,7 @@
 ##### For now, only one option can be chosen ####
 
 #Write positions, directions and energies of primary particles in a .txt
-/cpop/population/writeInfoPrimariesTxt yes
+/cpop/population/writeInfoPrimariesTxt yes infoPrimaries0.txt
 
 # Initialize cpop
 /cpop/population/init
