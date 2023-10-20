@@ -100,13 +100,9 @@ int main(int argc, char** argv)
     physicsList->messenger().BuildCommands("/cpop/physics");
     runManager->SetUserInitialization(physicsList);
 
-		G4cout << "Physics List" << G4endl;
-
     // Set custom action to extract informations from the simulation
     cpop::ActionInitialization* actionInitialisation = new cpop::ActionInitialization(population);
     runManager->SetUserInitialization(actionInitialisation);
-
-		G4cout << "Action Initialization" << G4endl;
 
     // Get the pointer to the User Interface manager
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
