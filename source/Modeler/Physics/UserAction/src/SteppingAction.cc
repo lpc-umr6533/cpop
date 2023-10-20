@@ -40,6 +40,7 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
     std::string PreOrganelle;
 
     G4String nameParticle = step->GetTrack()->GetDynamicParticle()->GetDefinition()->GetParticleName();
+    const G4String &processName = postStep->GetProcessDefinedStep()->GetProcessName();
 
     if(edep > 0) {
       G4ThreeVector pEdepPos = step->GetPreStepPoint()->GetPosition();
@@ -73,7 +74,7 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
     double check_distance = pEdepPos[0]*pEdepPos[0] + pEdepPos[1]*pEdepPos[1] + pEdepPos[2]*pEdepPos[2];
 
 
-    if (check_distance<=real_spheroid_radius)
+    if (check_distance<=real_spheroid_radius and processName!="Transportation")
     {
       fEventAction->AddEdepSpheroid(edep);
     }
