@@ -68,6 +68,8 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     nb_essais_diffusion=0;
 
     // (distributed_source()->organelle_weight_vector).clear();
+      // 
+      // particle_gun_->SetNumberOfParticles(10);
 
     // We do not need to check if source is nullptr because checkPrecondition() would have thrown an exception
     Source* source = selectSource();
@@ -112,13 +114,13 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
     if (li7_BNCT_spectra)
     {setPositionsDirections(name_info_primaries_file, name_method_for_info_primaries);}
-
-    // G4cout << "G4_particle_position: " << G4_particle_position << G4endl;
     particle_gun_->SetParticlePosition(G4_particle_position);
+
     // Choose an energy
     if (li7_BNCT_spectra)
     {energySpectraLithium7BNCT();}
     particle_gun_->SetParticleEnergy(particleEnergy);
+
     // Generate a momentum direction
     // G4cout << "direction: " << direction << G4endl;
     particle_gun_->SetParticleMomentumDirection(direction);
@@ -375,8 +377,6 @@ double PGA_impl::GenerateTimeBeforeDecay()
   std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
   std::uniform_real_distribution<> dis(0.0, 1.0);
 
-  // G4cout << "timeBeforedecay = " << (PDF_RadioactiveDecay(dis(gen),lambda)) << G4endl;
-
   return (PDF_RadioactiveDecay(dis(gen),lambda));
 
 }
@@ -408,27 +408,15 @@ G4ThreeVector PGA_impl::GenerateNewPositionAfterDiffusion(G4ThreeVector previous
 
   diffusion_distance = 12.0;
 
-  // G4cout << "\n\n previousPosition in G4 unit : " << previousPosition << G4endl;
-  //
-  // G4cout << "\n\n previousPosition : " << previousPosition*1000 << G4endl;
-
-  // G4cout << "\n \n diffusion_distance \n \n" << diffusion_distance << "\n \n" << G4endl;
-
   std::random_device rd;  // Will be used to obtain a seed for the random number engine
   std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
   std::uniform_real_distribution<> dis_x(x1 - diffusion_distance , x1 + diffusion_distance);
 
   x2 = dis_x(gen);
 
-  // G4cout << "\n x1 : " << x1 << G4endl;
-  // G4cout << "\n x2 : " << x2 << G4endl;
-
   std::uniform_real_distribution<> dis_y(y1 - sqrt(square(diffusion_distance) - square(x2-x1)) , y1 + sqrt(square(diffusion_distance) - square(x2-x1)));
 
   y2 = dis_y(gen);
-
-  // G4cout << "\n y1 : " << y1 << G4endl;
-  // G4cout << "\n y2 : " << y2 << G4endl;
 
   std::uniform_real_distribution<> dis_uniform(0, 1);
 
@@ -444,28 +432,16 @@ G4ThreeVector PGA_impl::GenerateNewPositionAfterDiffusion(G4ThreeVector previous
     z2 = z1 + sqrt(square(diffusion_distance) - square(x2-x1) - square(y2-y1));
   }
 
-  // G4cout << "\n z1 : " << z1 << G4endl;
-  // G4cout << "\n z2 : " << z2 << G4endl;
-
   new_G4_particle_position = G4ThreeVector(x2*pow(10,-3),y2*pow(10,-3),z2*pow(10,-3));
 
-  // G4cout << "Previous particle position : " << previousPosition << G4endl;
-  // G4cout << "Diffusion_distance : " << diffusion_distance << G4endl;
-  // G4cout << "New particle position : " << new_G4_particle_position << G4endl;
   if (isnan(new_G4_particle_position[1]))
   {
-    // G4cout << "square(diffusion_distance) : " << square(diffusion_distance) << G4endl;
-    // G4cout << "square(x2-x1) : " << square(x2-x1) << G4endl;
     GenerateNewPositionAfterDiffusion(previousPosition, diffusion_distance);
   }
   if (isnan(new_G4_particle_position[2]))
   {
-    // G4cout << "square(diffusion_distance) : " << square(diffusion_distance) << G4endl;
-    // G4cout << "square(x2-x1) : " << square(x2-x1) << G4endl;
-    // G4cout << "square(y2-y1) : " << square(y2-y1) << G4endl;
     GenerateNewPositionAfterDiffusion(previousPosition, diffusion_distance);
   }
-  // G4cout << "Check distance entre positions :" << sqrt(square(x2-x1)+square(y2-y1)+square(z2-z1)) << G4endl;
 
   Point_3 new_CGAL_particle_position = Utils::myCGAL::to_CPOP(new_G4_particle_position);
 
@@ -473,28 +449,12 @@ G4ThreeVector PGA_impl::GenerateNewPositionAfterDiffusion(G4ThreeVector previous
 
   if (cell && cell->hasIn(new_CGAL_particle_position))
    {
-   //G4cout<< "cell->hasIn(edep_pos)" << G4endl;
-   // G4cout << "\n need to generate a new position \n" << G4endl;
    nb_essais_diffusion+=1;
-   // G4cout << "\n nb_essais_diffusion \n" << nb_essais_diffusion << G4endl;
    GenerateNewPositionAfterDiffusion(previousPosition, diffusion_distance);
    }
   else
     {//G4cout<< "No hasIn" << G4endl;
     }
-
-
-  // if (findCell(new_CGAL_particle_position))
-  // {G4cout << "\n need to generate a new position \n" << G4endl;
-  //  nb_essais_diffusion+=1;
-  //  G4cout << "\n nb_essais_diffusion \n" << nb_essais_diffusion << G4endl;
-  //  GenerateNewPositionAfterDiffusion(previousPosition, diffusion_distance);}
-
-  // G4cout << "\n newPosition : " << new_G4_particle_position*1000 << G4endl;
-  //
-  // G4cout << "\n newPosition in G4 unit : " << new_G4_particle_position << G4endl;
-  //
-  // G4cout << "\n distance between both previous and new positions : " << sqrt(pow(previousPosition[0]-new_G4_particle_position[0],2) + pow(previousPosition[1]-new_G4_particle_position[1],2) + pow(previousPosition[2]-new_G4_particle_position[2],2))*1000 << G4endl;
 
   assert(sqrt(pow(previousPosition[0]-new_G4_particle_position[0],2) + pow(previousPosition[1]-new_G4_particle_position[1],2) + pow(previousPosition[2]-new_G4_particle_position[2],2))*1000 == diffusion_distance);
 

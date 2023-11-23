@@ -43,11 +43,8 @@ private:
     std::unique_ptr<G4UIcmdWith3Vector> cell_Labeling_cmd_;
     /// \brief Set the number of nanoparticle in the population
     std::unique_ptr<G4UIcmdWithAnInteger> only_one_position_for_all_particles_on_a_cell_cmd_;
-
-    // double emission_in_membrane_;
-    // double emission_in_nucleus_;
-    // double emission_in_nucleus_membrane_;
-    // double emission_cytoplasm_;
+    /// \brief Define the choice of lognormal distribution for particles in cells
+    std::unique_ptr<G4UIcommand> log_normal_distrib_cmd_;
 
 };
 

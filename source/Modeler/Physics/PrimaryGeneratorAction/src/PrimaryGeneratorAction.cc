@@ -10,6 +10,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(PGA_impl &pga_impl)
 }
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
+    // pga_impl_->setNumberOfParticles(10);
     pga_impl_->GeneratePrimaries(event);
 }
 

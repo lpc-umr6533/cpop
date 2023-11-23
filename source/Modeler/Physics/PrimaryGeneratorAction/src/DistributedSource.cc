@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <vector>
-
+#include <cmath>
 
 
 namespace cpop {
@@ -117,29 +117,66 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
 
    int max_nb_nano_per_cell[cells_in_region_size];
 
-   int mean_ppc = 5;
+   std::vector<float> randomNumbers(cells_in_region_size);
 
-   if (index_log_normal_distribution == 1)
-      { number_nano = 0;
-        for(int ind_cell = 0 ; ind_cell < cells_in_region_size; ++ind_cell)
+   if (cells_in_region_size > 0)
+   {
+     if (is_log_norm_distribution)
         {
-          G4float test_var = inverse_cdf_log_normal_distribution(dis(gen), 0.5, mean_ppc);
-          G4cout << "inverse_cdf_log_normal_distribution(dis(gen), 0.5, mean_ppc) : " << inverse_cdf_log_normal_distribution(dis(gen), 0.5, mean_ppc) << G4endl;
-          max_nb_nano_per_cell[ind_cell] =
-              test_var;
-          number_nano = number_nano + max_nb_nano_per_cell[ind_cell] ;
+          G4cout << "In log normal" << G4endl;
+          for (int i = 0; i < cells_in_region_size; ++i)
+          {
+             randomNumbers[i] = dis(gen);
+          }
+
+          vector<int> log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
+          while ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) != mean_ppc)
+           {
+             for (int i = 0; i < cells_in_region_size; ++i)
+             {
+                randomNumbers[i] = dis(gen);
+             }
+             log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
+           }
+
+           if ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size != number_nano)
+           {
+               std::stringstream error_msg;
+               error_msg << "Expected number of event = MeanNbPartPerCell * NbCells \n";
+               error_msg << "Change number of events to" << ": " << (sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size << '\n';
+               throw std::runtime_error(error_msg.str());
+           }
+          std::copy(log_norm_distrib_particles.begin(), log_norm_distrib_particles.end(), max_nb_nano_per_cell);
         }
-      }
-   else
-      {memset(max_nb_nano_per_cell, max_number_nanoparticle_per_cell,
-             cells_in_region_size*sizeof(int));}
+     else
+        {memset(max_nb_nano_per_cell, max_number_nanoparticle_per_cell,
+               cells_in_region_size*sizeof(int));}
+    }
 
-   G4cout << "number total particules = " << number_nano << G4endl;
-   if (region.name() == "Intermediary")
-     {   G4cout << "nb moyen particules / cellules = " << number_nano/410 << G4endl;}
-   if (region.name() == "External")
-     {   G4cout << "nb moyen particules / cellules = " << number_nano/2659 << G4endl;}
 
+  //  if (cells_in_region_size > 0)
+  //  {
+  //    while ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) != mean_ppc)
+  //     {
+  //       for (int i = 0; i < cells_in_region_size; ++i)
+  //       {
+  //          randomNumbers[i] = dis(gen);
+  //       }
+  //       log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
+  //     }
+  //
+  //     G4cout << "test 2: " << ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size == number_nano) << G4endl;
+  //
+  //     if ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size != number_nano) {
+  //         std::stringstream error_msg;
+  //
+  //         error_msg << "Expected number of event = MeanNbPartPerCell * NbCells \n";
+  //         error_msg << "Change number of events to" << ": " << (sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size << '\n';
+  //
+  //         throw std::runtime_error(error_msg.str());
+  //     }
+  //
+  // }
 
    // Particules are distributed on cells following :
    // - the % of labeled cells
@@ -331,6 +368,20 @@ void DistributedSource::setCell_Labeling_Percentage_intermediary(double cell_lab
 void DistributedSource::setCell_Labeling_Percentage_external(double cell_labeling_percentage_arg)
 {
   cell_labeling_percentage_external_ = cell_labeling_percentage_arg/100;
+}
+
+vector<int> DistributedSource::inverse_cdf_log_normal_distribution(const vector<float>& u,
+                                                float shape_param, float mean_output_value)
+{
+    vector<int> results;
+
+    for (float i : u)
+    {
+        float result = exp(boost::math::erf_inv(2 * i - 1) * shape_param * sqrt(2) +
+                                log(mean_output_value) - 0.5 * pow(shape_param, 2));
+        results.push_back(round(result));
+    }
+    return results;
 }
 
 

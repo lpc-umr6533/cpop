@@ -134,14 +134,33 @@ public:
 
     int only_one_position_for_all_particles_on_a_cell = 0;
 
-    int index_log_normal_distribution = 0;
+    bool is_log_norm_distribution = false;
+    int mean_ppc;
+    float shape_factor;
 
     std::vector<double> organelle_weight_vector;
 
-    G4float inverse_cdf_log_normal_distribution(G4float u, G4float shape_param,
-    G4float mean_output_value)
-    {return exp(boost::math::erf_inv(2 * u - 1) * shape_param * sqrt(2) + log(mean_output_value) - 0.5 * pow(shape_param,2));}
+    vector<int> inverse_cdf_log_normal_distribution(const vector<float>& u, float shape_param, float mean_output_value);
 
+    int nb_elements_array(const vector<int>& u)
+    {
+      int nb_elements = 0;
+      for (float i : u)
+      {
+        nb_elements += 1;
+      }
+      return nb_elements;
+    }
+
+    double sum_array(const vector<int>& u)
+    {
+      int sum = 0;
+      for (float i : u)
+      {
+        sum += i;
+      }
+      return static_cast<double>(sum);
+    }
 
 private:
     bool is_initialized_ = false;

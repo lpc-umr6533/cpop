@@ -5,6 +5,7 @@
 #include "G4UIparameter.hh"
 
 #include "DistributedSource.hh"
+#include "G4Tokenizer.hh"
 
 namespace cpop {
 
@@ -69,6 +70,16 @@ void DistributedSourceMessenger::BuildCommands(G4String base)
     only_one_position_for_all_particles_on_a_cell_cmd_->SetParameterName("Only_one_position_for_all_particles_on_a_cell", false);
     only_one_position_for_all_particles_on_a_cell_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
 
+    cmd_base = base + "/log_normal_distribution";
+    log_normal_distrib_cmd_ = std::make_unique<G4UIcommand>(cmd_base, this);
+    log_normal_distrib_cmd_->SetGuidance("log_normal_distribution");
+    G4UIparameter* choice_distrib = new G4UIparameter("bool_choice", 'b', true);
+    log_normal_distrib_cmd_->SetParameter(choice_distrib);
+    G4UIparameter* mean_number_particle = new G4UIparameter("mean_number_particle", 'i', true);
+    log_normal_distrib_cmd_->SetParameter(mean_number_particle);
+    G4UIparameter* shape_factor = new G4UIparameter("shape_factor", 'd', true);
+    log_normal_distrib_cmd_->SetParameter(shape_factor);
+    log_normal_distrib_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 void DistributedSourceMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
@@ -125,6 +136,16 @@ void DistributedSourceMessenger::SetNewValue(G4UIcommand *command, G4String newV
    }
    else if (command == only_one_position_for_all_particles_on_a_cell_cmd_.get()) {
      source_->only_one_position_for_all_particles_on_a_cell = only_one_position_for_all_particles_on_a_cell_cmd_->GetNewIntValue(newValue) ;
+   }
+   else if (command == log_normal_distrib_cmd_.get()){
+     G4Tokenizer next(newValue);
+     bool is_log_normal_distrib = next();
+     int mean_nb_particles_per_cell = StoI(next());
+     double shape_factor = StoD(next());
+
+     source_->is_log_norm_distribution = is_log_normal_distrib;
+     source_->mean_ppc = mean_nb_particles_per_cell;
+     source_->shape_factor = shape_factor;
    }
 }
 
