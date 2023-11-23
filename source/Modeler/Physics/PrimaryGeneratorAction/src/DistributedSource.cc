@@ -154,30 +154,6 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
     }
 
 
-  //  if (cells_in_region_size > 0)
-  //  {
-  //    while ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) != mean_ppc)
-  //     {
-  //       for (int i = 0; i < cells_in_region_size; ++i)
-  //       {
-  //          randomNumbers[i] = dis(gen);
-  //       }
-  //       log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
-  //     }
-  //
-  //     G4cout << "test 2: " << ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size == number_nano) << G4endl;
-  //
-  //     if ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size != number_nano) {
-  //         std::stringstream error_msg;
-  //
-  //         error_msg << "Expected number of event = MeanNbPartPerCell * NbCells \n";
-  //         error_msg << "Change number of events to" << ": " << (sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size << '\n';
-  //
-  //         throw std::runtime_error(error_msg.str());
-  //     }
-  //
-  // }
-
    // Particules are distributed on cells following :
    // - the % of labeled cells
    // - the max number of particules per cell
