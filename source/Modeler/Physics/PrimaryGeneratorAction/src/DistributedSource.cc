@@ -346,19 +346,42 @@ void DistributedSource::setCell_Labeling_Percentage_external(double cell_labelin
   cell_labeling_percentage_external_ = cell_labeling_percentage_arg/100;
 }
 
+// vector<int> DistributedSource::inverse_cdf_log_normal_distribution(const vector<float>& u,
+//                                                 float shape_param, float mean_output_value)
+// {
+//     vector<int> results;
+//
+//     for (float i : u)
+//     {
+//         float result = exp(boost::math::erf_inv(2 * i - 1) * shape_param * sqrt(2) +
+//                                 log(mean_output_value) - 0.5 * pow(shape_param, 2));
+//         results.push_back(round(result));
+//     }
+//     return results;
+// }
+
 vector<int> DistributedSource::inverse_cdf_log_normal_distribution(const vector<float>& u,
                                                 float shape_param, float mean_output_value)
-{
+{ // !!! Overflow error can crash the simulation. It comes from erf_inv. TO DO: find the source of error.
     vector<int> results;
+    float epsilon = std::numeric_limits<float>::epsilon();
 
     for (float i : u)
     {
-        float result = exp(boost::math::erf_inv(2 * i - 1) * shape_param * sqrt(2) +
-                                log(mean_output_value) - 0.5 * pow(shape_param, 2));
-        results.push_back(round(result));
+      float _arg_erf_inv = 2 * i - 1;
+      if (_arg_erf_inv >= 1.0)
+      {
+        _arg_erf_inv = 1.0 - epsilon;
+      }
+      if (_arg_erf_inv <= -1.0)
+      {
+        _arg_erf_inv = -1.0 + epsilon;
+      }
+      float result = exp(boost::math::erf_inv(_arg_erf_inv) * shape_param * sqrt(2) +
+                              log(mean_output_value) - 0.5 * pow(shape_param, 2));
+      results.push_back(round(result));
     }
     return results;
 }
-
 
 }
