@@ -107,7 +107,7 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
 
    G4cout << "Max number nano per cell : " << max_number_nanoparticle_per_cell << G4endl;
 
-   if(max_number_nanoparticle_per_cell*cells_in_region.size() < number_nano) {
+   if(max_number_nanoparticle_per_cell*cells_in_region.size()*cell_labeling_percentage < number_nano) {
         throw std::invalid_argument("Number of particles > Max number of particles per cell * Number of cells."
                         "Maybe macro command is missing : /cpop/source/gadolinium/maxSourcesPerCell");
     }
@@ -362,7 +362,7 @@ void DistributedSource::setCell_Labeling_Percentage_external(double cell_labelin
 
 vector<int> DistributedSource::inverse_cdf_log_normal_distribution(const vector<float>& u,
                                                 float shape_param, float mean_output_value)
-{ // !!! Overflow error can crash the simulation. It comes from erf_inv. TO DO: find the source of error.
+{
     vector<int> results;
     float epsilon = std::numeric_limits<float>::epsilon();
 
