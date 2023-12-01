@@ -124,6 +124,12 @@ public:
       ((current_cell_->second).position_in_cell_).erase(((current_cell_->second).position_in_cell_).begin());
     }
 
+    vector<const Settings::nCell::t_Cell_3 *> chooseLabeledCells(float cell_labeling_percentage,
+                                                                              const SpheroidRegion &region);
+
+    vector<int> applyMethodDistributionNbParticlesInCells(vector<const Settings::nCell::t_Cell_3 *> labeled_cells, int number_nano,
+                                                    int max_number_nanoparticle_per_cell);
+
     /// \brief Nanoparticle repartition in each cell
     std::unordered_map<const Settings::nCell::t_Cell_3*, NanoInfo> cell_nano_;
 
@@ -139,6 +145,8 @@ public:
     float shape_factor;
 
     std::vector<double> organelle_weight_vector;
+    
+    vector<int> max_nb_part_per_cell;
 
     vector<int> inverse_cdf_log_normal_distribution(const vector<float>& u, float shape_param, float mean_output_value);
 

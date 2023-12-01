@@ -90,8 +90,6 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
 
     int cells_in_region_size = cells_in_region.size();
 
-    std::vector<int> labeled_cells_id;
-
     int max_number_nanoparticle_per_cell = 1000000;
     double cell_labeling_percentage;
 
@@ -105,130 +103,57 @@ void DistributedSource::distribute(int number_nano, const SpheroidRegion &region
       {max_number_nanoparticle_per_cell = max_number_nanoparticle_per_cell_external;
        cell_labeling_percentage = cell_labeling_percentage_external_;}
 
-   G4cout << "Max number nano per cell : " << max_number_nanoparticle_per_cell << G4endl;
+   vector<const Settings::nCell::t_Cell_3 *> labeled_cells = chooseLabeledCells(cell_labeling_percentage, region);
 
    if(max_number_nanoparticle_per_cell*cells_in_region.size()*cell_labeling_percentage < number_nano) {
-        throw std::invalid_argument("Number of particles > Max number of particles per cell * Number of cells."
-                        "Maybe macro command is missing : /cpop/source/gadolinium/maxSourcesPerCell");
+        throw std::invalid_argument("Number of particles > Max number of particles per cell * Number of cells labeled.");
     }
 
    int nb_nano_per_cell[cells_in_region_size];
    memset(nb_nano_per_cell, 0, cells_in_region_size*sizeof(int));
 
-   int max_nb_nano_per_cell[cells_in_region_size];
-
    std::vector<float> randomNumbers(cells_in_region_size);
 
-   if (cells_in_region_size > 0)
+   if (labeled_cells.size() >0)
    {
-     if (is_log_norm_distribution)
-        {
-          G4cout << "In log normal" << G4endl;
-          for (int i = 0; i < cells_in_region_size; ++i)
-          {
-             randomNumbers[i] = dis(gen);
-          }
-
-          vector<int> log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
-          while ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) != mean_ppc)
-           {
-             for (int i = 0; i < cells_in_region_size; ++i)
-             {
-                randomNumbers[i] = dis(gen);
-             }
-             log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
-           }
-
-           if ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size != number_nano)
-           {
-               std::stringstream error_msg;
-               error_msg << "Expected number of event = MeanNbPartPerCell * NbCells \n";
-               error_msg << "Change number of events to" << ": " << (sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * cells_in_region_size << '\n';
-               throw std::runtime_error(error_msg.str());
-           }
-          std::copy(log_norm_distrib_particles.begin(), log_norm_distrib_particles.end(), max_nb_nano_per_cell);
-        }
-     else
-        {memset(max_nb_nano_per_cell, max_number_nanoparticle_per_cell,
-               cells_in_region_size*sizeof(int));}
-    }
-
-
-   // Particules are distributed on cells following :
-   // - the % of labeled cells
-   // - the max number of particules per cell
+   max_nb_part_per_cell = applyMethodDistributionNbParticlesInCells(labeled_cells, number_nano, max_number_nanoparticle_per_cell);
+   }
+   // Particules are distributed on cells following the max number of particules per cell
 
     int indexCell = 0;
     for(int i = 0 ; i < number_nano; ++i)
     {
-      if((labeled_cells_id.size())<(cell_labeling_percentage*cells_in_region_size))
+      indexCell = rand() % (labeled_cells.size());
+
+      while (nb_nano_per_cell[indexCell]>=max_nb_part_per_cell[indexCell])
+       {indexCell = rand() % (labeled_cells.size());}
+
+      const Settings::nCell::t_Cell_3 * selected_cell = labeled_cells[indexCell];
+
+      auto already_selected = cell_nano_.find(selected_cell);
+      if (already_selected == cell_nano_.end())
       {
-        //Labeled cells are chosen randomly in the region
-        indexCell = RandomEngineManager::getInstance()->randi(0, cells_in_region_size -1);
+        if (this->population()->verbose_level() > 0)
+            std::cout << "  Inserting nanoparticle in cell with id " << selected_cell->getID()  <<'\n';
 
-        while (nb_nano_per_cell[indexCell]>=max_nb_nano_per_cell[indexCell])
-         {indexCell = RandomEngineManager::getInstance()->randi(0, cells_in_region_size -1);}
-
-        labeled_cells_id.push_back(indexCell);
-
-        const Settings::nCell::t_Cell_3 * selected_cell = cells_in_region[indexCell];
-
-        auto already_selected = cell_nano_.find(selected_cell);
-        if (already_selected == cell_nano_.end())
-        {
-          if (this->population()->verbose_level() > 0)
-              std::cout << " Inserting nanoparticle in cell with id " << selected_cell->getID()  <<'\n';
-
-          cell_nano_.insert({selected_cell, {selected_cell, 1, number_particles_per_source_, *organelle_weight_} });
-          nb_nano_per_cell[indexCell] +=1 ;
-        }
-        else
-        {
-          if (this->population()->verbose_level() > 0)
-              std::cout << "  Adding nanoparticle to cell with id  " << selected_cell->getID() << '\n';
-          already_selected->second.addDistributedSource();
-          if (only_one_position_for_all_particles_on_a_cell == 0)
-          {already_selected->second.AddParticlePosition(*organelle_weight_);}
-          nb_nano_per_cell[indexCell] +=1 ;
-        }
+        cell_nano_.insert({selected_cell, {selected_cell, 1, number_particles_per_source_, *organelle_weight_} });
+        nb_nano_per_cell[indexCell] +=1 ;
       }
       else
       {
-        //When all cells are labeled, particles are added onmy in those cells
-        indexCell = rand() % (labeled_cells_id.size());
-
-        while (nb_nano_per_cell[indexCell]>=max_nb_nano_per_cell[indexCell])
-         {indexCell = rand() % (labeled_cells_id.size());}
-
-        const Settings::nCell::t_Cell_3 * selected_cell = cells_in_region[indexCell];
-
-        auto already_selected = cell_nano_.find(selected_cell);
-        if (already_selected == cell_nano_.end())
-        {
-          if (this->population()->verbose_level() > 0)
-              std::cout << "  Inserting nanoparticle in cell with id " << selected_cell->getID()  <<'\n';
-
-          cell_nano_.insert({selected_cell, {selected_cell, 1, number_particles_per_source_, *organelle_weight_} });
-          nb_nano_per_cell[indexCell] +=1 ;
-        }
-        else
-        {
-          if (this->population()->verbose_level() > 0)
-              std::cout << "  Adding nanoparticle to cell with id  " << selected_cell->getID() << '\n';
-          already_selected->second.addDistributedSource();
-          if (only_one_position_for_all_particles_on_a_cell == 0)
-          {already_selected->second.AddParticlePosition(*organelle_weight_);}
-          nb_nano_per_cell[indexCell] +=1 ;
-        }
-
+        if (this->population()->verbose_level() > 0)
+            std::cout << "  Adding nanoparticle to cell with id  " << selected_cell->getID() << '\n';
+        already_selected->second.addDistributedSource();
+        if (only_one_position_for_all_particles_on_a_cell == 0)
+        {already_selected->second.AddParticlePosition(*organelle_weight_);}
+        nb_nano_per_cell[indexCell] +=1 ;
       }
-
     }
 
-    std::cout << " Number of labeled cells in region " << region.name() << " = " << labeled_cells_id.size()  <<'\n';
+    std::cout << " Number of labeled cells in region " << region.name() << " = " << labeled_cells.size()  <<'\n';
 
     double cells_in_region_size_double = cells_in_region_size;
-    double labeled_cells_size_double = labeled_cells_id.size();
+    double labeled_cells_size_double = labeled_cells.size();
     if (cells_in_region_size!=0)
     {std::cout << " Labeled cells percentage in region " << region.name() << " = " << (labeled_cells_size_double/cells_in_region_size_double)*100 << "%" <<'\n';}
     else
@@ -346,20 +271,6 @@ void DistributedSource::setCell_Labeling_Percentage_external(double cell_labelin
   cell_labeling_percentage_external_ = cell_labeling_percentage_arg/100;
 }
 
-// vector<int> DistributedSource::inverse_cdf_log_normal_distribution(const vector<float>& u,
-//                                                 float shape_param, float mean_output_value)
-// {
-//     vector<int> results;
-//
-//     for (float i : u)
-//     {
-//         float result = exp(boost::math::erf_inv(2 * i - 1) * shape_param * sqrt(2) +
-//                                 log(mean_output_value) - 0.5 * pow(shape_param, 2));
-//         results.push_back(round(result));
-//     }
-//     return results;
-// }
-
 vector<int> DistributedSource::inverse_cdf_log_normal_distribution(const vector<float>& u,
                                                 float shape_param, float mean_output_value)
 {
@@ -382,6 +293,67 @@ vector<int> DistributedSource::inverse_cdf_log_normal_distribution(const vector<
       results.push_back(round(result));
     }
     return results;
+}
+
+vector<const Settings::nCell::t_Cell_3 *> DistributedSource::chooseLabeledCells(float cell_labeling_percentage,
+                                                                          const SpheroidRegion &region)
+{
+  if ((cell_labeling_percentage != 1.0) and (cell_labeling_percentage != 0.0))
+  {
+    int cells_in_region_size = region.cells_in_region().size();
+    vector<const Settings::nCell::t_Cell_3 *> labeled_cells = {};
+    vector<int> available_cells_id(cells_in_region_size);
+    iota(available_cells_id.begin(), available_cells_id.end(), 1); //contains 1 to available_cells_id.size()
+    for(int i = 0 ; i < int(cell_labeling_percentage * cells_in_region_size); ++i)
+      {
+        int indexCell = available_cells_id[rand() % available_cells_id.size()] - 1;
+        labeled_cells.push_back(region.cells_in_region()[indexCell]);
+        remove(available_cells_id.begin(),available_cells_id.end(),indexCell);
+      }
+
+    return labeled_cells;
+  }
+  return region.cells_in_region();
+}
+
+vector<int> DistributedSource::applyMethodDistributionNbParticlesInCells(vector<const Settings::nCell::t_Cell_3 *> labeled_cells,
+                                                                  int number_nano, int max_number_nanoparticle_per_cell)
+{
+  int labeled_cells_size = labeled_cells.size(); //Should be equal to labeling_percentage * nb_cells
+  std::random_device rd;  // Will be used to obtain a seed for the random number engine
+  std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+  std::uniform_real_distribution<> dis(0.0, 1.0);
+  if (is_log_norm_distribution)
+     {
+       vector<int> log_norm_distrib_particles;
+       std::vector<float> randomNumbers(labeled_cells_size);
+       for (int i = 0; i < labeled_cells_size; ++i)
+       {
+          randomNumbers[i] = dis(gen);
+       }
+
+       log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
+       while ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) != mean_ppc)
+        {
+          for (int i = 0; i < labeled_cells_size; ++i)
+          {
+             randomNumbers[i] = dis(gen);
+          }
+          log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
+        }
+
+        if ((sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * labeled_cells_size != number_nano)
+        {
+            std::stringstream error_msg;
+            error_msg << "Expected number of event = MeanNbPartPerCell * NbCells \n";
+            error_msg << "Change number of events to" << ": " << (sum_array(log_norm_distrib_particles)/nb_elements_array(log_norm_distrib_particles)) * labeled_cells_size << '\n';
+            throw std::runtime_error(error_msg.str());
+        }
+        return log_norm_distrib_particles;
+     }
+  else
+     {  vector<int> uniform_distrib_particles = std::vector<int>(labeled_cells_size, max_number_nanoparticle_per_cell);
+        return uniform_distrib_particles;}
 }
 
 }
