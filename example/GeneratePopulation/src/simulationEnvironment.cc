@@ -75,6 +75,7 @@ void SimulationEnvironment::setCellProperties(double minRadiusNucleus, double ma
 	CellVariableAttribute<double> weights(1.0*weightSystem, 1.0*weightSystem);
 	// membrane radius range
 	CellVariableAttribute<double> membraneRadius(minRadiusMembrane*metricSystem, maxRadiusMembrane*metricSystem);
+	maximum_radius_cell = maxRadiusMembrane;
 	// nucleus radius range
 	CellVariableAttribute<double> nucleusRadius(minRadiusNucleus*metricSystem, maxRadiusNucleus*metricSystem);
 	// cytoplasm material
@@ -110,7 +111,7 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 	/// 3.3 optional: redistribute in grid
 	if (is_distributed_in_grid)
 	{
-	t_Grid_3* grid = Utils::nGrid::getOptimalGrid(cellProperties, simulatedEnv, 0);
+	t_Grid_3* grid = Utils::nGrid::getOptimalGrid(cellProperties, simulatedEnv, 2*maximum_radius_cell * metricSystem);
 	assert(simulatedEnv);
 	assert(simulatedEnv->getSpatialDelimitation());
 	grid->applySpatialDelimitation(simulatedEnv->getSpatialDelimitation());

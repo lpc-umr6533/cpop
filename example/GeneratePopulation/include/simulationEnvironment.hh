@@ -39,6 +39,7 @@ class SimulationEnvironment {
 	double metricSystem;
 	// Cell properties
 	RoundCellProperties* cellProperties;
+	double maximum_radius_cell;
 	// Spheroid properties
 	t_Environment_3* env;
 	t_SimulatedSubEnv_3* simulatedEnv;
