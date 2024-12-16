@@ -134,6 +134,7 @@ Spheroid<Cell_type>::Spheroid(
 	useAGrid(pUseGrid),
 	gridWidth(pGridWidth)
 {
+	G4cout << "init spheroid" << G4endl;
 	if(!init(pMother))
 	{
 		InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, "Failed initialization", "Spheroid");

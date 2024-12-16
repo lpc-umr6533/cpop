@@ -1,5 +1,5 @@
 /*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
+Copyright (C): Henri Payno, Axel Delsol,
 Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
 
 This software is distributed under the terms
@@ -52,7 +52,7 @@ public:
 	/// \brief will lock the element
 	void lock(t_GridElement* pElmt);
 	/// \brief will make the grid match with the spatial delimitation. Each center of the grid must be inside the spatial delimitations.
-	/// Otherwise we will lock the GridElement. 
+	/// Otherwise we will lock the GridElement.
 	/// After this operation each GridElement unlock has his center inside of the given spatial delimitations.
 	void applySpatialDelimitation(const SpatialDelimitation<Kernel, Point, Vector>* );
 
@@ -74,7 +74,7 @@ private:
 	vector<t_GridElement*> grid;				///< \brief the grid
 	vector<unsigned int> gridDimensions;		///< \brief the grid dimension on each axis (nb element/cell )
 	set<unsigned int> unlockedElements;			///< \brief the grid unlocked elements id
-	
+
 	GridElementTraits<Kernel> elementTraits;	///< \brief the traits of the grid elements.
 };
 
@@ -172,7 +172,7 @@ void Grid<Kernel, Point, Vector>::releaseAllElmt()
 	for(itElmt = grid.begin(); itElmt != grid.end(); ++itElmt)
 	{
 		unlock(*itElmt);
-	} 
+	}
 }
 
 /// \cond
@@ -200,9 +200,9 @@ void Grid<Kernel, Point, Vector>::distributePosition(IT pITBegin, IT pITEnd, Gri
 	}else
 	{
 		// all agent given haven't a position into the grid
-		InformationSystemManager::getInstance()->Message(	
-			InformationSystemManager::CANT_PROCESS_MES, 
-			"grid does not contained enought element to attribute a position to all agent, some will be setted at origin", 
+		InformationSystemManager::getInstance()->Message(
+			InformationSystemManager::CANT_PROCESS_MES,
+			"grid does not contained enought element to attribute a position to all agent, some will be setted at origin",
 			"Grid");
 	}
 }
@@ -221,7 +221,7 @@ void Grid<Kernel, Point, Vector>::distributePosition(t_Spatialable_Agent* agt, G
 	/// if no element, no set of position
 	if(element == NULL)
 	{
-		InformationSystemManager::getInstance()->Message(	
+		InformationSystemManager::getInstance()->Message(
 			InformationSystemManager::CANT_PROCESS_MES,
 			"no element remaining unlocked, avoid setting position",
 			"Grid");
@@ -239,8 +239,8 @@ template <typename Kernel, typename Point, typename Vector>
 void Grid<Kernel, Point, Vector>::constructGrid()
 {
 	InformationSystemManager::getInstance()->Message(
-		InformationSystemManager::CANT_PROCESS_MES, 
-		"Failed to construct grid with this templates parameters", 
+		InformationSystemManager::CANT_PROCESS_MES,
+		"Failed to construct grid with this templates parameters",
 		"Grid");
 }
 
@@ -279,10 +279,10 @@ void Grid<Kernel, Point, Vector>::applySpatialDelimitation(const SpatialDelimita
 		lock(grid[toRemove[iToRmv]]);
 	}
 
-	if(DEBUG_GRID)
-	{
-		cout << "after applying spatial delimitation : nb unlock element = " << unlockedElements.size() << endl;
-	}
+	// if(DEBUG_GRID)
+	// {
+	// 	cout << "after applying spatial delimitation : nb unlock element = " << unlockedElements.size() << endl;
+	// }
 }
 
 #endif // GRID_HH

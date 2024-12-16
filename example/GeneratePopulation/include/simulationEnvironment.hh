@@ -1,5 +1,5 @@
 /*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
+Copyright (C): Henri Payno, Axel Delsol,
 Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
 
 This software is distributed under the terms
@@ -9,7 +9,7 @@ See LICENSE.md for further details
 #ifndef SIMULATION__ENVIRONMENT__H
 #define SIMULATION__ENVIRONMENT__H
 
-#include <algorithm> 
+#include <algorithm>
 #include <string>
 
 #include <CellFactory.hh>			// needed to call the mesh factory, creating the mesh
@@ -46,33 +46,33 @@ class SimulationEnvironment {
 	int numberOfFacetPerCell;
 	// Simulation properties
 	MASPlatform* platform;
-	
+
 	G4Material* parseMaterial(const char* material);
-	
+
 	public:
 	SimulationEnvironment();
 	~SimulationEnvironment();
-	
+
 	// Setter used by the xxxSection class
 	void setMetricSystem(const std::string& metric);
 	void setCellProperties(double minRadiusNucleus, double maxRadiusNucleus,
 						   double minRadiusMembrane, double maxRadiusMembrane,
 						   const std::string& cytoplasmMaterials,
 						   const std::string& nucleusMaterials);
-	void setSpheroidProperties(double internalRadius, double externalRadius, int nbCell);
+	void setSpheroidProperties(double internalRadius, double externalRadius, int nbCell, bool is_distributed_in_grid);
 	void setMeshProperties(int nOfFacetPerCell);
 	void setForceProperties(double ratioToStableLength, double rigidity);
-	void setSimulationProperties(double duration, int numberOfAgentToExecute, 
+	void setSimulationProperties(double duration, int numberOfAgentToExecute,
 								 double displacementThreshold,
 								 double stepDuration);
-								 
+
 	// start the simulation
 	void startSimulation();
-						
+
 	// save the population
 	void savePopulation(const char* filename);
-	
-	// export to off format to visualise the population 		 
+
+	// export to off format to visualise the population
 	void exportToVis(const char* filename);
 };
 

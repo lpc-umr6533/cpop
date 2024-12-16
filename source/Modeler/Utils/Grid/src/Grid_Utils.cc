@@ -19,9 +19,6 @@ namespace Utils
 		/// \return t_Grif_3* The grid we have compute according toparameters given
 		Settings::nGrid::t_Grid_3* getOptimalGrid(const CellProperties* pCellProp, const Settings::nEnvironment::t_SimulatedSubEnv_3* pSimuSubEnv, double pGridWidth)
 		{
-
-			G4cout << "\n\n\n Entrée dans Grid_Utils \n\n\n" << G4endl;
-
 			// define grid element size
 			double gridElementXLength = 1.;
 			double gridElementYLength = 1.;

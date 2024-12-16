@@ -73,7 +73,6 @@ int main(int argc, char** argv) {
     reader->addSection<ForceSection>();
     reader->addSection<SimulationSection>();
 
-
 	// Parse the configuration file and start the simulation
 	// SimulationEnvironment contains everything required to create a cell population
 	// (documentation in simulationEnvironment.hh and simulationEnvironment.cc)

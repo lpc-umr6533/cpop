@@ -8,8 +8,10 @@ See LICENSE.md for further details
 ----------------------*/
 #include "simulationEnvironment.hh"
 
-SimulationEnvironment::SimulationEnvironment() {
+#include "Grid.hh"
+#include "Spheroid.hh"
 
+SimulationEnvironment::SimulationEnvironment() {
 	// metric system
 	metricSystem = 1.0;
 
@@ -84,7 +86,7 @@ void SimulationEnvironment::setCellProperties(double minRadiusNucleus, double ma
 
 }
 
-void SimulationEnvironment::setSpheroidProperties(double internalRadius, double externalRadius, int nbCell) {
+void SimulationEnvironment::setSpheroidProperties(double internalRadius, double externalRadius, int nbCell, bool is_distributed_in_grid) {
 	// setup the main environment
 	env = new t_Environment_3("main Environment");
 	Point_3 center(0., 0., 0.);
@@ -98,11 +100,24 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 	RandomEngineManager::getInstance()->setEngine(&defaultEngine);
 
 	std::map<LifeCycles::LifeCycle, double> rates = Utils::generateUniformLifeCycle();
+
 	/// 3.1 get the distribution
 	ADistribution<double, Point_3, Vector_3>* distribution = DistributionFactory::getInstance()->getDistribution<double, Point_3, Vector_3>(Distribution::RANDOM);
 	/// 3.2 distribute
 	distribution->distribute(simulatedEnv, cellProperties, nbCell, rates);
 	delete distribution;
+
+	/// 3.3 optional: redistribute in grid
+	if (is_distributed_in_grid)
+	{
+	t_Grid_3* grid = Utils::nGrid::getOptimalGrid(cellProperties, simulatedEnv, 0);
+	assert(simulatedEnv);
+	assert(simulatedEnv->getSpatialDelimitation());
+	grid->applySpatialDelimitation(simulatedEnv->getSpatialDelimitation());
+	set<Agent*> agents = static_cast<Layer*>(simulatedEnv)->getAgents();
+	grid->distributePosition(agents.begin(), agents.end(), GEP_CENTER);
+	delete grid;
+  }
 }
 
 void SimulationEnvironment::setMeshProperties(int nOfFacetPerCell) {
