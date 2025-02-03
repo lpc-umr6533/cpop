@@ -68,7 +68,7 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     nb_essais_diffusion=0;
 
     // (distributed_source()->organelle_weight_vector).clear();
-      // 
+      //
       // particle_gun_->SetNumberOfParticles(10);
 
     // We do not need to check if source is nullptr because checkPrecondition() would have thrown an exception
@@ -144,9 +144,12 @@ void PGA_impl::writingInfoPrimariesTxt(G4ThreeVector position,
 {
   ofstream file(name_file, fstream::app);
   if (file.is_open())
-  {file << G4BestUnit(position, "Length") << " " << direction << " " <<
-   G4BestUnit(energy, "Energy")  << "\n";
-   file.close();}
+  //{file << G4BestUnit(position, "Length") << " " << direction << " " <<
+   //G4BestUnit(energy, "Energy")  << "\n";
+   //file.close();}
+   {file << G4BestUnit(position, "Length") << " " << direction << " " <<
+    current_cell_id  << "\n";
+    file.close();}
 }
 
 void PGA_impl::readInfoPrimariesTxt(int i, G4String name_file) {
