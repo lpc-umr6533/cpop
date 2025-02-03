@@ -72,12 +72,17 @@ public:
 
     void readInfoPrimariesTxt(int i, G4String name_file);
 
+    void readInfoPrimariesTxt_Hack(int i, G4String name_file);
+
     void setPositionsDirections(G4String name_file, G4String name_method);
+
+    void setPositions(G4String name_file);
 
     void SetTxtInfoPrimariesName_and_MethodName(G4String name_file, G4String name_method)
     {
       name_info_primaries_file = name_file;
       name_method_for_info_primaries = name_method;
+      read_input_position_file = true;
     }
 
     void energySpectraLithium7BNCT();
@@ -109,6 +114,8 @@ public:
     int current_cell_id;
 
     bool diffusion_bool;
+
+    bool read_input_position_file = false;
 
     G4int nb_essais_diffusion;
 

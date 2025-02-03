@@ -107,18 +107,24 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     }
 
     current_cell_id = distributed_source()->getID_OfCell();
+    // G4cout << "Current cell id: " << current_cell_id << G4endl;
 
    }
 
     direction = source->GetMomentum();
 
-    if (li7_BNCT_spectra)
-    {setPositionsDirections(name_info_primaries_file, name_method_for_info_primaries);}
+    // if (li7_BNCT_spectra)
+    // {setPositionsDirections(name_info_primaries_file, name_method_for_info_primaries);}
+
+    if (read_input_position_file)
+    {setPositions(name_info_primaries_file);}
     particle_gun_->SetParticlePosition(G4_particle_position);
 
     // Choose an energy
-    if (li7_BNCT_spectra)
-    {energySpectraLithium7BNCT();}
+    // if (li7_BNCT_spectra)
+    // {energySpectraLithium7BNCT();}
+
+
     particle_gun_->SetParticleEnergy(particleEnergy);
 
     // Generate a momentum direction
@@ -152,7 +158,7 @@ void PGA_impl::writingInfoPrimariesTxt(G4ThreeVector position,
     file.close();}
 }
 
-void PGA_impl::readInfoPrimariesTxt(int i, G4String name_file) {
+void PGA_impl::readInfoPrimariesTxt_Hack(int i, G4String name_file) {
     ifstream infile(name_file);
     string line;
 
@@ -165,6 +171,36 @@ void PGA_impl::readInfoPrimariesTxt(int i, G4String name_file) {
         }
     }
 
+  // parse the line and create the two vectors
+    istringstream parser(line);
+    double x, y, z;
+    string cell_id;
+    char delimiter_char;
+    string unit;
+    parser >> x >> y >> z >> unit >> cell_id;
+
+    if (unit.compare("um")==0)
+    {vec_position = G4ThreeVector(x * 0.001, y * 0.001, z * 0.001);}
+    else
+    {cerr << "Error: converts the values to um in the txt file. WIP: doing it in code" << endl;}
+
+    // G4cout << "vec_position: " << vec_position << G4endl;
+    // G4cout << "vec_direction: " << vec_direction << G4endl;
+    // G4cout << "energy_from_txt: " << energy_from_txt << G4endl;
+}
+
+
+void PGA_impl::readInfoPrimariesTxt(int i, G4String name_file) {
+    ifstream infile(name_file);
+    string line;
+    // read the ith line
+    for (int j = 0; j < i; j++) {
+        if (!getline(infile, line)) {
+            // error handling if i is greater than the number of lines in the file
+            cerr << "Error: the file does not have " << i << " lines." << endl;
+            return;
+        }
+    }
   // parse the line and create the two vectors
     istringstream parser(line);
     double x, y, z;
@@ -185,10 +221,6 @@ void PGA_impl::readInfoPrimariesTxt(int i, G4String name_file) {
     else
     {cerr << "Error: converts the values to um in the txt file. WIP: doing it in code" << endl;}
     vec_direction = G4ThreeVector(u, v, w);
-
-    // G4cout << "vec_position: " << vec_position << G4endl;
-    // G4cout << "vec_direction: " << vec_direction << G4endl;
-    // G4cout << "energy_from_txt: " << energy_from_txt << G4endl;
 }
 
 void PGA_impl::setPositionsDirections(G4String name_file, G4String name_method)
@@ -209,6 +241,14 @@ void PGA_impl::setPositionsDirections(G4String name_file, G4String name_method)
   }
   else
   {cerr << "Error: this method name is not correct" << endl;}
+}
+
+void PGA_impl::setPositions(G4String name_file)
+{
+  Source* source = selectSource();
+  readInfoPrimariesTxt_Hack(source->line_number_positions_directions_file,
+     name_file);
+  G4_particle_position = vec_position;
 }
 
 void PGA_impl::energySpectraLithium7BNCT()
