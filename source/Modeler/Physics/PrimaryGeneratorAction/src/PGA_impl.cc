@@ -117,11 +117,8 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     // {setPositionsDirections(name_info_primaries_file, name_method_for_info_primaries);}
 
     if (read_input_position_file)
-    {setPositions(name_info_primaries_file);
-    G4cout << "Position read" << G4endl;}
+    {setPositions(name_info_primaries_file);}
     particle_gun_->SetParticlePosition(G4_particle_position);
-
-    G4cout << "G4_particle_position: " << G4_particle_position << G4endl;
 
     // Choose an energy
     // if (li7_BNCT_spectra)
