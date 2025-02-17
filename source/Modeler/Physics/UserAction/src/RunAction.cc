@@ -85,9 +85,12 @@ void RunAction::EndOfRunAction(const G4Run * /*run*/)
        analysisManager->FillNtupleDColumn(8, fEdepc_tot[id_cell]);
        analysisManager->FillNtupleDColumn(9, fEdep_sph_tot);
        analysisManager->FillNtupleDColumn(10, 2);
+       /*G4cout << "Cell n°" << id_cell+3 << G4endl;
+       G4cout << "Edep nucleus: " << fEdepn_tot[id_cell] << G4endl;*/
 
 			analysisManager->AddNtupleRow();
 		}
+    //G4cout << "fEdep_sph_tot: " << fEdep_sph_tot << G4endl;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

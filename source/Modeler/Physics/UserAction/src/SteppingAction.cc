@@ -92,8 +92,11 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
     //   G4cout << "Ek" << preStep->GetKineticEnergy()/CLHEP::keV << G4endl;
     // }
 
-    if (step->IsFirstStepInVolume() and (track->GetParentID() == 0) and ((fEventAction->compteur_first_appearance)==0) )
+    if (step->IsFirstStepInVolume() and (track->GetParentID() == 0) and ((fEventAction->compteur_first_appearance)==0))
     {
+      // G4cout << "First position: " << preStepPoint->GetPosition().x() << preStepPoint->GetPosition().y() << preStepPoint->GetPosition().z() << G4endl;
+      // G4cout << "First volume: " << PreOrganelle << G4endl;
+
       if (cell && cell->hasIn(edep_pos))
       {
       // Détecte le premier step de la particule dans le world et permet de renvoyer son volume et énergie d'émission
@@ -113,6 +116,10 @@ void SteppingAction::UserSteppingAction(const G4Step * step)
       fEventAction->ID_Cell_D_Emission = fPGA_impl->current_cell_id;
       fEventAction->compteur_first_appearance+=1;
     }
+
+    /*G4cout << "Posi: " << G4BestUnit(pEdepPos, "Length") << G4endl;
+    G4cout << "fEventAction->FirstVolume: " << fEventAction->FirstVolume << "\n" << G4endl;
+    G4cout << "Ek: " << fEventAction->Energie_emission << G4endl;*/
 
     }
 

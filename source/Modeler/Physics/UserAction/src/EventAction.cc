@@ -143,6 +143,9 @@ void EventAction::EndOfEventAction(const G4Event* Event)
        analysisManager->FillNtupleDColumn(8, 0);
        analysisManager->FillNtupleDColumn(9, fEdep_sph); // dans python --> supprimer les doubles en triant suivant eventID
        analysisManager->FillNtupleDColumn(10, indice_if_diffusion_event);
+       /*G4cout << "Event n°" << event_id << G4endl;
+       G4cout << "Cell n°" << ID_Cellule[i] << G4endl;
+       G4cout << "Edep nucleus: " << Ei[i] - Ef[i] << G4endl;*/
 
        analysisManager->AddNtupleRow();
     }

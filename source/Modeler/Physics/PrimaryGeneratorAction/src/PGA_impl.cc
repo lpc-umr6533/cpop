@@ -118,7 +118,8 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
     if (read_input_position_file)
     {setPositions(name_info_primaries_file);}
-    particle_gun_->SetParticlePosition(G4_particle_position);
+      particle_gun_->SetParticlePosition(G4_particle_position);
+      //particle_gun_->SetParticlePosition(G4ThreeVector(0, 0, 0));
 
     // Choose an energy
     // if (li7_BNCT_spectra)
@@ -137,6 +138,7 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     {writingInfoPrimariesTxt(G4_particle_position, direction, particleEnergy,
                               population_->name_file_primaries);}
     // Generate a primary vertex
+    //G4cout << "Particle position: " << G4_particle_position << G4endl;
     particle_gun_->GeneratePrimaryVertex(event);
     // Update the source
     source->Update();
