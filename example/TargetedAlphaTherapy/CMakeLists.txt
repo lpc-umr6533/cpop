@@ -20,15 +20,17 @@ include(InformationSystem)
 include(MAS)
 include(Modeler)
 
-set(ALL_SOURCE 
+set(ALL_SOURCE
 	src/main.cc
 	src/DetectorConstruction.cc
 	src/DetectorConstructionMessenger.cc
+	src/RunAction.cc
 )
 
 set(ALL_HEADER
 	include/DetectorConstruction.hh
 	include/DetectorConstructionMessenger.hh
+	include/RunAction.hh
 )
 
 add_executable(${BINARY_NAME} ${ALL_SOURCE} ${ALL_HEADER})
@@ -37,4 +39,4 @@ target_include_directories(${BINARY_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/in
 target_compile_options(${BINARY_NAME} PUBLIC -Wall -pthread)
 target_link_libraries(${BINARY_NAME} PUBLIC Platform_SMA Modeler)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR}/example/TargetedAlphaTherapy)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/macros DESTINATION ${CMAKE_BINARY_DIR}/example/TargetedAlphaTherapy)
