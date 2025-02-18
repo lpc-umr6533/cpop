@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem> // Include the filesystem library
 
 // CPOP headers
 #include <cReader/configreader.hh>
@@ -82,15 +83,19 @@ int main(int argc, char** argv) {
     simulationEnv->startSimulation();
 
     // Save the generated cell population in an xml file
-    std::string outputPop = input + ".xml";
-    simulationEnv->savePopulation(outputPop.c_str());
-    std::cout << "Generated : "<< outputPop << std::endl;
+		std::string outputDir = std::filesystem::absolute("output").string();
+		std::filesystem::create_directories(outputDir);
+		std::string outputPath = outputDir + "/" + basename + ".xml";
+    simulationEnv->savePopulation(outputPath.c_str());
+    std::cout << "Generated : "<< outputPath << std::endl;
 
     // If vis flag is used, create an off file
     if (vis) {
-		std::string outputOff = input + ".off";
-		simulationEnv->exportToVis(input.c_str());
-		std::cout << "Generated : "<< outputOff << std::endl;
+		std::string outputVis = std::filesystem::absolute("outputVis").string();
+		std::filesystem::create_directories(outputVis);
+		std::string outputPathOff = outputVis + "/" + basename;
+		simulationEnv->exportToVis(outputPathOff.c_str());
+		std::cout << "Generated : "<< outputPathOff + ".off" << std::endl;
 	}
 
 
