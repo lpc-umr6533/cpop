@@ -15,7 +15,7 @@
 ########################################################################
 # Seed parameter
 
-/random/setSeeds 123456 4
+/random/setSeeds 123456 1
 
 ########################################################################
 # Define the physics process you want to simulate
@@ -27,8 +27,6 @@
 # set the physics list you want to use.
 # candidates : emstandard emstandard_opt1 emstandard_opt2 emstandard_opt3 emstandard_opt4 emlivermore empenelope emDNAphysics emDNAphysics_opt2
 /cpop/physics/physicsList emstandard_opt4
-#/cpop/physics/physicsList emDNAphysics_opt2
-
 
 # Those commands are defined in G4EmParametersMessenger.cc
 #/process/eLoss/minKinEnergy 100 eV
@@ -46,18 +44,16 @@
 /cpop/population/verbose 1
 
 # set the population file (relative path from the current directory)
-#/cpop/population/input data/geometries/Radius95um_25CP.cfg.xml
 /cpop/population/input data/geometries/Radius95um_50CP.cfg.xml
-#/cpop/population/input data/geometries/Radius95um_75CP.cfg.xml
 
 # set representation parameters
 /cpop/population/numberFacet 80
 /cpop/population/deltaRef !
 
 # define necrosis, intermediary and external regions
-# Necrosis region     : from 0                   to 0.01*spheroidRadius
-# Intermediary region : from 0.01*spheroidRadius to 0.52*spheroidRadius
-# External region     : from 0.52*spheroidRadius to spheroidRadius
+# Necrosis region     : from 0                                to internalRatio*spheroidRadius
+# Intermediary region : from internalRatio*spheroidRadius     to intermediaryRatio*spheroidRadius
+# External region     : from intermediaryRatio*spheroidRadius to spheroidRadius
 /cpop/population/internalRatio 0.01
 /cpop/population/intermediaryRatio 0.52
 
@@ -71,7 +67,7 @@
 ##### For now, only one option can be chosen ####
 
 #Write positions, directions and energies of primary particles in a .txt
-/cpop/population/writeInfoPrimariesTxt yes infoPrimaries0.txt
+#/cpop/population/writeInfoPrimariesTxt yes infoPrimaries0.txt
 
 # Initialize cpop
 /cpop/population/init
@@ -89,13 +85,9 @@
 
 # set the primary particles to send from a source
 #/cpop/source/radionuclide/particle alpha
-
 /cpop/source/radionuclide/ion 3 7
 
-#/cpop/source/radionuclide/spectrum data/spectra/At211.txt
-#/cpop/source/radionuclide/spectrum data/spectra/Bi213.txt
-#/cpop/source/radionuclide/spectrum data/spectra/Po210.txt
-/cpop/source/radionuclide/spectrum data/spectra/HeliumBNCT.txt
+/cpop/source/radionuclide/spectrum data/spectra/At211.txt
 
 # set the number of sources in the spheroid
 /cpop/source/radionuclide/totalSource 200
@@ -124,10 +116,6 @@
 #the primaries  of your simulation
 #methods: SamePositions_SameDirections, SamePositions_OppositeDirections 
 #/cpop/source/usePositionsDirectionsTxt infoPrimaries2.txt SamePositions_OppositeDirections
-
-
-#Doesn't work without PositionsDirectionsTxt. Experimental: WIP
-#/cpop/source/EmitLi7BNCTSpectrum yes
 
 
 # set the maximum number of sources per cell, in each region.
