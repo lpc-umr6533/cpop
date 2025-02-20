@@ -32,6 +32,8 @@ See LICENSE.md for further details
 
 #include <string>
 #include <fstream>
+#include <filesystem>  // C++17 feature
+namespace fs = std::filesystem;
 
 
 #if defined(WITH_GEANT_4) || defined(WITH_GDML_EXPORT)
@@ -462,6 +464,18 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 						false,         				// no boolean operations
 						0);           				// copy number
 
+	std::string home_path = std::filesystem::current_path().string();
+
+	std::string output_txt_folder = home_path + "/OutputTxt";
+	if (!fs::exists(output_txt_folder)) {
+			if (!fs::create_directory(output_txt_folder)) {
+					std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";
+			}
+	}
+
+	std::ofstream masses_file(output_txt_folder + "/MassesCell.txt",
+	 fstream::app);
+
 	// try to remove overlaps by reducing membrane radius
 	if(checkOverLaps)
 	{
@@ -555,13 +569,10 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 	            pNucleiMap->insert(make_pair(const_cast<const G4LogicalVolume*>(nucPlacement->GetLogicalVolume()), const_cast<const t_Nucleus_3*>(*itNucleus) ));
 	        }
 
-			ofstream fw("MassesCell.txt", fstream::app);
-
-			if (fw.is_open())
+			if (masses_file.is_open())
 			{
-			    fw << G4BestUnit(((nucPlacement->GetLogicalVolume())->GetMass()), "Mass") <<" ";
-					fw << G4BestUnit((membraneLogicVol->GetMass()), "Mass") << "\n" ;
-			  fw.close();
+			    masses_file << G4BestUnit(((nucPlacement->GetLogicalVolume())->GetMass()), "Mass") <<" ";
+					masses_file << G4BestUnit((membraneLogicVol->GetMass()), "Mass") << "\n" ;
 			}
 			else err=1;
 
@@ -571,6 +582,8 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 		if (err) {G4cout << "error happened during writing of MassesCell.txt"<<
 								G4endl;}
 	}
+
+	masses_file.close();
 
 	return vpPalcement;
 }

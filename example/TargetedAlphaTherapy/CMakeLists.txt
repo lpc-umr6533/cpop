@@ -24,13 +24,11 @@ set(ALL_SOURCE
 	src/main.cc
 	src/DetectorConstruction.cc
 	src/DetectorConstructionMessenger.cc
-	src/RunAction.cc
 )
 
 set(ALL_HEADER
 	include/DetectorConstruction.hh
 	include/DetectorConstructionMessenger.hh
-	include/RunAction.hh
 )
 
 add_executable(${BINARY_NAME} ${ALL_SOURCE} ${ALL_HEADER})

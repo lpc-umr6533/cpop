@@ -188,17 +188,9 @@ void Population::loadPopulation()
     voronoi_mesh_ = MeshFactory::getInstance()->create_3DMesh(&error,  dynamic_cast<t_SimulatedSubEnv_3*>( env->getFirstChild() ), MeshTypes::Round_Cell_Tesselation, number_max_facet_poly(), delta_reffinement());
     dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->generateMesh();
 
-    std::ofstream masses_cell_file;
-    masses_cell_file.open("MassesCell.txt");
-
     //Call of this function allow to write geometry informations in .gdml (HACKED FOR NOW)
     //A sub call of SpheroidalCell:convertToG4Structure writes the masses of cells in MassesCell.txt
     dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->exportToFile("",MeshOutFormats::GDML , false);
-
-    masses_cell_file.close();
-    std::cout << '\n' << " Masses of cells written in MassesCell.txt "  <<'\n';
-
-
 
     // create the vector of cells
     {

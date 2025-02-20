@@ -1,5 +1,5 @@
 /*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
+Copyright (C): Henri Payno, Axel Delsol,
 Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
 
 This software is distributed under the terms
@@ -70,7 +70,7 @@ RandomCellDistribution<Kernel, Point, Vector>::~RandomCellDistribution()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 template <typename Kernel, typename Point, typename Vector>
 void RandomCellDistribution<Kernel, Point, Vector>::distribute(
-	SimulatedSubEnv<Kernel, Point, Vector>* pSubEnv, 
+	SimulatedSubEnv<Kernel, Point, Vector>* pSubEnv,
 	const CellProperties* pCellProperties,
 	unsigned int nbCell,
 	std::map<LifeCycles::LifeCycle, double > pLifeCycles)
@@ -79,7 +79,7 @@ void RandomCellDistribution<Kernel, Point, Vector>::distribute(
 
 	if(DEBUG_RANDOM_CELL_DISTRIB)
 	{
-		QString mess = "ask for distribution with template parameters : " + 
+		QString mess = "ask for distribution with template parameters : " +
 		QString(typeid(Kernel).name()) + ", " + QString(typeid(Point).name()) + ", " + QString(typeid(Vector).name()) + ", ";
 		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "RandomCellDistribution");
 	}
@@ -100,7 +100,7 @@ void RandomCellDistribution<Kernel, Point, Vector>::distribute(
 		{
 			nbPopCellToStateN = itLSR->second * nbCell;
 		}
-		
+
 		int lLocalGenerated = 0;
 		while(lLocalGenerated < nbPopCellToStateN)
 		{
@@ -113,8 +113,8 @@ void RandomCellDistribution<Kernel, Point, Vector>::distribute(
 			/// \todo : set LifeCycle according to a specifique distribution...
 			newCell->setLifeCycle(itLSR->first);
 			pSubEnv->addAgent(newCell);
-			
-			lLocalGenerated++;	
+
+			lLocalGenerated++;
 		}
 		nbCellGenerated +=lLocalGenerated;
 	}
@@ -132,7 +132,7 @@ void RandomCellDistribution<Kernel, Point, Vector>::distribute(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////:
 template <typename Kernel, typename Point, typename Vector>
 void RandomCellDistribution<Kernel, Point, Vector>::distribute(
-	SimulatedSubEnv<Kernel, Point, Vector>* pSubEnv, 
+	SimulatedSubEnv<Kernel, Point, Vector>* pSubEnv,
 	Cell<Kernel, Point, Vector>* pCell,
 	std::map<LifeCycles::LifeCycle, double > pLifeCycleRates)
 {
@@ -172,8 +172,8 @@ void RandomCellDistribution<Kernel, Point, Vector>::distribute(
 		if(nucleus)
 		{
 			// set nucleus radius
-			double nucleusRadius = RandomEngineManager::getInstance()->randd( 
-										pCell->getCellProperties()->getNucleusRadius(pCell->getLifeCycle()).var_min(), 
+			double nucleusRadius = RandomEngineManager::getInstance()->randd(
+										pCell->getCellProperties()->getNucleusRadius(pCell->getLifeCycle()).var_min(),
 										pCell->getCellProperties()->getNucleusRadius(pCell->getLifeCycle()).var_max() );
 			assert(nucleusRadius > 0.);
 			nucleus->setRadius(nucleusRadius);
@@ -187,8 +187,8 @@ void RandomCellDistribution<Kernel, Point, Vector>::distribute(
 		RoundCell<Kernel, Point, Vector>* roundCell = dynamic_cast<RoundCell<Kernel, Point, Vector>* > (pCell);
 		if(roundCell)
 		{
-			double cellRadius = RandomEngineManager::getInstance()->randd( 
-				(roundProp->getMembraneRadius(pCell->getLifeCycle())).var_min(), 
+			double cellRadius = RandomEngineManager::getInstance()->randd(
+				(roundProp->getMembraneRadius(pCell->getLifeCycle())).var_min(),
 				(roundProp->getMembraneRadius(pCell->getLifeCycle())).var_max() );
 			roundCell->setRadius(cellRadius);
 		}
