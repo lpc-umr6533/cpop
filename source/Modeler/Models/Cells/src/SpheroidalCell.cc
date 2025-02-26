@@ -398,7 +398,7 @@ G4LogicalVolume* SpheroidalCell::convertMembraneToG4(QString pName)
         if(!membraneSolid->AddFacet(static_cast<G4VFacet*>(facet)))
         {
         	std::cout << "error during facet addition" << std::endl;
-        	return NULL;
+        	// return NULL;
         }
     }
 
@@ -467,12 +467,11 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 	std::string home_path = std::filesystem::current_path().string();
 
 	std::string output_txt_folder = home_path + "/OutputTxt";
-	if (!fs::exists(output_txt_folder)) {
-			if (!fs::create_directory(output_txt_folder)) {
-					std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";
-			}
-	}
-
+	if (!fs::exists(output_txt_folder))
+	  {
+			if (!fs::create_directory(output_txt_folder))
+			{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
+		}
 	std::ofstream masses_file(output_txt_folder + "/MassesCell.txt",
 	 fstream::app);
 
