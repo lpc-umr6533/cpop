@@ -22,6 +22,11 @@ See LICENSE.md for further details
 
 #include <CGAL/convex_hull_3.h>
 
+#include <string>
+#include <fstream>
+#include <filesystem>  // C++17 feature
+namespace fs = std::filesystem;
+
 #ifdef WITH_GDML_EXPORT
 	#include "MyGDML_Parser.hh"	// The GDML parser.
 #endif
@@ -462,6 +467,19 @@ G4LogicalVolume* SpheroidalCellMesh::convertToG4Logical( G4LogicalVolume* parent
 	Polyhedron_3::Point_iterator itPolyPts;
 
 	/// \brief generate the cell mesh
+	std::string home_path = std::filesystem::current_path().string();
+
+	std::string output_txt_folder = home_path + "/OutputTxt";
+	if (!fs::exists(output_txt_folder))
+	  {
+			if (!fs::create_directory(output_txt_folder))
+			{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
+		}
+	std::ofstream masses_file(output_txt_folder + "/MassesCell.txt",
+	 fstream::trunc);
+	masses_file << "MassNucleus Unit MassCytoplasm Unit" << "\n" ;
+	masses_file.close();
+
 	unsigned int nbRemovedForG4 = 0;
 	vector<pair<G4TessellatedSolid*, G4Orb*> > solids;
 	for(itCell = cells.begin(); itCell != cells.end(); ++itCell)

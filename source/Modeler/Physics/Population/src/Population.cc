@@ -189,7 +189,7 @@ void Population::loadPopulation()
     dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->generateMesh();
 
     //Call of this function allow to write geometry informations in .gdml (HACKED FOR NOW)
-    //A sub call of SpheroidalCell:convertToG4Structure writes the masses of cells in MassesCell.txt
+    //A sub call of SpheroidalCell:convertToG4Structure writes the masses of cells in a txt file
     dynamic_cast<SpheroidalCellMesh*>(voronoi_mesh_)->exportToFile("",MeshOutFormats::GDML , false);
 
     // create the vector of cells
@@ -198,7 +198,6 @@ void Population::loadPopulation()
         cells_.clear();
         cells_.insert(cells_.begin(), lCells.begin(), lCells.end());
     }
-
 
     // compute spheroid radius from the farthest cell
     double nearest, farthest;
