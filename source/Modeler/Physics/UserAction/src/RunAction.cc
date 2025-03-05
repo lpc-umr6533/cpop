@@ -67,31 +67,21 @@ void RunAction::EndOfRunAction(const G4Run * /*run*/)
 
 	//Allows to get total energy deposited in each nucleus and cell //
 
-	if (population->event_level_info_ == 1)
-	{
+	// if (population->event_level_info_ == 1)
+	// {
     for (int id_cell=0; id_cell<(population->nb_cell_xml); ++id_cell)
     {
-       ///// The tag 'EndOfRun' in the nameParticle category allows to identify that these data are stocked at the RunAction level /////
-       analysisManager->FillNtupleSColumn(0, "EndOfRun");
-       analysisManager->FillNtupleDColumn(1, 0);
-       analysisManager->FillNtupleDColumn(2, 0);
-       ///// WARNING : with this method, cells are identified with ids from 3 to total number of cells+2, which are not their real id
+       ///// WARNING : cells are identified with ids from 3 to total number of cells+2, which are not their real id
        //for analysis purposes, the IDCell.txt must be used to associate the energy deposited here to the real cells ///////
-       analysisManager->FillNtupleDColumn(3, id_cell+3);
-       analysisManager->FillNtupleDColumn(4, 0);
-       analysisManager->FillNtupleDColumn(5, 0);
-       analysisManager->FillNtupleSColumn(6, "EndOfRun");
-       analysisManager->FillNtupleDColumn(7, fEdepn_tot[id_cell]);
-       analysisManager->FillNtupleDColumn(8, fEdepc_tot[id_cell]);
-       analysisManager->FillNtupleDColumn(9, fEdep_sph_tot);
-       analysisManager->FillNtupleDColumn(10, 2);
-       /*G4cout << "Cell n°" << id_cell+3 << G4endl;
-       G4cout << "Edep nucleus: " << fEdepn_tot[id_cell] << G4endl;*/
+       analysisManager->FillNtupleDColumn(2, 0, id_cell+3);
+       analysisManager->FillNtupleDColumn(2, 1, fEdepn_tot[id_cell]);
+       analysisManager->FillNtupleDColumn(2, 2, fEdepc_tot[id_cell]);
+       analysisManager->FillNtupleDColumn(2, 3, fEdep_sph_tot);
 
-			analysisManager->AddNtupleRow();
+			analysisManager->AddNtupleRow(2);
 		}
     //G4cout << "fEdep_sph_tot: " << fEdep_sph_tot << G4endl;
-	}
+	// }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,39 +124,42 @@ void RunAction::CreateHistogram()
 	// Creating ntuple
 	const Population* population = population_;
 
-	if ((population->stepping_level_info_) == 1)
-	{
-		analysisManager->CreateNtuple("Edep", "Energy deposition by cell");
-		analysisManager->CreateNtupleDColumn("posX");
-		analysisManager->CreateNtupleDColumn("posY");
-		analysisManager->CreateNtupleDColumn("posZ");
-		analysisManager->CreateNtupleDColumn("momDirX");
-		analysisManager->CreateNtupleDColumn("momDirY");
-		analysisManager->CreateNtupleDColumn("momDirZ");
-		analysisManager->CreateNtupleDColumn("edep");
-		analysisManager->CreateNtupleDColumn("eKin");
-		analysisManager->CreateNtupleIColumn("cellID");
-		analysisManager->CreateNtupleSColumn("organelle");
-		analysisManager->CreateNtupleSColumn("region");
-		analysisManager->CreateNtupleIColumn("eventID");
-		analysisManager->FinishNtuple();
-	}
-	else if ((population->event_level_info_) == 1)
-	{
-		analysisManager->CreateNtuple("cell", "physics");
-		analysisManager->CreateNtupleSColumn("nameParticle");
-		analysisManager->CreateNtupleDColumn("Ei");
-		analysisManager->CreateNtupleDColumn("Ef");
-		analysisManager->CreateNtupleDColumn("ID_Cell");
-		analysisManager->CreateNtupleDColumn("eventID");
-		analysisManager->CreateNtupleDColumn("Cellule_D_Emission");
-		analysisManager->CreateNtupleSColumn("Organelle_emission");
-		analysisManager->CreateNtupleDColumn("fEdepn");
-		analysisManager->CreateNtupleDColumn("fEdepc");
-		analysisManager->CreateNtupleDColumn("fEdep_sph");
-		analysisManager->CreateNtupleDColumn("indice_if_diffusion");
-		analysisManager->FinishNtuple();
-	}
+	analysisManager->CreateNtuple("Step", "SteppingAction level");
+	analysisManager->CreateNtupleDColumn(0, "posX");
+	analysisManager->CreateNtupleDColumn(0, "posY");
+	analysisManager->CreateNtupleDColumn(0, "posZ");
+	analysisManager->CreateNtupleDColumn(0, "momDirX");
+	analysisManager->CreateNtupleDColumn(0, "momDirY");
+	analysisManager->CreateNtupleDColumn(0, "momDirZ");
+	analysisManager->CreateNtupleDColumn(0, "edep");
+	analysisManager->CreateNtupleDColumn(0, "eKin");
+	analysisManager->CreateNtupleIColumn(0, "cellID");
+	analysisManager->CreateNtupleSColumn(0, "organelle");
+	analysisManager->CreateNtupleSColumn(0, "region");
+	analysisManager->CreateNtupleIColumn(0, "eventID");
+	analysisManager->FinishNtuple();
+  //
+	analysisManager->CreateNtuple("Event", "EventAction level");
+	analysisManager->CreateNtupleSColumn(1, "nameParticle");
+	analysisManager->CreateNtupleDColumn(1, "Ei");
+	analysisManager->CreateNtupleDColumn(1, "Ef");
+	analysisManager->CreateNtupleDColumn(1, "ID_Cell");
+	analysisManager->CreateNtupleDColumn(1, "eventID");
+	analysisManager->CreateNtupleDColumn(1, "Cellule_D_Emission");
+	analysisManager->CreateNtupleSColumn(1, "Organelle_emission");
+	analysisManager->CreateNtupleDColumn(1, "fEdepn");
+	analysisManager->CreateNtupleDColumn(1, "fEdepc");
+	analysisManager->CreateNtupleDColumn(1, "fEdep_sph");
+	analysisManager->CreateNtupleDColumn(1, "indice_if_diffusion");
+	analysisManager->FinishNtuple();
+  //
+  analysisManager->CreateNtuple("Run", "RunAction level");
+  analysisManager->CreateNtupleDColumn(2, "ID_Cell");
+  analysisManager->CreateNtupleDColumn(2, "fEdepn");
+  analysisManager->CreateNtupleDColumn(2, "fEdepc");
+  analysisManager->CreateNtupleDColumn(2, "fEdep_sph");
+  analysisManager->FinishNtuple();
+
 }
 
 }

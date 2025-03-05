@@ -64,7 +64,6 @@
 /cpop/population/stepInfo 0
 # Get info at the event level
 /cpop/population/eventInfo 1
-##### For now, only one option can be chosen ####
 
 #Write positions, directions and energies of primary particles in a .txt
 #/cpop/population/writeInfoPrimariesTxt yes infoPrimaries0.txt

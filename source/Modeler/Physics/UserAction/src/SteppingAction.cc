@@ -285,19 +285,19 @@ void SteppingAction::addTupleRow(const G4Step *step, int cellID, const std::stri
 
     if ((population->stepping_level_info_) == 1)
     {
-    analysisManager->FillNtupleDColumn(0, edepPos.x());
-    analysisManager->FillNtupleDColumn(1, edepPos.y());
-    analysisManager->FillNtupleDColumn(2, edepPos.z());
-    analysisManager->FillNtupleDColumn(3, momDir.x());
-    analysisManager->FillNtupleDColumn(4, momDir.y());
-    analysisManager->FillNtupleDColumn(5, momDir.z());
-    analysisManager->FillNtupleDColumn(6, edep);
-    analysisManager->FillNtupleDColumn(7, eKin); //in keV
-    analysisManager->FillNtupleIColumn(8, cellID);
-    analysisManager->FillNtupleSColumn(9, organelle);
-    analysisManager->FillNtupleSColumn(10, region);
-    analysisManager->FillNtupleIColumn(11, fEventAction->eventID_for_stepping_action);
-    analysisManager->AddNtupleRow();
+    analysisManager->FillNtupleDColumn(0, 0, edepPos.x());
+    analysisManager->FillNtupleDColumn(0, 1, edepPos.y());
+    analysisManager->FillNtupleDColumn(0, 2, edepPos.z());
+    analysisManager->FillNtupleDColumn(0, 3, momDir.x());
+    analysisManager->FillNtupleDColumn(0, 4, momDir.y());
+    analysisManager->FillNtupleDColumn(0, 5, momDir.z());
+    analysisManager->FillNtupleDColumn(0, 6, edep);
+    analysisManager->FillNtupleDColumn(0, 7, eKin); //in keV
+    analysisManager->FillNtupleIColumn(0, 8, cellID);
+    analysisManager->FillNtupleSColumn(0, 9, organelle);
+    analysisManager->FillNtupleSColumn(0, 10, region);
+    analysisManager->FillNtupleIColumn(0, 11, fEventAction->eventID_for_stepping_action);
+    analysisManager->AddNtupleRow(0);
   }
 }
 

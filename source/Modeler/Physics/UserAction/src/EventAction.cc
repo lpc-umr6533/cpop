@@ -132,22 +132,19 @@ void EventAction::EndOfEventAction(const G4Event* Event)
   {
     for (int i=0; i<(tailleEi+1); ++i)
     {
-       analysisManager->FillNtupleSColumn(0, nameParticle);
-       analysisManager->FillNtupleDColumn(1, Ei[i]);
-       analysisManager->FillNtupleDColumn(2, Ef[i]);
-       analysisManager->FillNtupleDColumn(3, ID_Cellule[i]);
-       analysisManager->FillNtupleDColumn(4, event_id);
-       analysisManager->FillNtupleDColumn(5, ID_Cell_D_Emission);
-       analysisManager->FillNtupleSColumn(6, FirstVolume);
-       analysisManager->FillNtupleDColumn(7, 0);
-       analysisManager->FillNtupleDColumn(8, 0);
-       analysisManager->FillNtupleDColumn(9, fEdep_sph); // dans python --> supprimer les doubles en triant suivant eventID
-       analysisManager->FillNtupleDColumn(10, indice_if_diffusion_event);
-       /*G4cout << "Event n°" << event_id << G4endl;
-       G4cout << "Cell n°" << ID_Cellule[i] << G4endl;
-       G4cout << "Edep nucleus: " << Ei[i] - Ef[i] << G4endl;*/
+       analysisManager->FillNtupleSColumn(1, 0, nameParticle);
+       analysisManager->FillNtupleDColumn(1, 1, Ei[i]);
+       analysisManager->FillNtupleDColumn(1, 2, Ef[i]);
+       analysisManager->FillNtupleDColumn(1, 3, ID_Cellule[i]);
+       analysisManager->FillNtupleDColumn(1, 4, event_id);
+       analysisManager->FillNtupleDColumn(1, 5, ID_Cell_D_Emission);
+       analysisManager->FillNtupleSColumn(1, 6, FirstVolume);
+       analysisManager->FillNtupleDColumn(1, 7, 0);
+       analysisManager->FillNtupleDColumn(1, 8, 0);
+       analysisManager->FillNtupleDColumn(1, 9, fEdep_sph); // dans python --> supprimer les doubles en triant suivant eventID
+       analysisManager->FillNtupleDColumn(1, 10, indice_if_diffusion_event);
 
-       analysisManager->AddNtupleRow();
+       analysisManager->AddNtupleRow(1);
     }
   }
 
