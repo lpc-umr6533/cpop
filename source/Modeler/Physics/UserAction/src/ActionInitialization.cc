@@ -10,7 +10,7 @@ namespace cpop {
 
 ActionInitialization::ActionInitialization(const Population &population)
     :G4VUserActionInitialization(),
-      pga_impl_(std::make_unique<PGA_impl>(population)),
+      pga_impl_(make_unique<PGA_impl>(population)),
       population_(&population)
 {
     G4String pga_base = "/cpop/source";
@@ -19,19 +19,17 @@ ActionInitialization::ActionInitialization(const Population &population)
 
 void ActionInitialization::BuildForMaster() const
 {
-    SetUserAction(new RunAction(*population_));
+    SetUserAction(new RunAction());
 }
 
 void ActionInitialization::Build() const
 {
     // Build tuples
-    RunAction* runAction = new RunAction(*population_);
-    SetUserAction(runAction);
+    SetUserAction(new RunAction());
     // Periodic logging
-    EventAction* eventAction = new EventAction(*population_, runAction);
-    SetUserAction(eventAction);
+    SetUserAction(new EventAction());
     // Fill tuples
-    SetUserAction(new SteppingAction(*population_, eventAction, *pga_impl_));
+    SetUserAction(new SteppingAction(*population_));
     // Primary generator
     PrimaryGeneratorAction* pga = new PrimaryGeneratorAction(*pga_impl_);
     SetUserAction(pga);

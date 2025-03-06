@@ -24,11 +24,19 @@ set(ALL_SOURCE
 	src/main.cc
 	src/DetectorConstruction.cc
 	src/DetectorConstructionMessenger.cc
+	src/CpopActionInitialization.cc
+	src/CpopSteppingAction.cc
+	src/CpopEventAction.cc
+	src/CpopRunAction.cc
 )
 
 set(ALL_HEADER
 	include/DetectorConstruction.hh
 	include/DetectorConstructionMessenger.hh
+	include/CpopActionInitialization.hh
+	include/CpopSteppingAction.hh
+	include/CpopEventAction.hh
+	include/CpopRunAction.hh
 )
 
 add_executable(${BINARY_NAME} ${ALL_SOURCE} ${ALL_HEADER})

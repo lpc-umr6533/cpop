@@ -8,7 +8,7 @@
 #include <cReader/zupply.hpp>
 #include "Population.hh"
 #include "PhysicsList.hh"
-#include "ActionInitialization.hh"
+#include "CpopActionInitialization.hh"
 
 #include "DetectorConstruction.hh"
 
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
     runManager->SetUserInitialization(physicsList);
 
     // Set custom action to extract informations from the simulation
-    cpop::ActionInitialization* actionInitialisation = new cpop::ActionInitialization(population);
+    cpop::CpopActionInitialization* actionInitialisation = new cpop::CpopActionInitialization(population);
     runManager->SetUserInitialization(actionInitialisation);
 
 

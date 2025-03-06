@@ -1,5 +1,5 @@
-#ifndef ACTIONINITIALIZATION_HH
-#define ACTIONINITIALIZATION_HH
+// #ifndef ACTIONINITIALIZATION_HH
+// #define ACTIONINITIALIZATION_HH
 
 #include <memory>
 
@@ -10,10 +10,10 @@ namespace cpop {
 
 class Population;
 
-class ActionInitialization : public G4VUserActionInitialization
+class CpopActionInitialization : public G4VUserActionInitialization
 {
 public:
-    ActionInitialization(const Population& population);
+    CpopActionInitialization(const Population& population);
 
     virtual void BuildForMaster() const;
     virtual void Build() const;
@@ -28,4 +28,4 @@ private:
 
 }
 
-#endif // ACTIONINITIALIZATION_HH
+// #endif // ACTIONINITIALIZATION_HH
