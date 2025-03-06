@@ -44,7 +44,9 @@
 /cpop/population/verbose 1
 
 # set the population file (relative path from the current directory)
+#/cpop/population/input data/geometries/Radius95um_25CP.cfg.xml
 /cpop/population/input data/geometries/Radius95um_50CP.cfg.xml
+#/cpop/population/input data/geometries/Radius95um_75CP.cfg.xml
 
 # set representation parameters
 /cpop/population/numberFacet 80

@@ -158,9 +158,9 @@ TEST_CASE("Distributed source, [source]") {
         REQUIRE(source.particle() == particle);
         REQUIRE(source.number_distributed() == 6);
         REQUIRE(source.number_particles_per_source() == 100);
-        REQUIRE(source.number_nanoparticle_necrosis() == 1);
-        REQUIRE(source.number_nanoparticle_intermediary() == 2);
-        REQUIRE(source.number_nanoparticle_external() == 3);
+        REQUIRE(source.number_source_necrosis() == 1);
+        REQUIRE(source.number_source_intermediary() == 2);
+        REQUIRE(source.number_source_external() == 3);
         REQUIRE(source.total_particle() == 600);
 
         REQUIRE(source.HasLeft());
