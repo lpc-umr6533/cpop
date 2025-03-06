@@ -15,6 +15,9 @@
 #include <iostream>
 #include <vector>
 
+#include <random>
+#include "RandomEngineManager.hh"
+#include "Randomize.hh"
 
 namespace cpop {
 
@@ -180,6 +183,13 @@ private:
 
     /// \brief Distribute number_source particle sources inside region and update the unordered map
     void distribute(int number_source, const SpheroidRegion& region);
+
+    /// \brief Distribute number_source particle sources inside cells, with a
+    /// maximum number per source and update the unordered map
+    void distribute_in_cells_with_maximum_nb(int total_nb_source,
+                                            int* nb_source_per_cell,
+                                            vector<const Settings::nCell::t_Cell_3 *> labeled_cells,
+                                            vector<int> max_nb_part_per_cell);
 
     /// \brief Return a position in the cell in G4 unit according to the organelle_weight probablity
     std::vector<G4ThreeVector> getPositionInCell() const;

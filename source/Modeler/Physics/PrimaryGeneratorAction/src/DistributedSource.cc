@@ -22,6 +22,7 @@ DistributedSource::DistributedSource(const string &name, const Population &popul
     :Source(name,population),
        messenger_(std::make_unique<DistributedSourceMessenger>(this))
 {
+
 }
 
 std::vector<G4ThreeVector> DistributedSource::GetPosition()
@@ -81,17 +82,11 @@ int DistributedSource::source_in_region(const SpheroidRegion &region) const
 
 void DistributedSource::distribute(int number_source, const SpheroidRegion &region)
 {
-
-    std::random_device rd;  // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-    std::uniform_real_distribution<> dis(0.0, 1.0);
-
     std::vector<const Settings::nCell::t_Cell_3 *> cells_in_region = region.cells_in_region();
-
     int cells_in_region_size = cells_in_region.size();
 
-    int max_number_source_per_cell = 1000000;
-    double cell_labeling_percentage;
+    int max_number_source_per_cell = 1000000; //In case of no below corresponding region name
+    double cell_labeling_percentage = 100.;
 
     if (region.name() == "Necrosis")
       {max_number_source_per_cell = max_number_source_per_cell_necrosis;
@@ -114,17 +109,29 @@ void DistributedSource::distribute(int number_source, const SpheroidRegion &regi
 
    std::vector<float> randomNumbers(cells_in_region_size);
 
-   if (labeled_cells.size() >0)
-   {
-   max_nb_part_per_cell = applyMethodDistributionNbParticlesInCells(labeled_cells, number_source, max_number_source_per_cell);
-   }
-   // Particules are distributed on cells following the max number of particules per cell
+   if (labeled_cells.size() == 0) {return;}
+   max_nb_part_per_cell = applyMethodDistributionNbParticlesInCells(labeled_cells,
+                                        number_source, max_number_source_per_cell);
 
+   distribute_in_cells_with_maximum_nb(number_source, nb_source_per_cell, labeled_cells, max_nb_part_per_cell);
+
+   std::cout << " Number of labeled cells in region " << region.name() << " = " << labeled_cells.size()  <<'\n';
+
+   if (cells_in_region_size!=0)
+   {std::cout << " Labeled cells percentage in region " << region.name() << " = " << (static_cast<double>(labeled_cells.size())/cells_in_region_size)*100 << "%" <<'\n';}
+   else
+   {std::cout << " Zero cells in region " << region.name()  <<'\n';}
+}
+
+void DistributedSource::distribute_in_cells_with_maximum_nb(int total_nb_source,
+                                        int* nb_source_per_cell,
+                                        vector<const Settings::nCell::t_Cell_3 *> labeled_cells,
+                                        vector<int> max_nb_part_per_cell)
+{
     int indexCell = 0;
-    for(int i = 0 ; i < number_source; ++i)
+    for(int i = 0 ; i < total_nb_source; ++i)
     {
       indexCell = rand() % (labeled_cells.size());
-
       while (nb_source_per_cell[indexCell]>=max_nb_part_per_cell[indexCell])
        {indexCell = rand() % (labeled_cells.size());}
 
@@ -149,17 +156,8 @@ void DistributedSource::distribute(int number_source, const SpheroidRegion &regi
         nb_source_per_cell[indexCell] +=1 ;
       }
     }
-
-    std::cout << " Number of labeled cells in region " << region.name() << " = " << labeled_cells.size()  <<'\n';
-
-    double cells_in_region_size_double = cells_in_region_size;
-    double labeled_cells_size_double = labeled_cells.size();
-    if (cells_in_region_size!=0)
-    {std::cout << " Labeled cells percentage in region " << region.name() << " = " << (labeled_cells_size_double/cells_in_region_size_double)*100 << "%" <<'\n';}
-    else
-    {std::cout << " Zero cells in region " << region.name()  <<'\n';}
-
 }
+
 
 std::vector<G4ThreeVector> DistributedSource::getPositionInCell() const
 {
@@ -319,17 +317,18 @@ vector<const Settings::nCell::t_Cell_3 *> DistributedSource::chooseLabeledCells(
 vector<int> DistributedSource::applyMethodDistributionNbParticlesInCells(vector<const Settings::nCell::t_Cell_3 *> labeled_cells,
                                                                   int number_source, int max_number_source_per_cell)
 {
-  int labeled_cells_size = labeled_cells.size(); //Should be equal to labeling_percentage * nb_cells
   std::random_device rd;  // Will be used to obtain a seed for the random number engine
   std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-  std::uniform_real_distribution<> dis(0.0, 1.0);
+  std::uniform_real_distribution<> uniform_distribution(0.0, 1.0);
+  int labeled_cells_size = labeled_cells.size(); //Should be equal to labeling_percentage * nb_cells
+
   if (is_log_norm_distribution)
      {
        vector<int> log_norm_distrib_particles;
        std::vector<float> randomNumbers(labeled_cells_size);
        for (int i = 0; i < labeled_cells_size; ++i)
        {
-          randomNumbers[i] = dis(gen);
+          randomNumbers[i] = uniform_distribution(gen);
        }
 
        log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
@@ -337,7 +336,7 @@ vector<int> DistributedSource::applyMethodDistributionNbParticlesInCells(vector<
         {
           for (int i = 0; i < labeled_cells_size; ++i)
           {
-             randomNumbers[i] = dis(gen);
+             randomNumbers[i] = uniform_distribution(gen);
           }
           log_norm_distrib_particles = inverse_cdf_log_normal_distribution(randomNumbers, shape_factor, mean_ppc);
         }
