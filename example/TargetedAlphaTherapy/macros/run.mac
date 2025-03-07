@@ -111,7 +111,7 @@
 /cpop/source/radionuclide/distributionInCell 0 1 0 0
 
 # Activate diffusion of radionuclide's daughter (for At-211 only)
-/cpop/source/daughterDiffusion no
+#/cpop/source/daughterDiffusion yes 0.5
 
 #Choose a txt file with positions and directions and choose a method to use them on
 #the primaries  of your simulation

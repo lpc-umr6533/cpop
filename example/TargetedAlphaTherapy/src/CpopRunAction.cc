@@ -147,9 +147,6 @@ void CpopRunAction::CreateHistogram()
 	analysisManager->CreateNtupleDColumn(1, "eventID");
 	analysisManager->CreateNtupleDColumn(1, "Cellule_D_Emission");
 	analysisManager->CreateNtupleSColumn(1, "Organelle_emission");
-	analysisManager->CreateNtupleDColumn(1, "fEdepn");
-	analysisManager->CreateNtupleDColumn(1, "fEdepc");
-	analysisManager->CreateNtupleDColumn(1, "fEdep_sph");
 	analysisManager->CreateNtupleDColumn(1, "indice_if_diffusion");
 	analysisManager->FinishNtuple();
   //

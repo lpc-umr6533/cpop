@@ -31,6 +31,9 @@
 
 #include "DetectorConstruction.hh"
 
+#include <filesystem>  // C++17 feature
+namespace fs = std::filesystem;
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc, char** argv)
@@ -88,14 +91,20 @@ int main(int argc, char** argv)
 
 		// Create a population
 
-		std::ofstream id_cell_file;
-		id_cell_file.open("IDCell.txt");
-
 		cpop::Population population;
 		population.messenger().BuildCommands("/cpop");
 
-    // Set mandatory initialization classes
-    //
+		std::string home_path = std::filesystem::current_path().string();
+		std::string output_txt_folder = home_path + "/OutputTxt";
+		if (!fs::exists(output_txt_folder))
+			{
+				if (!fs::create_directory(output_txt_folder))
+				{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
+			}
+		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt",
+		 fstream::trunc);
+
+		// Set mandatory initialization classes
 
     // Set the geometry ie a box filled with G4_WATER
     cpop::DetectorConstruction* detector = new cpop::DetectorConstruction(population);
