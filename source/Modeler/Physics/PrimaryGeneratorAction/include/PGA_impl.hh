@@ -49,7 +49,7 @@ public:
 
     void checkBeamOn() const;
 
-    void ActivateDiffusion(G4String diffusion_string);
+    void ActivateDiffusion(G4String diffusion_string, G4double half_life);
 
     UniformSource& addUniformSource(const std::string& source_name);
     UniformSource* uniform_source();

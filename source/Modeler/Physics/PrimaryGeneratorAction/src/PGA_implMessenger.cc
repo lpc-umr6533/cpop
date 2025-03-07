@@ -30,9 +30,12 @@ void PGA_implMessenger::BuildCommands(G4String base)
     distributed_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     cmd_base = base + "/daughterDiffusion";
-    diffusion_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
+    diffusion_cmd_ = std::make_unique<G4UIcommand>(cmd_base, this);
     diffusion_cmd_->SetGuidance("Activate daughter diffusion");
-    diffusion_cmd_->SetParameterName("Daughterdiffusion", false);
+    G4UIparameter* bool_diffusion = new G4UIparameter("bool_diffusion", 's', false);
+    diffusion_cmd_->SetParameter(bool_diffusion);
+    G4UIparameter* half_life = new G4UIparameter("half_life", 'f', false);
+    diffusion_cmd_->SetParameter(half_life);
     diffusion_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     cmd_base = base + "/usePositionsDirectionsTxt";
@@ -67,7 +70,11 @@ void PGA_implMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
         G4String source_base = base_ + "/" + newValue;
         added_source.messenger().BuildCommands(source_base);
     } else if (command == diffusion_cmd_.get()) {
-        pga_impl_->ActivateDiffusion(newValue);
+        G4String bool_diffusion;
+        G4double half_life; //s
+        std::istringstream is(newValue.data());
+        is >> bool_diffusion >> half_life;
+        pga_impl_->ActivateDiffusion(bool_diffusion, half_life);
     } else if (command == init_cmd_.get()) {
         pga_impl_->Initialize();
     } else if (command == posi_direc_txt_cmd_.get()) {

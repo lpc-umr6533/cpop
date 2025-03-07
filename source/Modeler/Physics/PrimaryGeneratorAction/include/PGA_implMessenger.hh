@@ -31,7 +31,7 @@ private:
     /// \brief Add a distributed source
     std::unique_ptr<G4UIcmdWithAString> distributed_cmd_;
     /// \brief Activate radionuclide's daughter diffusion
-    std::unique_ptr<G4UIcmdWithAString> diffusion_cmd_;
+    std::unique_ptr<G4UIcommand> diffusion_cmd_;
     /// \brief Use a txt file to choose postions and directions of primary particles
     std::unique_ptr<G4UIcommand> posi_direc_txt_cmd_;
     /// \brief Choose Li7 spectrum if the energy of the

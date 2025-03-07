@@ -92,7 +92,7 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
     if (distributed_source_->only_one_position_for_all_particles_on_a_cell == 0)
       {distributed_source_->eraseFront_position_cell();}
 
-    G4String name_radionuclide = "At211"; //TODO : create a macro command with radionuclide name and associate corresponding half life and energies
+    G4String name_radionuclide = "At211"; //TODO : create a macro command with radionuclide name and associate corresponding energies
 
     if (name_radionuclide.compare("At211")==0)
       { half_life = 0.516;
@@ -398,11 +398,12 @@ Source *PGA_impl::selectSource() const
     return nullptr;
 }
 
-void PGA_impl::ActivateDiffusion(G4String diffusion_string)
+void PGA_impl::ActivateDiffusion(G4String diffusion_string, G4double half_life_arg)
 {
   if (diffusion_string.compare("yes")==0)
   { G4cout<< "\n yes \n" << G4endl;
-    diffusion_bool=true;}
+    diffusion_bool=true;
+    half_life=half_life_arg;}
   else if (diffusion_string.compare("no")==0)
   {G4cout<< "\n no \n" << G4endl;
     diffusion_bool=false;}
