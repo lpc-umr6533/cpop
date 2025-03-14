@@ -70,12 +70,18 @@ void CpopSteppingAction::UserSteppingAction(const G4Step * step)
     G4Track* track = step->GetTrack();
 
     G4ThreeVector pEdepPos = step->GetPreStepPoint()->GetPosition();
-    double check_distance = pEdepPos[0]*pEdepPos[0] + pEdepPos[1]*pEdepPos[1] + pEdepPos[2]*pEdepPos[2];
+    double distance_from_center = pow(pEdepPos[0]*pEdepPos[0] + pEdepPos[1]*pEdepPos[1] + pEdepPos[2]*pEdepPos[2], 0.5);
 
 
-    if (check_distance<=real_spheroid_radius and processName!="Transportation")
+    if (distance_from_center<=real_spheroid_radius and processName!="Transportation")
     {
+      // G4cout << "Debug: " << G4BestUnit(distance_from_center, "Length") << ", " <<G4BestUnit(real_spheroid_radius, "Length") << G4endl;
       fEventAction->AddEdepSpheroid(edep);
+    }
+
+    if (distance_from_center>real_spheroid_radius)
+    {
+      G4cout << "Debug: " << G4BestUnit(distance_from_center, "Length") << ", " <<G4BestUnit(real_spheroid_radius, "Length") << G4endl;
     }
 
     Point_3 edep_pos = Utils::myCGAL::to_CPOP(pEdepPos);
