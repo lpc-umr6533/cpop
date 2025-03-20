@@ -88,6 +88,8 @@ void PGA_impl::GeneratePrimaries(G4Event *event)
 
     if (distributed_source_)
     {
+    labeled_cells = distributed_source_->labeled_cells;
+    population_->set_labeled_cells(labeled_cells);
 
     if (distributed_source_->only_one_position_for_all_particles_on_a_cell == 0)
       {distributed_source_->eraseFront_position_cell();}

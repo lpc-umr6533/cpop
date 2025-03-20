@@ -79,7 +79,7 @@ void Population::setDelta_reffinement(double delta_reffinement)
 
 std::string Population::population_file() const
 {
-    return population_file_;
+  return population_file_;
 }
 
 void Population::setPopulation_file(const std::string &population_file)

@@ -134,6 +134,8 @@ public:
                                                     int number_source,
                                                     int max_number_source_per_cell);
 
+    vector<const Settings::nCell::t_Cell_3 *> labeled_cells;
+
     /// \brief particle source repartition in each cell
     std::unordered_map<const Settings::nCell::t_Cell_3*, SourceInfo> cell_source_;
 

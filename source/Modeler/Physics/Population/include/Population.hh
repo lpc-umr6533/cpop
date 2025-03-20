@@ -84,6 +84,13 @@ public:
 
     G4String name_file_primaries;
 
+    mutable vector<const Settings::nCell::t_Cell_3 *> labeled_cells;
+
+    void set_labeled_cells(std::vector<const Settings::nCell::t_Cell_3 *> vector_labeled)
+     const {
+        labeled_cells = vector_labeled;
+    }
+
 private:
 
     //Conversion helpers

@@ -140,6 +140,8 @@ public:
 
     bool li7_BNCT_spectra;
 
+    vector<const Settings::nCell::t_Cell_3 *> labeled_cells;
+
 
 private:
 

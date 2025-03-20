@@ -98,7 +98,10 @@ void DistributedSource::distribute(int number_source, const SpheroidRegion &regi
       {max_number_source_per_cell = max_number_source_per_cell_external;
        cell_labeling_percentage = cell_labeling_percentage_external_;}
 
-   vector<const Settings::nCell::t_Cell_3 *> labeled_cells = chooseLabeledCells(cell_labeling_percentage, region);
+   labeled_cells = chooseLabeledCells(cell_labeling_percentage, region);
+
+   // for (const Settings::nCell::t_Cell_3* cell: labeled_cells)
+   //  {std::cout << cell->getID() << ' ';}
 
    if(max_number_source_per_cell*cells_in_region.size()*cell_labeling_percentage < number_source) {
         throw std::invalid_argument("Number of particles > Max number of particles per cell * Number of cells labeled.");

@@ -53,6 +53,14 @@ void CpopRunAction::BeginOfRunAction(const G4Run * /*run*/)
 
 void CpopRunAction::EndOfRunAction(const G4Run * /*run*/)
 {
+  labeled_cells = population_-> labeled_cells;
+  for (const Settings::nCell::t_Cell_3* cell: labeled_cells)
+  {std::cout << cell->getID() << ' ';}
+
+  std::unordered_set<int> labeled_cells_id;
+  for (const Settings::nCell::t_Cell_3* cell : labeled_cells)
+  {labeled_cells_id.insert(cell->getID());}
+
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
 	const Population* population = population_;
@@ -77,6 +85,7 @@ void CpopRunAction::EndOfRunAction(const G4Run * /*run*/)
        analysisManager->FillNtupleDColumn(2, 1, fEdepn_tot[id_cell]);
        analysisManager->FillNtupleDColumn(2, 2, fEdepc_tot[id_cell]);
        analysisManager->FillNtupleDColumn(2, 3, fEdep_sph_tot);
+       analysisManager->FillNtupleIColumn(2, 4, labeled_cells_id.count(id_cell+3));
 
 			analysisManager->AddNtupleRow(2);
 		}
@@ -155,6 +164,7 @@ void CpopRunAction::CreateHistogram()
   analysisManager->CreateNtupleDColumn(2, "fEdepn");
   analysisManager->CreateNtupleDColumn(2, "fEdepc");
   analysisManager->CreateNtupleDColumn(2, "fEdep_sph");
+  analysisManager->CreateNtupleIColumn(2, "is_labeled");
   analysisManager->FinishNtuple();
 
 }

@@ -26,6 +26,8 @@ public:
 	void setFile_name(const std::string &file_name);
 	void CreateHistogram();
 
+	vector<const Settings::nCell::t_Cell_3 *> labeled_cells;
+
 private:
 
 	std::string file_name_ = "";
