@@ -54,8 +54,6 @@ void CpopRunAction::BeginOfRunAction(const G4Run * /*run*/)
 void CpopRunAction::EndOfRunAction(const G4Run * /*run*/)
 {
   labeled_cells = population_-> labeled_cells;
-  for (const Settings::nCell::t_Cell_3* cell: labeled_cells)
-  {std::cout << cell->getID() << ' ';}
 
   std::unordered_set<int> labeled_cells_id;
   for (const Settings::nCell::t_Cell_3* cell : labeled_cells)
