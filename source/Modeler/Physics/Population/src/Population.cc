@@ -84,6 +84,7 @@ std::string Population::population_file() const
 
 void Population::setPopulation_file(const std::string &population_file)
 {
+G4cout << "\n\n\n" << &population_file<< "\n\n\n";
     population_file_ = population_file;
 }
 
@@ -139,10 +140,12 @@ void Population::loadPopulation()
     if (population_file().empty())
         throw std::runtime_error("Population file not set. Use /cpop/detector/setPopulation file.xml to set it.");
     else {
-        zz::fs::Path path = "./" + population_file();
+        //zz::fs::Path path = "./" + population_file();
+        zz::fs::Path path = population_file();
+         //G4cout << "\n\n\n" << path.rel_path<< "\n\n\n";
 
         if(!path.is_file()) {
-            std::string errorMsg = "Could not find population file at " + path.abs_path();
+            std::string errorMsg = "Could not find population file at " + path.relative_path();
             throw std::runtime_error(errorMsg.c_str());
         }
     }
