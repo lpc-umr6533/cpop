@@ -19,6 +19,14 @@
 using namespace zz;
 
 int main(int argc, char** argv) {
+	std::string home_path = std::filesystem::current_path().string();
+	std::string output_txt_folder = home_path + "/OutputTxt";
+	if (!std::filesystem::exists(output_txt_folder))
+		{
+			if (!std::filesystem::create_directory(output_txt_folder))
+			{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
+		}
+	std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", fstream::trunc);
 
 	// First we add an argument parser to simplify the use of the population generator
 	zz::cfg::ArgParser argparser;

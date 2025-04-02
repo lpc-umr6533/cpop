@@ -57,7 +57,8 @@ void CpopRunAction::EndOfRunAction(const G4Run * /*run*/)
 
   std::unordered_set<int> labeled_cells_id;
   for (const Settings::nCell::t_Cell_3* cell : labeled_cells)
-  {labeled_cells_id.insert(cell->getID());}
+  { G4cout << "Cell nb°" << cell->getID() << " is labeled" << G4endl;
+    labeled_cells_id.insert(cell->getID());}
 
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 

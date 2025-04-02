@@ -62,6 +62,10 @@ public:
 	/// \brief release an ID from a specific map IS
 	void releaseSpecificIDFor(QString IDMap, unsigned long int );
 
+	void reset();
+	void destroyInstance();
+	
+
 private:
 	/// \brief deal directly with function giving unsigned long int and the set corresponding.
 	unsigned long int getID_internal(IDMap* );

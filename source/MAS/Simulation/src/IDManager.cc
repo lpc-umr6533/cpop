@@ -78,6 +78,7 @@ bool IDManager::setID(Agent* pAgt)
 {
 	assert(pAgt);
 	unsigned long int lID = this->getID_internal(&agentIDs);
+	std::cout << "Setting id: " << lID << std::endl;
 	if(lID == 0)
 	{
 		return false;
@@ -126,4 +127,14 @@ unsigned long int IDManager::getSpecificIDFor( QString pIDMap )
 void IDManager::releaseSpecificIDFor(QString pIDMap, unsigned long int pID )
 {
 	releaseID_internal(getOrCreateIDsMap(pIDMap), pID);
+}
+
+void IDManager::reset() {
+    agentIDs = IDMap(); // Resets the stored ID map
+    specificsIDsMap.clear(); // Clears all specific ID maps
+}
+
+void IDManager::destroyInstance() {
+    delete idManager;
+    idManager = nullptr;
 }

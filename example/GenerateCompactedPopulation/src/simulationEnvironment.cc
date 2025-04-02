@@ -14,6 +14,9 @@ See LICENSE.md for further details
 #include <G4UnitsTable.hh>
 #include <math.h>
 
+#include "IDManager.hh"
+#include <filesystem>
+
 SimulationEnvironment::SimulationEnvironment() {
 	// metric system
 	metricSystem = 1.0;
@@ -92,7 +95,7 @@ void SimulationEnvironment::setCellProperties(double minRadiusNucleus, double ma
 
 void SimulationEnvironment::setSpheroidProperties(double internalRadius, double externalRadius, double required_compaction, double precision_compaction) {
 	// setup the main environment
-	env = new t_Environment_3("main Environment");
+	//env = new t_Environment_3("main Environment");
 	Point_3 center(0., 0., 0.);
 	// tell where the cells should be created (here in a spheroid)
 	SpheresSDelimitation* subEnvSD = new SpheresSDelimitation(internalRadius*metricSystem, externalRadius*metricSystem, center);
@@ -108,11 +111,21 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 	int nbCell_mid;
 
 	const int max_iterations = 50;
-  int iteration = 0;
+ 	int iteration = 0;
 
 	while (fabs(computed_compaction - required_compaction) > precision && iteration < max_iterations)
-	{	nbCell_mid = (nbCell_min + nbCell_max) / 2;
+	{	std::string home_path = std::filesystem::current_path().string();
+		std::string output_txt_folder = home_path + "/OutputTxt";
+		if (!std::filesystem::exists(output_txt_folder))
+			{
+				if (!std::filesystem::create_directory(output_txt_folder))
+				{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
+			}
+		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", fstream::trunc);
+		
+		nbCell_mid = (nbCell_min + nbCell_max) / 2;
 		// New distribution
+		env = new t_Environment_3("main Environment");
 		simulatedEnv = new t_SimulatedSubEnv_3(env, "MySimulatedSubEnv", static_cast<t_SpatialDelimitation_3*>(subEnvSD));
 		ADistribution<double, Point_3, Vector_3>* distribution = DistributionFactory::getInstance()->getDistribution<double, Point_3, Vector_3>(Distribution::RANDOM);
 		distribution->distribute(simulatedEnv, cellProperties, nbCell_mid, rates);
@@ -121,16 +134,21 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 		G4cout << "Iteration " << iteration + 1 << ", Compaction: " << computed_compaction << G4endl;
 		// Bisection
 		if (computed_compaction > required_compaction + precision)
-		{nbCell_max = nbCell_mid;}
+		{nbCell_max = nbCell_mid;
+		}
 		else if (computed_compaction < required_compaction - precision)
-		{nbCell_min = nbCell_mid;}
+		{nbCell_min = nbCell_mid;
+		}
 		iteration++;
+
+		IDManager::getInstance()->reset();
+		//IDManager::getInstance()->destroyInstance();
 	}
 
-G4cout << "\n\n\nFinal compaction: " << computed_compaction * 100 << " %\n\n\n" << G4endl;
+	G4cout << "\n\n\nFinal compaction: " << computed_compaction * 100 << " %\n\n\n" << G4endl;
 
-if (iteration >= max_iterations)
-{G4cout << "Warning: Maximum iterations reached. Solution may not be optimal." << G4endl;}
+	if (iteration >= max_iterations)
+	{G4cout << "Warning: Maximum iterations reached. Solution may not be optimal." << G4endl;}
 
 }
 

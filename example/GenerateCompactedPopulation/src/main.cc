@@ -18,6 +18,7 @@
 
 using namespace zz;
 
+
 int main(int argc, char** argv) {
 
 	// First we add an argument parser to simplify the use of the population generator

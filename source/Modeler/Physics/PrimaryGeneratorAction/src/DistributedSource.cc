@@ -98,6 +98,8 @@ void DistributedSource::distribute(int number_source, const SpheroidRegion &regi
       {max_number_source_per_cell = max_number_source_per_cell_external;
        cell_labeling_percentage = cell_labeling_percentage_external_;}
 
+   if (cell_labeling_percentage == 0) {return;}
+
    labeled_cells = chooseLabeledCells(cell_labeling_percentage, region);
 
    // for (const Settings::nCell::t_Cell_3* cell: labeled_cells)
@@ -112,7 +114,6 @@ void DistributedSource::distribute(int number_source, const SpheroidRegion &regi
 
    std::vector<float> randomNumbers(cells_in_region_size);
 
-   if (labeled_cells.size() == 0) {return;}
    max_nb_part_per_cell = applyMethodDistributionNbParticlesInCells(labeled_cells,
                                         number_source, max_number_source_per_cell);
 
