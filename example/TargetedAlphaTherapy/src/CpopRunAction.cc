@@ -86,7 +86,7 @@ void CpopRunAction::EndOfRunAction(const G4Run * /*run*/)
 		analysisManager->FillNtupleDColumn(2, 2, fEdepc_tot[id_cell]);
 		analysisManager->FillNtupleDColumn(2, 3, fEdep_sph_tot);
 		analysisManager->FillNtupleIColumn(2, 4, labeled_cells_id.count(id_cell+3));
-		analysisManager->FillNtupleSColumn(2, 5, determine_cell_region_by_id(G4int cell_id));
+		analysisManager->FillNtupleSColumn(2, 5, determine_cell_region_by_id(id_cell+3));
 
 		analysisManager->AddNtupleRow(2);
 	}
