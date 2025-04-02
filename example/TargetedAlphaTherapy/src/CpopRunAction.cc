@@ -5,6 +5,7 @@
 #include <G4AnalysisManager.hh>
 
 #include "analysis.hh"
+#include <algorithm>
 
 namespace cpop {
 
@@ -78,16 +79,17 @@ void CpopRunAction::EndOfRunAction(const G4Run * /*run*/)
 	// {
     for (int id_cell=0; id_cell<(population->nb_cell_xml); ++id_cell)
     {
-       ///// WARNING : cells are identified with ids from 3 to total number of cells+2, which are not their real id
-       //for analysis purposes, the IDCell.txt must be used to associate the energy deposited here to the real cells ///////
-       analysisManager->FillNtupleDColumn(2, 0, id_cell+3);
-       analysisManager->FillNtupleDColumn(2, 1, fEdepn_tot[id_cell]);
-       analysisManager->FillNtupleDColumn(2, 2, fEdepc_tot[id_cell]);
-       analysisManager->FillNtupleDColumn(2, 3, fEdep_sph_tot);
-       analysisManager->FillNtupleIColumn(2, 4, labeled_cells_id.count(id_cell+3));
+		///// WARNING : cells are identified with ids from 3 to total number of cells+2, which are not their real id
+		//for analysis purposes, the IDCell.txt must be used to associate the energy deposited here to the real cells ///////
+		analysisManager->FillNtupleDColumn(2, 0, id_cell+3);
+		analysisManager->FillNtupleDColumn(2, 1, fEdepn_tot[id_cell]);
+		analysisManager->FillNtupleDColumn(2, 2, fEdepc_tot[id_cell]);
+		analysisManager->FillNtupleDColumn(2, 3, fEdep_sph_tot);
+		analysisManager->FillNtupleIColumn(2, 4, labeled_cells_id.count(id_cell+3));
+		analysisManager->FillNtupleSColumn(2, 5, determine_cell_region_by_id(G4int cell_id));
 
-			analysisManager->AddNtupleRow(2);
-		}
+		analysisManager->AddNtupleRow(2);
+	}
     //G4cout << "fEdep_sph_tot: " << fEdep_sph_tot << G4endl;
 	// }
 
@@ -96,6 +98,24 @@ void CpopRunAction::EndOfRunAction(const G4Run * /*run*/)
 	analysisManager->Write();
 	analysisManager->CloseFile();
 }
+
+std::string CpopRunAction::determine_cell_region_by_id(G4int cell_id)
+{
+	std::vector<SpheroidRegion> regions = population_->regions();
+	for(const SpheroidRegion& region : regions)
+	{
+		std::vector<const Settings::nCell::t_Cell_3 *> cells_in_region = region.cells_in_region();
+        auto it = std::find_if(cells_in_region.begin(), cells_in_region.end(),
+            [cell_id](const Settings::nCell::t_Cell_3* cell) { return cell->getID() == cell_id; });
+
+        if (it != cells_in_region.end())
+        {
+            return region.name();
+        }
+	}
+	return "Unknown";
+}
+
 
 std::string CpopRunAction::file_name() const
 {
@@ -164,6 +184,7 @@ void CpopRunAction::CreateHistogram()
   analysisManager->CreateNtupleDColumn(2, "fEdepc");
   analysisManager->CreateNtupleDColumn(2, "fEdep_sph");
   analysisManager->CreateNtupleIColumn(2, "is_labeled");
+  analysisManager->CreateNtupleSColumn(2, "region");
   analysisManager->FinishNtuple();
 
 }

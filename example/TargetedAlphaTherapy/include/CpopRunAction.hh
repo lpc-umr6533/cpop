@@ -28,6 +28,8 @@ public:
 
 	vector<const Settings::nCell::t_Cell_3 *> labeled_cells;
 
+	std::string determine_cell_region_by_id(G4int cell_id);
+
 private:
 
 	std::string file_name_ = "";
