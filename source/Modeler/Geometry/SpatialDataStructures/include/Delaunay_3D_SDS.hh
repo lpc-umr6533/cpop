@@ -1,16 +1,7 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef DELAUNAY_3D_SDS
 #define DELAUNAY_3D_SDS
 
 #include "SpatialDataStructure.hh"
-#include "SpatialableAgent.hh"
 
 #include <map>
 
@@ -21,33 +12,24 @@ using namespace Settings::nAgent;
 using namespace Settings::Geometry;
 using namespace Settings::Geometry::Mesh3D;
 
-//////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Define a spatial data structure based on a Delaunay triangulation.
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////////////////////
-class Delaunay_3D_SDS : public SpatialDataStructure<double, Point_3, Vector_3>
-{
-
+class Delaunay_3D_SDS : public SpatialDataStructure<double, Point_3, Vector_3> {
 public:
-	/// \brief constructor
 	Delaunay_3D_SDS(QString);
-		/// \brief constructor
-	Delaunay_3D_SDS(const Delaunay_3D_SDS&);
-	///\brief destructor
-	virtual ~Delaunay_3D_SDS();
 
 	/// \brief function to call to add a spatialable entity
-	bool add(const t_SpatialableAgent_3*);
+	bool add(const t_SpatialableAgent_3*) override;
 	/// \brief function to call to remove a spatialable entity
-	void remove(const t_SpatialableAgent_3*);
+	void remove(const t_SpatialableAgent_3*) override;
 	/// \brief function to call to add a spatialable entity
-	bool update(const t_SpatialableAgent_3*);	
+	bool update(const t_SpatialableAgent_3*) override;
 	/// \brief update the total triangulation
-	int update();
+	int update() override;
 	/// \brief return true if the SDS contains this agent
-	bool contains(const t_SpatialableAgent_3* agent)	{return agentToVertex.find(agent) != agentToVertex.end();};
+	bool contains(const t_SpatialableAgent_3* agent) override	{return _agentToVertex.find(agent) != _agentToVertex.end();};
 	/// \brief return the list of neighbours
-	std::set<const t_SpatialableAgent_3*> getNeighbours(const t_SpatialableAgent_3*) const;
+	std::set<const t_SpatialableAgent_3*> getNeighbours(const t_SpatialableAgent_3*) const override;
 	/// \brief return neighbour only if not enought spatialable to generate a tetragulation
 	std::set<const t_SpatialableAgent_3*> getNeighboursWithoutTriangulation(const t_SpatialableAgent_3* pAgent) const;
 	/// \brief return the nearest agent of a given point
@@ -57,10 +39,9 @@ public:
 	virtual void clean();
 
 protected:
-	RT_3 delaunay;	///< \brief the delaunay regular triangulation ( weighted Delunay )
+	RT_3 _delaunay;	///< \brief the delaunay regular triangulation ( weighted Delunay )
 	/// \brief the map linking agent to his dealunay regular triangulation Vertex
-	std::map<const t_SpatialableAgent_3*, Vertex_3_handle> agentToVertex;
-
+	std::map<const t_SpatialableAgent_3*, Vertex_3_handle> _agentToVertex;
 };
 
-#endif // DELAUNAY_3D_SDS
+#endif

@@ -1,137 +1,126 @@
 #include "PopulationMessenger.hh"
 #include "Population.hh"
 
-
-
 namespace cpop {
 
-PopulationMessenger::PopulationMessenger(Population *population)
-    :MessengerBase(),
-      population_(population)
+PopulationMessenger::PopulationMessenger(Population *population):
+	_population(population)
 {
-
 }
 
-void PopulationMessenger::BuildCommands(G4String base)
-{
-    //G4String cmd_base = this->make_directory(base, "population");
-    G4String cmd_base = base + "/population";
+void PopulationMessenger::BuildCommands(G4String base) {
+	//G4String cmd_base = this->make_directory(base, "population");
+	G4String cmd_base = base + "/population";
 
-    G4String cmd_name = cmd_base + "/verbose";
-    verbose_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
-    verbose_cmd_->SetGuidance("Set vebose level. 0 (silent) 1 (output to terminal");
-    verbose_cmd_->SetParameterName("Verbose",true);
-    verbose_cmd_->SetDefaultValue(0);
-    verbose_cmd_->SetRange("Verbose == 0 || Verbose == 1");
-    verbose_cmd_->AvailableForStates(G4State_PreInit);
+	G4String cmd_name = cmd_base + "/verbose";
+	_verboseCmd = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
+	_verboseCmd->SetGuidance("Set vebose level. 0 (silent) 1 (output to terminal");
+	_verboseCmd->SetParameterName("Verbose",true);
+	_verboseCmd->SetDefaultValue(0);
+	_verboseCmd->SetRange("Verbose == 0 || Verbose == 1");
+	_verboseCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/input";
-    population_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_name, this);
-    population_cmd_->SetGuidance("Set cell population file");
-    population_cmd_->SetParameterName("CellPop",false);
-    population_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/input";
+	_populationCmd = std::make_unique<G4UIcmdWithAString>(cmd_name, this);
+	_populationCmd->SetGuidance("Set cell population file");
+	_populationCmd->SetParameterName("CellPop",false);
+	_populationCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/numberFacet";
-    number_facet_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
-    number_facet_cmd_->SetGuidance("Set maximum number of facet for each cell representation");
-    number_facet_cmd_->SetParameterName("NumberFacet", true);
-    number_facet_cmd_->SetDefaultValue(100);
-    number_facet_cmd_->SetRange("NumberFacet > 0");
-    number_facet_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/numberFacet";
+	_numberFacetCmd = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
+	_numberFacetCmd->SetGuidance("Set maximum number of facet for each cell representation");
+	_numberFacetCmd->SetParameterName("NumberFacet", true);
+	_numberFacetCmd->SetDefaultValue(100);
+	_numberFacetCmd->SetRange("NumberFacet > 0");
+	_numberFacetCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/deltaRef";
-    delta_ref_cmd_ = std::make_unique<G4UIcmdWithADouble>(cmd_name,this);
-    delta_ref_cmd_->SetGuidance("Set delta refinement parameter");
-    delta_ref_cmd_->SetParameterName("DeltaRef", true);
-    delta_ref_cmd_->SetDefaultValue(0);
-    delta_ref_cmd_->SetRange("DeltaRef >= 0");
-    delta_ref_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/deltaRef";
+	_deltaRefCmd = std::make_unique<G4UIcmdWithADouble>(cmd_name,this);
+	_deltaRefCmd->SetGuidance("Set delta refinement parameter");
+	_deltaRefCmd->SetParameterName("DeltaRef", true);
+	_deltaRefCmd->SetDefaultValue(0);
+	_deltaRefCmd->SetRange("DeltaRef >= 0");
+	_deltaRefCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/internalRatio";
-    internal_ratio_cmd_ = std::make_unique<G4UIcmdWithADouble>(cmd_name,this);
-    internal_ratio_cmd_->SetGuidance("Set internal layer ratio");
-    internal_ratio_cmd_->SetParameterName("internalRatio", false);
-    internal_ratio_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/internalRatio";
+	_internalRatioCmd = std::make_unique<G4UIcmdWithADouble>(cmd_name,this);
+	_internalRatioCmd->SetGuidance("Set internal layer ratio");
+	_internalRatioCmd->SetParameterName("internalRatio", false);
+	_internalRatioCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/intermediaryRatio";
-    intermediary_ratio_cmd_ = std::make_unique<G4UIcmdWithADouble>(cmd_name, this);
-    intermediary_ratio_cmd_->SetGuidance("Set intermediary layer ratio");
-    intermediary_ratio_cmd_->SetParameterName("intermediaryRatio", false);
-    intermediary_ratio_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/intermediaryRatio";
+	_intermediaryRatioCmd = std::make_unique<G4UIcmdWithADouble>(cmd_name, this);
+	_intermediaryRatioCmd->SetGuidance("Set intermediary layer ratio");
+	_intermediaryRatioCmd->SetParameterName("intermediaryRatio", false);
+	_intermediaryRatioCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/sampling";
-    number_sampling_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name,this);
-    number_sampling_cmd_->SetGuidance("Set number of cell to observe. Use ! to observe the whole population");
-    number_sampling_cmd_->SetParameterName("Sampling", true);
-    number_sampling_cmd_->SetDefaultValue(-1);
-    number_sampling_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/sampling";
+	_numberSamplingCmd = std::make_unique<G4UIcmdWithAnInteger>(cmd_name,this);
+	_numberSamplingCmd->SetGuidance("Set number of cell to observe. Use ! to observe the whole population");
+	_numberSamplingCmd->SetParameterName("Sampling", true);
+	_numberSamplingCmd->SetDefaultValue(-1);
+	_numberSamplingCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/init";
-    init_cmd_ = std::make_unique<G4UIcmdWithoutParameter>(cmd_name,this);
-    init_cmd_->SetGuidance("Load population file and define regions");
-    init_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/init";
+	_initCmd = std::make_unique<G4UIcmdWithoutParameter>(cmd_name,this);
+	_initCmd->SetGuidance("Load population file and define regions");
+	_initCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/stepInfo";
-    get_stepping_level_info_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
-    get_stepping_level_info_cmd_->SetGuidance("Get info at the stepping level");
-    get_stepping_level_info_cmd_->SetParameterName("StepInfoBool", true);
-    get_stepping_level_info_cmd_->SetDefaultValue(0);
-    get_stepping_level_info_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/stepInfo";
+	_getSteppingLevelInfoCmd = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
+	_getSteppingLevelInfoCmd->SetGuidance("Get info at the stepping level");
+	_getSteppingLevelInfoCmd->SetParameterName("StepInfoBool", true);
+	_getSteppingLevelInfoCmd->SetDefaultValue(0);
+	_getSteppingLevelInfoCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_name = cmd_base + "/eventInfo";
-    get_event_level_info_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
-    get_event_level_info_cmd_->SetGuidance("Get info at the event level");
-    get_event_level_info_cmd_->SetParameterName("EventInfoBool", true);
-    get_event_level_info_cmd_->SetDefaultValue(0);
-    get_event_level_info_cmd_->AvailableForStates(G4State_PreInit);
+	cmd_name = cmd_base + "/eventInfo";
+	_getEventLevelInfoCmd = std::make_unique<G4UIcmdWithAnInteger>(cmd_name, this);
+	_getEventLevelInfoCmd->SetGuidance("Get info at the event level");
+	_getEventLevelInfoCmd->SetParameterName("EventInfoBool", true);
+	_getEventLevelInfoCmd->SetDefaultValue(0);
+	_getEventLevelInfoCmd->AvailableForStates(G4State_PreInit);
 
-    cmd_base = cmd_base + "/writeInfoPrimariesTxt";
-    infos_primaries_cmd_ = std::make_unique<G4UIcommand>(cmd_base, this);
-    infos_primaries_cmd_->SetGuidance("Write positions,"
-     "directions and energy of primary particles in .txt");
-    G4UIparameter* bool_info_primaries = new G4UIparameter("bool_info_primaries",
-                                                          's', false);
-    infos_primaries_cmd_->SetParameter(bool_info_primaries);
-    G4UIparameter* name_file = new G4UIparameter("name_file", 's', false);
-    infos_primaries_cmd_->SetParameter(name_file);
-    infos_primaries_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-
+	cmd_base = cmd_base + "/writeInfoPrimariesTxt";
+	_infosPrimariesCmd = std::make_unique<G4UIcommand>(cmd_base, this);
+	_infosPrimariesCmd->SetGuidance("Write positions,"
+	 "directions and energy of primary particles in .txt");
+	auto* bool_info_primaries = new G4UIparameter("bool_info_primaries", 's', false);
+	_infosPrimariesCmd->SetParameter(bool_info_primaries);
+	auto* name_file = new G4UIparameter("name_file", 's', false);
+	_infosPrimariesCmd->SetParameter(name_file);
+	_infosPrimariesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
-void PopulationMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
-{
-    if (command == verbose_cmd_.get()) {
-        population_->setVerbose_level(verbose_cmd_->GetNewIntValue(newValue));
-    } else if (command == population_cmd_.get()) {
-        population_->setPopulation_file(newValue.data());
-    } else if (command == number_facet_cmd_.get()) {
-        population_->setNumber_max_facet_poly(number_facet_cmd_->GetNewIntValue(newValue));
-    } else if (command == delta_ref_cmd_.get()) {
-        population_->setDelta_reffinement(delta_ref_cmd_->GetNewDoubleValue(newValue));
-    } else if (command == internal_ratio_cmd_.get()) {
-        population_->setInternal_layer_ratio(internal_ratio_cmd_->GetNewDoubleValue(newValue));
-    } else if (command == intermediary_ratio_cmd_.get()) {
-        population_->setIntermediary_layer_ratio(intermediary_ratio_cmd_->GetNewDoubleValue(newValue));
-    } else if (command == number_sampling_cmd_.get()) {
-        population_->setNumber_sampling_cell_per_region(number_sampling_cmd_->GetNewIntValue(newValue));
-    } else if (command == init_cmd_.get()) {
-        population_->loadPopulation();
-        population_->defineRegion();
-    } else if (command == get_stepping_level_info_cmd_.get()) {
-        population_->set_Stepping_level_info_bool(get_stepping_level_info_cmd_->GetNewIntValue(newValue));
-    } else if (command == get_event_level_info_cmd_.get()) {
-        population_->set_Event_level_info_bool(get_event_level_info_cmd_->GetNewIntValue(newValue));
-    } else if (command == infos_primaries_cmd_.get()) {
-        G4String bool_writing;
-        G4String name_file;
+void PopulationMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
+	if (command == _verboseCmd.get()) {
+		_population->setVerbose_level(_verboseCmd->GetNewIntValue(newValue));
+	} else if (command == _populationCmd.get()) {
+		_population->setPopulation_file(newValue.data());
+	} else if (command == _numberFacetCmd.get()) {
+		_population->setNumber_max_facet_poly(_numberFacetCmd->GetNewIntValue(newValue));
+	} else if (command == _deltaRefCmd.get()) {
+		_population->setDelta_reffinement(_deltaRefCmd->GetNewDoubleValue(newValue));
+	} else if (command == _internalRatioCmd.get()) {
+		_population->setInternal_layer_ratio(_internalRatioCmd->GetNewDoubleValue(newValue));
+	} else if (command == _intermediaryRatioCmd.get()) {
+		_population->setIntermediary_layer_ratio(_intermediaryRatioCmd->GetNewDoubleValue(newValue));
+	} else if (command == _numberSamplingCmd.get()) {
+		_population->setNumber_sampling_cell_per_region(_numberSamplingCmd->GetNewIntValue(newValue));
+	} else if (command == _initCmd.get()) {
+		_population->loadPopulation();
+		_population->defineRegion();
+	} else if (command == _getSteppingLevelInfoCmd.get()) {
+		_population->set_Stepping_level_info_bool(_getSteppingLevelInfoCmd->GetNewIntValue(newValue));
+	} else if (command == _getEventLevelInfoCmd.get()) {
+		_population->set_Event_level_info_bool(_getEventLevelInfoCmd->GetNewIntValue(newValue));
+	} else if (command == _infosPrimariesCmd.get()) {
+		G4String bool_writing;
+		G4String name_file;
 
-        std::istringstream is(newValue.data());
-        is >> bool_writing >> name_file;
-        population_->enableWritingInfoPrimariesTxt(bool_writing, name_file);
-    }
-
-
+		std::istringstream is(newValue.data());
+		is >> bool_writing >> name_file;
+		_population->enableWritingInfoPrimariesTxt(bool_writing, name_file);
+	}
 }
 
 }

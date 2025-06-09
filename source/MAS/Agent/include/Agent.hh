@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef AGENT_HH
 #define AGENT_HH
 
@@ -21,25 +13,24 @@ using namespace AgentStates;
 /// In our case we are running discreet continuous simulation.
 /// @author Henri Payno
 /////////////////////////////////////////////////////////////////////////////////////////
-class Agent
-{
+class Agent {
 	friend class MASPlatform;
 	friend class IDManager;
 	friend class ConflictSolver;
-	
+
 public:
 	/// \brief  constructor
 	Agent(Body*);
 	/// \brief  destructor
 	virtual ~Agent();
-	
+
 	/// \brief  the function called before the first run
 	virtual int init() = 0;
 	/// \brief  return the agent ID
-	inline unsigned long int getID() const 	{return ID;}; 
+	[[nodiscard]] inline unsigned long int getID() const { return _id; }
 	/// \brief  return the agent state
-	inline AgentState getState() const 		{return state;};
-	
+	[[nodiscard]] inline AgentState getState() const { return _state; }
+
 	/// \brief agent state setter.
 	bool setState(AgentState);
 
@@ -52,41 +43,41 @@ public:
 	/// \brief draw the agent to the OpenGL world
 	virtual void draw() const;
 	/// \brief body getter
-	Body* getBody() const					{ return body;};
+	[[nodiscard]] Body* getBody() const { return _body; }
 	/// \brief will set the ID given
 	/// \warning : this shouldn't be used prudently.
 	/// no control from the IDManager is made and can generate bad condition !!!
-	void forceID(unsigned long int pID)		{ID = pID;};
+	void forceID(unsigned long int pID) { _id = pID; }
 	/// \brief to be executed tag setter
-	void setToBeExecute(bool b)				{ toBeExecuted = b;}
+	void setToBeExecute(bool b) { _toBeExecuted = b; }
 	/// \brief to be executed tag getter
-	bool hasToBeExecuted()					{ return toBeExecuted;}
+	[[nodiscard]] bool hasToBeExecuted() const { return _toBeExecuted; }
 
 	/// \brief color getter
-	CGAL::Color getColor() const 		{ return color; }
+	[[nodiscard]] CGAL::Color getColor() const { return _color; }
 	/// \brief color setter
-	void setColor(CGAL::Color pColor) 	{ color = pColor;}
+	void setColor(CGAL::Color pColor) { _color = pColor; }
 
 protected:
 	/// Will move to the agent natural next state
 	int goToNextLogicalState();
+
 private:
 	/// \brief setter of the ID.
 	/// \param pID The new ID
-	void setID(unsigned long int pID)	{ID = pID;};	
-	
-protected:	
-	Body* body;			///< \brief  the physical body of the agent.
-	
+	void setID(unsigned long int pID)	{ _id = pID; }
+
+protected:
+	Body* _body; ///< \brief  the physical body of the agent.
+
 private:
 	/// \brief  the agent ID, set by the IDManager
-	unsigned long int ID;
+	unsigned long int _id;
 	/// \brief  the agent state (stopped, running, waitingInit, waitingStart )
-	AgentState state;
+	AgentState _state;
 	/// \brief tag to know if we have to execute the agent or not
-	bool toBeExecuted;
-	CGAL::Color color;						///< \brief the color to set to the agent
-
+	bool _toBeExecuted;
+	CGAL::Color _color; ///< \brief the color to set to the agent
 };
 
-#endif // AGENT_HH
+#endif

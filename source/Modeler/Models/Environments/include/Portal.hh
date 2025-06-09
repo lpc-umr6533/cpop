@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef PORTAL_HH
 #define PORTAL_HH
 
@@ -16,36 +8,28 @@ See LICENSE.md for further details
 #include <CGAL/float.h> 	///< CGAL float definition
 #include <CGAL/Cartesian.h>
 
-/////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Defined a one side portal on the space.
 /// A portal link like a bridge two comparable spatial areas (ActiveDelimitation).
 /// @author Henri Payno
-/////////////////////////////////////////////////////////////////////////////////////////
 template <typename Kernel, typename Point, typename Vector>
-class Portal : public Writable 
-{
+class Portal : public Writable {
 public:
-	/// \brief constructor
 	Portal(ActiveDelimitation<Kernel, Point, Vector>* pIn, ActiveDelimitation<Kernel, Point, Vector>* pOut);
-	/// \brief destructor
-	~Portal();
+
 	/// \brief function to know if the agent is going to go throw the portal
 	bool isGoingThrowPortal(DynamicAgent<Kernel, Point, Vector>*) const;
 	/// \brief return the position of the agent when passing to the portal
 	Vector getNewPositionThrowPortal(DynamicAgent<Kernel, Point, Vector>*) const;
 
 protected:
-	ActiveDelimitation<Kernel, Point, Vector>* in;		///< \brief The entry of the portal
-	ActiveDelimitation<Kernel, Point, Vector>* out;	///< \brief The exit of the portal
+	ActiveDelimitation<Kernel, Point, Vector>* in;  ///< \brief The entry of the portal
+	ActiveDelimitation<Kernel, Point, Vector>* out; ///< \brief The exit of the portal
 };
-
 
 ////////////////////// FUNCTION DEFINITION //////////////////
 
-///////////////////////////////////////////////////////////////////////////////////
 /// \param pIn 	The entry of the portal
 /// \param pOut The exit of the portal
-///////////////////////////////////////////////////////////////////////////////////
 template <typename Kernel, typename Point, typename Vector>
 Portal<Kernel, Point, Vector>::Portal(ActiveDelimitation<Kernel, Point, Vector>* pIn, ActiveDelimitation<Kernel, Point, Vector>* pOut):
 	Writable(),
@@ -54,19 +38,7 @@ Portal<Kernel, Point, Vector>::Portal(ActiveDelimitation<Kernel, Point, Vector>*
 	/// \todo : check in et out are comparable ( same shape...)
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////////////////////
-template <typename Kernel, typename Point, typename Vector>
-Portal<Kernel, Point, Vector>::~Portal()
-{
-	/// Doesn't deletes active delimitations 
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////
 /// \brief function to know if the agent is going to go throw the portal
-/////////////////////////////////////////////////////////////////////////////////////
 template <typename Kernel, typename Point, typename Vector>
 bool Portal<Kernel, Point, Vector>::isGoingThrowPortal(DynamicAgent<Kernel, Point, Vector>* pDynAgent) const
 {
@@ -74,14 +46,11 @@ bool Portal<Kernel, Point, Vector>::isGoingThrowPortal(DynamicAgent<Kernel, Poin
 	return false;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
 /// \brief return the position of the agent when passing to the portal
-/////////////////////////////////////////////////////////////////////////////////////
 template <typename Kernel, typename Point, typename Vector>
-Vector Portal<Kernel, Point, Vector>::getNewPositionThrowPortal(DynamicAgent<Kernel, Point, Vector>*) const
-{
-	Vector newPos;
+Vector Portal<Kernel, Point, Vector>::getNewPositionThrowPortal(DynamicAgent<Kernel, Point, Vector>*) const {
 	/// \todo 
-	return newPos;
+	return {};
 }
-#endif // PORTAL_HH
+
+#endif

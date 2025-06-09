@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol,
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef SPHEROID__SECTION__H
 #define SPHEROID__SECTION__H
 
@@ -48,22 +40,17 @@ See LICENSE.md for further details
 
 template <typename T>
 class SpheroidSection: public conf::SectionReader<T> {
-
 public:
-    SpheroidSection() {}
-    ~SpheroidSection() {}
+	void fill() {
+		std::string sectionName("SpheroidProperties");
 
-    void fill() {
-		const char sectionName[] = "SpheroidProperties";
-
-		double internalRadius = this->template load<double>(sectionName, "internalRadius");
-		double externalRadius = this->template load<double>(sectionName, "externalRadius");
-		int nbCell = this->template load<int>(sectionName, "nbCell");
-    bool is_distributed_in_grid = this->template load<bool>(sectionName, "gridDistribution");
-
+		auto internalRadius = this->template load<double>(sectionName, "internalRadius");
+		auto externalRadius = this->template load<double>(sectionName, "externalRadius");
+		auto nbCell = this->template load<int>(sectionName, "nbCell");
+		auto is_distributed_in_grid = this->template load<bool>(sectionName, "gridDistribution");
 
 		this->objToFill->setSpheroidProperties(internalRadius, externalRadius, nbCell, is_distributed_in_grid);
-    }
+	}
 };
 
 #endif

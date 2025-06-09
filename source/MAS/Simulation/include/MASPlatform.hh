@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef MAS_PLATFORM_HH
 #define MAS_PLATFORM_HH
 
@@ -17,19 +9,15 @@ See LICENSE.md for further details
 #include <QList>
 #include <QObject>
 
-//////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Offer a multithreaded Multi Agent System platform allowing to execute agent and
 /// synchronize at each step of the simulation.
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////////////////////
-class MASPlatform : public QObject
-{
+class MASPlatform: public QObject {
 	Q_OBJECT
 public:
-	/// \brief constructor
 	MASPlatform(QList<Agent*> pAgents = QList<Agent*>());
-	/// \brief destructor
-	~MASPlatform();
+	~MASPlatform() override;
+
 	/// \brief simulation starter
 	int startSimulation();
 
@@ -46,7 +34,7 @@ public:
 	/// \brief displacementThreshold setter
 	void setDisplacementThreshold(double pThreshold) const;
 	/// \brief displacementThreshold getter
-	double getDisplacementThreshold() const;
+	[[nodiscard]] double getDisplacementThreshold() const;
 
 	/// \brief set the duration of steps
 	void setNbMaxThreads(int);
@@ -59,7 +47,7 @@ public:
 	int addParticipant(Agent*);
 
 	/// \brief we will execute randomly a limited number of agent 
-	void limiteNbAgentToSimulate(unsigned int );
+	void limiteNbAgentToSimulate(unsigned int);
 	/// \brief avoid limitation of agent, execute all agent
 	void unlimiteNbAgentToSimulate(bool);
 
@@ -68,11 +56,11 @@ private:
 	bool initAgentToSimulate();
 	/// \brief: The layer to simulate
 	/// \warning on order to have a display update the layer to simulate must be part of the world
-	Layer* layerToSimulate;							
+	Layer* _layerToSimulate;							
 
 public slots:
 	/// \brief slot called wwhen simulation start
-	void sl_startSimulation()		{startSimulation();};
+	void sl_startSimulation() { startSimulation(); }
 };
 
-#endif // MAS_PLATFORM_HH
+#endif

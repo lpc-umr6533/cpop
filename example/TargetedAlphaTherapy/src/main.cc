@@ -101,8 +101,7 @@ int main(int argc, char** argv)
 				if (!fs::create_directory(output_txt_folder))
 				{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
 			}
-		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt",
-		 fstream::trunc);
+		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::fstream::trunc);
 
 		// Set mandatory initialization classes
 

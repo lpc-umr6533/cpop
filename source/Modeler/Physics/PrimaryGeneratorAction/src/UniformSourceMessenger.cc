@@ -3,31 +3,28 @@
 
 namespace cpop {
 
-UniformSourceMessenger::UniformSourceMessenger(UniformSource *source)
-    : MessengerBase(),
-      source_(source),
-      source_messenger_(std::make_unique<SourceMessenger>(source))
+UniformSourceMessenger::UniformSourceMessenger(UniformSource *source):
+	_source(source),
+	_sourceMessenger(std::make_unique<SourceMessenger>(source))
 {
 }
 
-void UniformSourceMessenger::BuildCommands(G4String base)
-{
-    source_messenger_->BuildCommands(base);
+void UniformSourceMessenger::BuildCommands(G4String base) {
+	_sourceMessenger->BuildCommands(base);
 
-    G4String cmd_base = base + "/totalParticle";
-    total_particle_cmd_ = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
-    total_particle_cmd_->SetGuidance("Set number of particles to be generated from this source");
-    total_particle_cmd_->SetParameterName("TotalParticle", false);
-    total_particle_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
+	G4String cmd_base = base + "/totalParticle";
+	_totalParticleCmd = std::make_unique<G4UIcmdWithAnInteger>(cmd_base, this);
+	_totalParticleCmd->SetGuidance("Set number of particles to be generated from this source");
+	_totalParticleCmd->SetParameterName("TotalParticle", false);
+	_totalParticleCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
-void UniformSourceMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
-{
-    source_messenger_->SetNewValue(command, newValue);
+void UniformSourceMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
+	_sourceMessenger->SetNewValue(command, newValue);
 
-    if (command == total_particle_cmd_.get()) {
-        source_->setTotal_particle(total_particle_cmd_->GetNewIntValue(newValue));
-    }
+	if (command == _totalParticleCmd.get()) {
+		_source->setTotal_particle(_totalParticleCmd->GetNewIntValue(newValue));
+	}
 }
 
 }

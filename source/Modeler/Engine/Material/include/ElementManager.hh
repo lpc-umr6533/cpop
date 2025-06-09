@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef ELEMENT_MANAGER_HH
 #define ELEMENT_MANAGER_HH
 
@@ -14,18 +6,13 @@ See LICENSE.md for further details
 #include <map>
 #include <QString>
 
-///////////////////////////////////////////////////////////////////////////
 /// \brief define the element manager
 /// \warning elements are defined from the G4Element definition
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////
-class ElementManager
-{
+class ElementManager {
 public:
-	/// \brief constructor
 	ElementManager();
-	/// \brief destructor
-	~ElementManager();
+
 	/// \brief return the ElementManager singleton
 	static ElementManager* getInstance();
 	/// \brief return the requested element
@@ -43,4 +30,4 @@ private:
 	std::map<QString, G4Element*> elementsMap;
 };
 
-#endif // ELEMENT_MANAGER_HH
+#endif

@@ -1,18 +1,7 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef VORONOI_3D_CELL_MESH_SUBDIVION_THREAD_HH
 #define VORONOI_3D_CELL_MESH_SUBDIVION_THREAD_HH
 
-#include "CellMeshSettings.hh"
-#include "CPOP_Circle.hh"
 #include "CPOP_Triangle.hh"
-#include "Nucleus.hh"
 #include "Mesh3DSettings.hh"
 #include "SpheroidalCell.hh"
 #include "RefinementThread.hh"
@@ -25,35 +14,33 @@ See LICENSE.md for further details
 using namespace Settings::Geometry;
 using namespace Settings::Geometry::Mesh3D;
 
-//////////////////////////////////////////////////////////////////////////////
 /// \brief The thread to refine spheroid cell from voronoi cell.
-/// ideally to SpheroidalCell must be Sphere_3. But to win dev time we heritate from 
+/// ideally to SpheroidalCell must be Sphere_3. But to win dev time we heritate from
 /// SpheroidalCellMeshSubThread and do the same action but without nucleus.
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////
-class Voronoi3DCellMeshSubThread : public RefinementThread
-{
+class Voronoi3DCellMeshSubThread : public RefinementThread {
 	Q_OBJECT
 
 public:
-	/// \brief constructor
-	Voronoi3DCellMeshSubThread(unsigned int, unsigned int, double, 
-		const std::map<SpheroidalCell*, std::set<const SpheroidalCell*> >* ,					
+	Voronoi3DCellMeshSubThread(
+		unsigned int, unsigned int, double,
+		const std::map<SpheroidalCell*,
+		std::set<const SpheroidalCell*>>*,
 		std::vector<SpheroidalCell*> pCellsToReffine = std::vector<SpheroidalCell*>(),
-		double pSpaceBetweenCells = 0.);
-	/// \brief destructor
-	virtual ~Voronoi3DCellMeshSubThread();
+		double pSpaceBetweenCells = 0.
+	);
+	~Voronoi3DCellMeshSubThread() override;
 	/// \brief add a spheroidal cell struct to reffine
 	void addCell(SpheroidalCell*);
 	/// \brief run of the thread.
-	void run();
+	void run() override;
 	/// \brief main function called to reffine a specific cell
 	virtual bool reffineCell(SpheroidalCell* cell);
 
 	/// \brief space between cell setter
-	void setSpaceBetweenCell(double pSpace) 			{ spaceBetweenCells = pSpace;}
+	void setSpaceBetweenCell(double pSpace) { _spaceBetweenCells = pSpace; }
 	/// \brief space between cell getter
-	double getSpaceBetweenCell() const 					{ return spaceBetweenCells;}
+	[[nodiscard]] double getSpaceBetweenCell() const { return _spaceBetweenCells; }
 
 protected:
 	/// \brief generate the intersections planes for the given cell
@@ -63,7 +50,7 @@ protected:
 	/// \brief subdivided the membrane mesh according to the delta and maxNumberFacet parameters.
 	bool subdivseCellMembraneMesh(SpheroidalCell* cell);
 	/// \brief clean data structure and pointer after process
-	void clean();	
+	void clean();
 
 private:
 	/// \brief update the point of the mesh according to intersections.
@@ -79,15 +66,15 @@ protected:
 	std::map<Point_3, int> reffinementValues;		///< \brief map each point to the plane he is part of. If -1 : not par of an intersection plane but on the theorical sphere
 	/// \brief memorise the interesting intersection plane from the voronoi cell.
 	/// \warning emake sur the plane has his normal on the opposite direction of the sphere center.
-	std::vector<Plane_3*> intersections; 
+	std::vector<Plane_3*> intersections;
 	/// \brief map of plane with there given IDs
-	std::map<Plane_3*, int> intersectionIDMap;	
+	std::map<Plane_3*, int> intersectionIDMap;
 
 	std::vector<SpheroidalCell*> cellsToReffine;										///< \brief all the cell to reffine.
-	/// \brief the list of neighbour and there weight.	
-	const std::map<SpheroidalCell*, std::set<const SpheroidalCell* > >* neighbourCells;	
+	/// \brief the list of neighbour and there weight.
+	const std::map<SpheroidalCell*, std::set<const SpheroidalCell* > >* neighbourCells;
 	/// \brief the minimal space to generate betwen each cell. Half ot his distance will be directly removed from the cells radius.
-	double spaceBetweenCells;									
+	double _spaceBetweenCells;
 };
 
-#endif // SPHEROIDAL_3D_CELL_MESH_THREAD_HH
+#endif

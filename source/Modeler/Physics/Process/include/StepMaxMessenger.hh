@@ -9,21 +9,20 @@ namespace cpop {
 
 class StepMax;
 
-class StepMaxMessenger : public MessengerBase
-{
+class StepMaxMessenger : public MessengerBase {
 public:
-    StepMaxMessenger(StepMax* step_max);
+	StepMaxMessenger(StepMax* step_max);
 
-    virtual void BuildCommands(G4String base) override;
-    virtual void SetNewValue(G4UIcommand * command , G4String newValue) override;
+	void BuildCommands(G4String base) override;
+	void SetNewValue(G4UIcommand * command , G4String newValue) override;
 
 private:
-    StepMax* step_max_;
+	StepMax* _stepMax;
 
-    std::unique_ptr<G4UIcmdWithADoubleAndUnit> step_max_cmd_;
+	std::unique_ptr<G4UIcmdWithADoubleAndUnit> _stepMaxCmd;
 
 };
 
 }
 
-#endif // STEPMAXMESSENGER_HH
+#endif

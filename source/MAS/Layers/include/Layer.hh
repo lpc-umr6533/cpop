@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef LAYER_HH
 #define LAYER_HH
 
@@ -18,52 +10,45 @@ See LICENSE.md for further details
 #include <set>
 #include <vector>
 
-//////////////////////////////////////////////////////////////////////////////
 /// \brief Define a layer.
 /// a layer handle mainly the display procedures.
 /// Will be herited from World and WorldLayer.
-/// World will delete agent, no worldLayer, 
+/// World will delete agent, no worldLayer,
 /// World's agents will be set from is initialisation.
 /// WorldLayer's agents can be add on the fly before world intialisation
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////
-class Layer
-{
-
+class Layer {
 public:
 	/// \brief define the potential layer types
-	enum LayerType
-	{
-		ROOT,	///< The root/top node, 
+	enum LayerType {
+		ROOT,	///< The root/top node,
 		NODE, 	///< a node including leaf(s) and included inside node
 		LEAF 	///< the bottom entity
 	};
 
 public:
-	/// \brief constructor
-	Layer(QString, Layer* parent = NULL, LayerType pType = LEAF);
-	/// \brief destructor
+	Layer(QString, Layer* parent = nullptr, LayerType pType = LEAF);
 	virtual ~Layer();
 
 	/// \brief alpha display parameter getter
-	float getAlpha() const						{ return alpha;};
+	[[nodiscard]] float getAlpha() const { return _alpha; }
 	/// \brief alpha display parameter setter
-	void setAlpha(float pAlpha)					{ alpha = pAlpha;};
+	void setAlpha(float pAlpha) { _alpha = pAlpha; }
 
 	/// \brief return the layer name / ID
-	QString getName() const						{return name;}
+	[[nodiscard]] QString getName() const { return _name; }
 
 	/// \brief display the layer and all the agent included
 	virtual void draw() const;
 
 	/// \brief return the list of agent contained inside the layer
-	inline virtual std::set<Agent*> getAgents() const			{return agents;};
+	[[nodiscard]] inline virtual std::set<Agent*> getAgents() const { return _agents; }
 	/// \brief return the number of agent contained on the world
-	inline unsigned long int getNbAgent() const					{ return (unsigned long int) agents.size();};
+	[[nodiscard]] inline unsigned long int getNbAgent() const	{ return (unsigned long int) _agents.size(); }
 	/// \brief return the set of agents contained inside sub layer with a unicity constrain
-	std::set<Agent*> getUniqueSubAgents() const;
+	[[nodiscard]] std::set<Agent*> getUniqueSubAgents() const;
 	/// \brief return all the contained agents from this layer to the sublayers
-	std::set<Agent*> getUniqueAgentsAndSubAgents() const;
+	[[nodiscard]] std::set<Agent*> getUniqueAgentsAndSubAgents() const;
 
 	/// \brief return true if contains the layer requested
 	virtual bool contains(Layer*) const;
@@ -75,31 +60,29 @@ public:
 	virtual void init();
 
 	/// \brief layers getter
-	std::map<QString, Layer*> getChilds() const	{return childLayers;};
+	[[nodiscard]] std::map<QString, Layer*> getChilds() const	{return _childLayers;};
 	/// \brief layer getter from hisID
-	Layer* getChild(QString) const;
+	[[nodiscard]] Layer* getChild(QString) const;
 	/// \brief return the fisrst child of the layer in the alphabetical order, Null if none
-	Layer* getFirstChild() const;
+	[[nodiscard]] Layer* getFirstChild() const;
 	/// \brief return n agent randomly. We assure their unicity
-	std::set<Agent*> getNRandomAgent(unsigned int) const;
+	[[nodiscard]] std::set<Agent*> getNRandomAgent(unsigned int) const;
 	/// \brief return one agent randomly
-	Agent* getOneRandomAgent() const;
+	[[nodiscard]] Agent* getOneRandomAgent() const;
 
-    float getColor(int index) const {
-        return color[index];
-    }
+	[[nodiscard]] float getColor(int index) const { return _color[index]; }
 
 protected:
 	/// \brief set of agent included on the layer.
 	/// no setter because the WorldLayer will be able to add some but not the world
-	std::set<Agent*> agents;
+	std::set<Agent*> _agents;
 
-	QString name;							///< \brief the name of the layer
-	float alpha;							///< \brief the alpha parameter for the display
-	std::map<QString, Layer*> 	childLayers;///< \brief layers included inside this layer		
-	std::vector<float> 			color;		///< \brief the color of the layer for display
+	QString _name;                            ///< \brief the name of the layer
+	float _alpha;                             ///< \brief the alpha parameter for the display
+	std::map<QString, Layer*>	_childLayers;   ///< \brief layers included inside this layer
+	std::vector<float> _color;		            ///< \brief the color of the layer for display
 
-	LayerType layerType; 					///< \brief the position of the layer inside the layer tree
+	LayerType _layerType;                     ///< \brief the position of the layer inside the layer tree
 
 	/// \brief include all agents contained inside sub layer on this layer
 	void includeSubLayersAgents();
@@ -110,4 +93,4 @@ protected:
 	void removeChild(Layer*);
 };
 
-#endif // LAYER_HH
+#endif

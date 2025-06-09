@@ -12,45 +12,43 @@
 #include "G4ParticleTypes.hh"
 #include "G4ElectronCapture.hh"
 
-namespace  cpop {
+namespace cpop {
 
 class StepMax;
 class PhysicsListMessenger;
 
-class PhysicsList : public G4VModularPhysicsList
-{
+class PhysicsList : public G4VModularPhysicsList {
 public:
-    PhysicsList();
-    ~PhysicsList() = default;
+	PhysicsList();
 
-    void ConstructParticle();
-    void ConstructProcess();
+	void ConstructParticle() override;
+	void ConstructProcess() override;
 
-    void ConstructEM();
+	void ConstructEM();
 
-    void AddPhysicsList(const G4String& name);
+	void AddPhysicsList(const G4String& name);
 
-    PhysicsListMessenger& messenger();
+	PhysicsListMessenger& messenger();
 
-    StepMax *step_max_process();
+	StepMax *step_max_process();
 
-    void SetElectronCut(G4double);
+	void SetElectronCut(G4double);
 
-    G4double fElectronCut;
+	G4double fElectronCut;
 
 private:
-    void AddStepMax();
-    void AddElectronCapture();
+	void AddStepMax();
+	void AddElectronCapture();
 
-    std::unique_ptr<G4VPhysicsConstructor> physics_list_;
-    G4String name_;
-    StepMax* step_max_process_ = nullptr; //Not sure whether G4 owns it or not
+	std::unique_ptr<G4VPhysicsConstructor> _physicsList;
+	G4String _name;
+	StepMax* _stepMaxProcess = nullptr; //Not sure whether G4 owns it or not
 
-    G4VPhysicsConstructor* decay_List;
+	G4VPhysicsConstructor* _decayList;
 
-
-    std::unique_ptr<PhysicsListMessenger> messenger_;
+	std::unique_ptr<PhysicsListMessenger> _messenger;
 };
 
 }
-#endif // PHYSICSLIST_HH
+
+#endif

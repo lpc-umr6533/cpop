@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef DETECTORCONSTRUCTION_HH
 #define DETECTORCONSTRUCTION_HH
 
@@ -17,18 +9,17 @@ class DetectorConstructionMessenger;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-    DetectorConstruction();
-    ~DetectorConstruction();
+	DetectorConstruction();
+	~DetectorConstruction() override;
 
-    virtual G4VPhysicalVolume* Construct();
+	G4VPhysicalVolume* Construct() override;
 
-    double getWorldSize() const;
-    void setWorldSize(double value);
+	[[nodiscard]] double getWorldSize() const;
+	void setWorldSize(double value);
 
 private:
-    double m_worldSize;
-    DetectorConstructionMessenger* m_messenger;
-
+	double _worldSize;
+	DetectorConstructionMessenger* _messenger;
 };
 
-#endif // DETECTORCONSTRUCTION_HH
+#endif

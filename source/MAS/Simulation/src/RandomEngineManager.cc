@@ -1,100 +1,54 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "RandomEngineManager.hh"
 
-static RandomEngineManager* randomEngine = 0;
+static RandomEngineManager* randomEngine = nullptr;
 
-#include <limits> 
+#include <limits>
 #include <QString>
 
 static QString fileOutName = "randomOutput";
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
 RandomEngineManager::RandomEngineManager():
-	rndEngine(NULL),
-	outputRandom(NULL)
+	_rndEngine(nullptr),
+	_outputRandom(nullptr)
 {
-
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-RandomEngineManager::~RandomEngineManager()
-{
-	delete rndEngine;
+RandomEngineManager::~RandomEngineManager() {
+	delete _rndEngine;
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-RandomEngineManager* RandomEngineManager::getInstance()
-{
+RandomEngineManager* RandomEngineManager::getInstance() {
 	if(!randomEngine)
-	{
 		randomEngine = new RandomEngineManager();
-	}
 	return randomEngine;
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-void RandomEngineManager::setEngine(CLHEP::HepRandomEngine* pEngine)
-{
+void RandomEngineManager::setEngine(CLHEP::HepRandomEngine* pEngine) {
 	assert(pEngine);
-	rndEngine = pEngine;
+	_rndEngine = pEngine;
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-double RandomEngineManager::randd()
-{
-	assert(rndEngine);
-	return rndEngine->flat(); 
+double RandomEngineManager::randd() {
+	assert(_rndEngine);
+	return _rndEngine->flat();
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-double RandomEngineManager::randd(double min, double max)
-{
+double RandomEngineManager::randd(double min, double max) {
 	if(min == max)	return min;
 	return randd() * ( max - min ) + min;
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-int RandomEngineManager::randi()
-{
-	assert(rndEngine);
+int RandomEngineManager::randi() {
+	assert(_rndEngine);
 	return (int) (randd() * std::numeric_limits<int>::max());
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-int RandomEngineManager::randi(int min, int max)
-{
-    if(min == max)  return min;
-    if(min > max)   return randi(max, min);
-    return (min + (randi()%(max - min +1)));
+int RandomEngineManager::randi(int min, int max) {
+	if(min == max)  return min;
+	if(min > max)   return randi(max, min);
+	return (min + (randi()%(max - min +1)));
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-double RandomEngineManager::normaled(double min, double max, double medium, double standardDeviation)
-{
+double RandomEngineManager::normaled(double min, double max, double medium, double standardDeviation) {
 	return -1.;
 }

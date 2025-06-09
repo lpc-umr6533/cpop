@@ -1,12 +1,3 @@
-##########################################################
-# Copyright (C): Henri Payno, Axel Delsol, Alexis Pereda #
-# Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA  #
-#                                                        #
-# This software is distributed under the terms           #
-# of the GNU Lesser General  Public Licence (LGPL)       #
-# See LICENSE.md for further detais                      #
-##########################################################
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake) # main (top) cmake dir
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) # project specific cmake dir
 
@@ -79,16 +70,10 @@ set(HEADERS
 
 set(SOURCES
 	Agent/src/Agent.cc
-	Agent/src/Body.cc
 	Agent/src/DynamicAgent.cc
 	Agent/src/SpatialableAgent.cc
 
-	ConflictSolver/src/ConflictSolver.cc
-
-	Layers/src/Dimensioned_Layer.cc
 	Layers/src/Layer.cc
-	Layers/src/World.cc
-	Layers/src/WorldLayer.cc
 
 	Simulation/src/Action.cc
 	Simulation/src/IDManager.cc
@@ -96,7 +81,6 @@ set(SOURCES
 	Simulation/src/RandomEngineManager.cc
 	Simulation/src/Scheduler.cc
 	Simulation/src/SimulationManager.cc
-	Simulation/src/SpatialDataStructure.cc
 	Simulation/src/SpatialDataStructureManager.cc
 	Simulation/src/ThreadAgentGroup.cc
 	Simulation/src/ViewerUpdater.cc
@@ -145,4 +129,4 @@ install(TARGETS ${LIBRARY_NAME}
 	FRAMEWORK DESTINATION CPOP/bin COMPONENT libs # for mac
 	PUBLIC_HEADER DESTINATION include/CPOP COMPONENT devel   # headers for mac (note the different component -> different package)
 	INCLUDES DESTINATION include/CPOP            # headers
-	)
+)

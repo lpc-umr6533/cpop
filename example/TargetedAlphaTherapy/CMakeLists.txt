@@ -1,11 +1,3 @@
-##########################################################
-# Copyright (C): Henri Payno, Axel Delsol, Alexis Pereda #
-# Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA  #
-#                                                        #
-# This software is distributed under the terms           #
-# of the GNU Lesser General  Public Licence (LGPL)       #
-# See LICENSE.md for further detais                      #
-##########################################################
 cmake_minimum_required(VERSION 3.7)
 
 project(TargetedAlphaTherapy)
@@ -46,3 +38,4 @@ target_compile_options(${BINARY_NAME} PUBLIC -Wall -pthread)
 target_link_libraries(${BINARY_NAME} PUBLIC Platform_SMA Modeler)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/macros DESTINATION ${CMAKE_BINARY_DIR}/example/TargetedAlphaTherapy)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR}/example/TargetedAlphaTherapy)

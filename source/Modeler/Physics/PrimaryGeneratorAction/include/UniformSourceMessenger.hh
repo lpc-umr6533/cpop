@@ -11,25 +11,23 @@ namespace cpop {
 class SourceMessenger;
 class UniformSource;
 
-class UniformSourceMessenger : public MessengerBase
-{
+class UniformSourceMessenger : public MessengerBase {
 public:
-    UniformSourceMessenger(UniformSource *source);
-    ~UniformSourceMessenger() = default;
+	UniformSourceMessenger(UniformSource *source);
 
-    virtual void BuildCommands(G4String base) override;
-    virtual void SetNewValue(G4UIcommand * command , G4String newValue) override;
+	void BuildCommands(G4String base) override;
+	void SetNewValue(G4UIcommand * command , G4String newValue) override;
 
 private:
-    UniformSource* source_;
+	UniformSource* _source;
 
-    // We choose composition over inheritancce to avoid type casting
-    std::unique_ptr<SourceMessenger> source_messenger_;
+	// We choose composition over inheritancce to avoid type casting
+	std::unique_ptr<SourceMessenger> _sourceMessenger;
 
-    // Commands
-    std::unique_ptr<G4UIcmdWithAnInteger> total_particle_cmd_;
+	// Commands
+	std::unique_ptr<G4UIcmdWithAnInteger> _totalParticleCmd;
 };
 
 }
 
-#endif // UNIFORMSOURCEMESSENGER_HH
+#endif

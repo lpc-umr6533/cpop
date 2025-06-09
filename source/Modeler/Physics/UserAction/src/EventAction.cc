@@ -6,27 +6,15 @@
 
 namespace cpop {
 
-EventAction::EventAction()
-    :G4UserEventAction()
-{
+void EventAction::BeginOfEventAction(const G4Event * evt) {
+	G4int evt_id = evt->GetEventID();
+	G4int print_modulo = G4RunManager::GetRunManager()->GetPrintProgress();
 
-}
-
-void EventAction::BeginOfEventAction(const G4Event * evt)
-{
-    G4int evt_id = evt->GetEventID();
-    G4int print_modulo = G4RunManager::GetRunManager()->GetPrintProgress();
-
-    if (print_modulo > 0 && evt_id%print_modulo == 0) {
-        G4int total_evt = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed();
-        double progress = ((double)evt_id/ total_evt)*100;
-        std::cout << "\n---> Begin of Event: " << evt_id  << " (" << progress << "%)\n";
-    }
-}
-
-void EventAction::EndOfEventAction(const G4Event * /*evt*/)
-{
-
+	if (print_modulo > 0 && evt_id%print_modulo == 0) {
+		G4int total_evt = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed();
+		double progress = ((double)evt_id/ total_evt)*100;
+		std::cout << "\n---> Begin of Event: " << evt_id  << " (" << progress << "%)\n";
+	}
 }
 
 }

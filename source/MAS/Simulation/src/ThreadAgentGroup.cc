@@ -1,15 +1,7 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "ThreadAgentGroup.hh"
 #include "InformationSystemManager.hh"
 
-#include <assert.h>
+#include <cassert>
 
 #ifndef NDEBUG
 	#define DEBUG_THREAD_AGENT_GROUP 0
@@ -17,82 +9,55 @@ See LICENSE.md for further details
 	#define DEBUG_THREAD_AGENT_GROUP 0	// must always stay at 0
 #endif
 
-/////////////////////////////////////////////////////////////////////
-/// 
-/////////////////////////////////////////////////////////////////////
 ThreadAgentGroup::ThreadAgentGroup(int pID) :
-	ID(pID)
+	_ID(pID)
 {
-	
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-ThreadAgentGroup::~ThreadAgentGroup()
-{
-	agents.clear();
+ThreadAgentGroup::~ThreadAgentGroup() {
+	_agents.clear();
 }
 
-/////////////////////////////////////////////////////////////////////
 /// \param <agentToAdd> { The agent to add}
 /// \return
 ///	0 : success
 ///	1 : agent == NULL
 ///	2 : agent already added previously
-/////////////////////////////////////////////////////////////////////
-int ThreadAgentGroup::addAgent(Agent* agentToAdd)
-{
+int ThreadAgentGroup::addAgent(Agent* agentToAdd) {
 	assert(agentToAdd);
-	if(agentToAdd==NULL)
-	{
+	if(!agentToAdd) {
 		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, "unvalid agent, NULL pointer", "ThreadAgentGroup");
 		return 1;
 	}
 
 	/// if already contains the agent
-	if(agents.find(agentToAdd) != agents.end())
-	{
+	if(_agents.find(agentToAdd) != _agents.end()) {
 		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, "unable to add an agent twice", "ThreadAgentGroup");
 		return 2;
-	}else
-	{
-		agents.insert(agentToAdd);
+	} else {
+		_agents.insert(agentToAdd);
 		return 0;
 	}
 }
 
-/////////////////////////////////////////////////////////////////////
-/// 
-/////////////////////////////////////////////////////////////////////
-int ThreadAgentGroup::removeAgent(Agent* agentToRemove)
-{
-	if(agents.find(agentToRemove) != agents.end())
-	{
-		agents.erase(agentToRemove);
-	}
+int ThreadAgentGroup::removeAgent(Agent* agentToRemove) {
+	if(_agents.find(agentToRemove) != _agents.end())
+		_agents.erase(agentToRemove);
+
 	return 0;
 }
 
-/////////////////////////////////////////////////////////////////////
-/// 
-/////////////////////////////////////////////////////////////////////
-void ThreadAgentGroup::run()
-{
-	if(DEBUG_THREAD_AGENT_GROUP)
-	{
-		QString mess = "thread " + QString::number(ID) + "will process " + QString::number(agents.size()) + " agents" ;
+void ThreadAgentGroup::run() {
+	if(DEBUG_THREAD_AGENT_GROUP) {
+		QString mess = "thread " + QString::number(_ID) + "will process " + QString::number(_agents.size()) + " agents" ;
 		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "ThreadAgentGroup");
 	}
+
 	/// process all agent contained
-	std::set<Agent*>::iterator it;
-	for(it=agents.begin(); it!=agents.end(); ++it)
-	{
-		assert(*it);
-		if((*it)->hasToBeExecuted())
-		{
-			processAgent((static_cast<Agent*>(*it)));
-		}
+	for(auto* agent : _agents) {
+		assert(agent);
+		if(agent->hasToBeExecuted())
+			processAgent(static_cast<Agent*>(agent));
 	}
 
 	runSucced = true;
@@ -100,16 +65,11 @@ void ThreadAgentGroup::run()
 	if(DEBUG_THREAD_AGENT_GROUP) InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, "running thread group over", "ThreadAgentGroup");
 }
 
-/////////////////////////////////////////////////////////////////////
-/// 
-/////////////////////////////////////////////////////////////////////
-void ThreadAgentGroup::processAgent(Agent* pAgent)
-{
+void ThreadAgentGroup::processAgent(Agent* pAgent) {
 	assert(pAgent);
 	if(DEBUG_THREAD_AGENT_GROUP) InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, "startexecuting an agent", "ThreadAgentGroup");
 
-	switch(pAgent->getState())
-	{
+	switch(pAgent->getState()) {
 		case AgentStates::WAITING_FOR_INIT:
 			pAgent->init();
 			pAgent->setState(AgentStates::WAITING_FOR_START);
@@ -125,27 +85,17 @@ void ThreadAgentGroup::processAgent(Agent* pAgent)
 		default:
 			break;
 	}
+
 	if(DEBUG_THREAD_AGENT_GROUP) InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, "en executing an agent", "ThreadAgentGroup");
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-void ThreadAgentGroup::stop()
-{
+void ThreadAgentGroup::stop() {
 	/// stop all agents
-	std::set<Agent*>::iterator itAgent;
-	for(itAgent=agents.begin(); itAgent!=agents.end(); ++itAgent)
-	{
-		(*itAgent)->stop();
-	}
+	for(auto agent : _agents)
+		agent->stop();
 }
 
-/////////////////////////////////////////////////////////////////////
-///
-/////////////////////////////////////////////////////////////////////
-void ThreadAgentGroup::reset()
-{
-	agents.clear();
-	stepDuration = 0.;
+void ThreadAgentGroup::reset() {
+	_agents.clear();
+	_stepDuration = 0.;
 }

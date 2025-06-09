@@ -16,61 +16,60 @@ namespace cpop {
 
 class Population;
 
-class Source
-{
+class Source {
 public:
-    Source(const std::string& name, const Population& population);
-    virtual ~Source() = default;
+	Source(const std::string& name, const Population& population);
+	virtual ~Source() = default;
 
-    std::string source_name() const;
-    void setSource_name(const std::string &source_name);
+	[[nodiscard]] std::string source_name() const;
+	void setSource_name(const std::string &source_name);
 
-    G4ParticleDefinition *particle() const;
-    void setParticle(G4ParticleDefinition *particle);
+	[[nodiscard]] G4ParticleDefinition *particle() const;
+	void setParticle(G4ParticleDefinition *particle);
 
-    G4ParticleDefinition *ion() const;
-    void setIon(G4int atomic_number, G4int atomic_mass);
+	[[nodiscard]] G4ParticleDefinition *ion() const;
+	void setIon(G4int atomic_number, G4int atomic_mass);
 
-    void setUser_spectrum(const std::string& user_spectrum_file);
+	void setUser_spectrum(const std::string& user_spectrum_file);
 
-    /// \brief Generate a random energy (in MeV)
-    G4double GetEnergy() const;
-    /// \brief Generate a random momentum direction (in G4 unit)
-    G4ThreeVector GetMomentum() const;
+	/// \brief Generate a random energy (in MeV)
+	[[nodiscard]] G4double GetEnergy() const;
+	/// \brief Generate a random momentum direction (in G4 unit)
+	[[nodiscard]] G4ThreeVector GetMomentum() const;
 
-    /// \brief Initialize the object
-    virtual void Initialize() {}
+	/// \brief Initialize the object
+	virtual void Initialize() {}
 
-    // Pure virtual methods
-    // Not const to let the user change object state (eg keep track of what has been generated)
-    /// \brief Generate a random position (in G4 unit)
-    virtual std::vector<G4ThreeVector> GetPosition() = 0;
-    /// \brief Called at the end of GeneratePrimaries
-    virtual void Update() = 0;
-    /// \brief Tell if the source has generated all its particles
-    virtual bool HasLeft() = 0;
+	// Pure virtual methods
+	// Not const to let the user change object state (eg keep track of what has been generated)
+	/// \brief Generate a random position (in G4 unit)
+	virtual std::vector<G4ThreeVector> GetPosition() = 0;
+	/// \brief Called at the end of GeneratePrimaries
+	virtual void Update() = 0;
+	/// \brief Tell if the source has generated all its particles
+	virtual bool HasLeft() = 0;
 
-    int line_number_positions_directions_file = 1;
+	int lineNumberPositionsDirectionsFile = 1;
 
 protected:
     /// \brief Generate uniformely a 3D point on the unit sphere using G.Marsaglia method
-    G4ThreeVector randSphere() const;
+    [[nodiscard]] G4ThreeVector randSphere() const;
 
-    const Population *population() const;
+    [[nodiscard]] const Population *population() const;
 
 private:
-    /// \brief Source name
-    std::string source_name_ = "";
-    /// \brief Cell population
-    const Population* population_ = nullptr;
-    /// \brief User energy spectrum
-    std::unique_ptr<CPOP_UserSpectrum> user_spectrum_;
-    /// \brief Particle sent by this source
-    G4ParticleDefinition* particle_ = nullptr;
-    /// \brief Ion sent by this source
-    G4ParticleDefinition* ion_ = nullptr;
+	/// \brief Source name
+	std::string _sourceName = "";
+	/// \brief Cell population
+	const Population* _population = nullptr;
+	/// \brief User energy spectrum
+	std::unique_ptr<CPOP_UserSpectrum> _userSpectrum;
+	/// \brief Particle sent by this source
+	G4ParticleDefinition* _particle = nullptr;
+	/// \brief Ion sent by this source
+	G4ParticleDefinition* _ion = nullptr;
 };
 
 }
 
-#endif // SOURCE_HH
+#endif

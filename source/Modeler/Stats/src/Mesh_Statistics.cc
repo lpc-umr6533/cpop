@@ -1,121 +1,91 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "Mesh_Statistics.hh"
 
 #include "InformationSystemManager.hh"
-#include "IDManager.hh"
 #include "SimpleSpheroidalCell.hh"
 #include "StatsDataEmitter.hh"
 
-#include <fstream>	// needed to call the << operator on ofstream 
+#include <fstream>	// needed to call the << operator on ofstream
 
-namespace Statistics
-{
+namespace Statistics {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// \param pCells The cells we want to export the stats for
-	/// \param pFormat The mesh format we want the stats for (needed bacause can changed from a format to an other 
-	/// 						(specially external format, the one we dont keep a copy for, cf Geant4) ) 
-	/// \param pCellOut The stats output target for cell
-	/// \param pNucleiOut The stats output target for cell nuclei
-    /// \warning this data exporter start from principal that each cell will export the same type of data ( == all cells are the same type : spheroidal...)
-	/// \return True if sucess
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    bool generateMeshStats(vector<const t_Cell_3*> pCells, MeshOutFormats::outputFormat pFormat, ofstream* pCellOut, ofstream* pNucleiOut)
-    {
-        if(pCells.size() == 0)
-        {
-            return true;
-        }
-    	if(pFormat > MeshOutFormats::Unknow)
-    	{
-			InformationSystemManager::getInstance()->Message(
-				InformationSystemManager::CANT_PROCESS_MES, 
-				"Unvalid mesh format to export mesh statistics for", 
-				"Statitstics::generateMeshStats");
-    		return false;
-    	}
-    	/// write cell header
-    	if(pCellOut)
-    	{
-    		writeCellStatsHeader(pFormat, pCellOut);
-            *pCellOut << "###" << (*pCells.begin())->writeStatsHeader().toStdString() << "\tcellMeshVolume\tcytoplasmMeshVolume" << endl;
-    	}
+/// \param pCells The cells we want to export the stats for
+/// \param pFormat The mesh format we want the stats for (needed bacause can changed from a format to an other
+/// 						(specially external format, the one we dont keep a copy for, cf Geant4) )
+/// \param pCellOut The stats output target for cell
+/// \param pNucleiOut The stats output target for cell nuclei
+/// \warning this data exporter start from principal that each cell will export the same type of data ( == all cells are the same type : spheroidal...)
+/// \return True if sucess
+bool generateMeshStats(std::vector<const t_Cell_3*> pCells, MeshOutFormats::outputFormat pFormat, std::ofstream* pCellOut, std::ofstream* pNucleiOut) {
+	if(pCells.size() == 0)
+		return true;
 
-    	/// write cell nuclei header
-    	if(pNucleiOut)
-    	{
-    		writeCellNucleiStatsHeader(pFormat, pNucleiOut);
-            if(dynamic_cast<const SimpleSpheroidalCell*>(*pCells.begin()))
-            {
-                *pNucleiOut << "###" << "CellID\t" << dynamic_cast<const SimpleSpheroidalCell*>(*pCells.begin())->getNucleus()->writeStatsHeader().toStdString() << "\tmeshVolume" << endl;
-            }
-    	}
+	if(pFormat > MeshOutFormats::Unknow) {
+		InformationSystemManager::getInstance()->Message(
+			InformationSystemManager::CANT_PROCESS_MES,
+			"Unvalid mesh format to export mesh statistics for",
+			"Statitstics::generateMeshStats"
+		);
+		return false;
+	}
 
-    	/// then write statistic for cell and is nucleus
-    	vector<const t_Cell_3*>::const_iterator itCell;
-    	for(itCell = pCells.begin(); itCell != pCells.end(); ++itCell)
-    	{
-    		assert(*itCell);
-    		// print cell mesh stats
-    		if(pCellOut)
-    		{	
-	    		*pCellOut 	<< (*itCell)->addStatsData().toStdString()  << "\t"  
-                            // cell volume mesh  
-                            << (*itCell)->getMeshVolume(pFormat)        << "\t";    // add the volume here because is dependant of the mesh type
-    		}
-            
-            unsigned long int lID = (*itCell)->getID();
-            vector< t_Nucleus_3* > nuclei = (*itCell)->getNuclei();
+	/// write cell header
+	if(pCellOut) {
+		writeCellStatsHeader(pFormat, pCellOut);
+		*pCellOut << "###" << (*pCells.begin())->writeStatsHeader().toStdString() << "\tcellMeshVolume\tcytoplasmMeshVolume" << std::endl;
+	}
 
-            double nucleiVolume = 0.;
+	/// write cell nuclei header
+	if(pNucleiOut) {
+		writeCellNucleiStatsHeader(pFormat, pNucleiOut);
+		if(dynamic_cast<const SimpleSpheroidalCell*>(*pCells.begin()))
+			*pNucleiOut << "###" << "CellID\t" << dynamic_cast<const SimpleSpheroidalCell*>(*pCells.begin())->getNucleus()->writeStatsHeader().toStdString() << "\tmeshVolume" << std::endl;
+	}
 
-            vector< t_Nucleus_3* >::iterator itNucleus;
-            for(itNucleus = nuclei.begin(); itNucleus != nuclei.end(); ++itNucleus)
-            {
+	/// then write statistic for cell and is nucleus
+	for(auto const& pCell : pCells) {
+		assert(pCell);
+		// print cell mesh stats
+		if(pCellOut) {
+			*pCellOut << pCell->addStatsData().toStdString()  << "\t"
+				// cell volume mesh
+				<< pCell->getMeshVolume(pFormat) << "\t"; // add the volume here because is dependant of the mesh type
+		}
 
-        		// print nuclei mesh stats
-        		if(pNucleiOut)
-        		{
-	    			*pNucleiOut	<< lID										    << "\t"           
-                                << (*itNucleus)->addStatsData().toStdString()   << "\t"
-	    						<< (*itNucleus)->getMeshVolume(pFormat)         << endl;
-    			
-                }
-                nucleiVolume += (*itNucleus)->getMeshVolume(pFormat);
-	    	}
+		unsigned long int lID = pCell->getID();
+		auto const& nuclei = pCell->getNuclei();
 
-            if(pCellOut)
-            {
-                // cytoplasm mesh volume - nuclei mesh volume
-                *pCellOut << ( (*itCell)->getMeshVolume(pFormat) - nucleiVolume ) << endl;
-            }
-    	}
-    	return true;
-    }
+		double nucleiVolume = 0.;
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// \param pFormat the format for which we want to export stats
-    /// \param pOut where to redirect statistics
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    void writeCellStatsHeader(MeshOutFormats::outputFormat pFormat, ofstream* pOut)
-    {
-    	*pOut   << "### file generated by cpop for cell meshes statistics. Unit is micro meter. Mesh format is : " << getFormatName(pFormat).toStdString() << "### \n";
-    }
+		for(auto const& itNucleus : nuclei) {
+			// print nuclei mesh stats
+			if(pNucleiOut) {
+				*pNucleiOut	<< lID << "\t"
+					<< itNucleus->addStatsData().toStdString() << "\t"
+					<< itNucleus->getMeshVolume(pFormat) << std::endl;
+			}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// \param pFormat the format for which we want to export stats
-    /// \param pOut where to redirect statistics
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    void writeCellNucleiStatsHeader(MeshOutFormats::outputFormat pFormat, ofstream* pOut)
-    {
-    	*pOut  << "### file generated by cpop for cell Nuclei meshes statistics. Unit is micro meter. Mesh format is : " << getFormatName(pFormat).toStdString() << "### \n";
-    }
+			nucleiVolume += itNucleus->getMeshVolume(pFormat);
+		}
+
+		if(pCellOut) {
+			// cytoplasm mesh volume - nuclei mesh volume
+			*pCellOut << ( pCell->getMeshVolume(pFormat) - nucleiVolume ) << std::endl;
+		}
+	}
+
+	return true;
+}
+
+/// \param pFormat the format for which we want to export stats
+/// \param pOut where to redirect statistics
+void writeCellStatsHeader(MeshOutFormats::outputFormat pFormat, std::ofstream* pOut) {
+	*pOut << "### file generated by cpop for cell meshes statistics. Unit is micro meter. Mesh format is : " << getFormatName(pFormat).toStdString() << "### \n";
+}
+
+/// \param pFormat the format for which we want to export stats
+/// \param pOut where to redirect statistics
+void writeCellNucleiStatsHeader(MeshOutFormats::outputFormat pFormat, std::ofstream* pOut) {
+	*pOut << "### file generated by cpop for cell Nuclei meshes statistics. Unit is micro meter. Mesh format is : " << getFormatName(pFormat).toStdString() << "### \n";
+}
 
 }

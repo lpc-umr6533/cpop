@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef SIMULATION__SECTION__H
 #define SIMULATION__SECTION__H
 
@@ -48,22 +40,17 @@ See LICENSE.md for further details
 
 template <typename T>
 class SimulationSection: public conf::SectionReader<T> {
-
 public:
-    SimulationSection() {}
-    ~SimulationSection() {}
+	void fill() {
+		std::string sectionName("SimulationProperties");
 
-    void fill() {
-		const char sectionName[] = "SimulationProperties";
-		
-		double duration = this->template load<double>(sectionName, "duration");
-		int numberOfAgentToExecute = this->template load<int>(sectionName, "numberOfAgentToExecute");
-		double displacementThreshold = this->template load<double>(sectionName, "displacementThreshold");
-		double stepDuration = this->template load<double>(sectionName, "stepDuration");
-		
-		
+		auto duration = this->template load<double>(sectionName, "duration");
+		auto numberOfAgentToExecute = this->template load<int>(sectionName, "numberOfAgentToExecute");
+		auto displacementThreshold = this->template load<double>(sectionName, "displacementThreshold");
+		auto stepDuration = this->template load<double>(sectionName, "stepDuration");
+
 		this->objToFill->setSimulationProperties(duration, numberOfAgentToExecute, displacementThreshold, stepDuration);
-    }
+	}
 };
 
 #endif

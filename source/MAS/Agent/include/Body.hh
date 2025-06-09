@@ -1,50 +1,41 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef BODY_HH
 #define BODY_HH
 
-//////////////////////////////////////////////////////////////////////////////
 /// \brief The body class : define an agent body
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////
-class Body
-{
+class Body {
 public:
-	/// \brief constructor
-	Body(bool pCrossable = false, bool pDeformable = false);
-	/// \brief destructor
-	virtual ~Body();
+	Body(bool pCrossable = false, bool pDeformable = false):
+		_crossable(pCrossable),
+		_deformable(pDeformable)
+	{}
 
-	/// \brief function called to draw the body 
-	virtual void draw() const =0 ;
+	virtual ~Body() = default;
+
+	/// \brief function called to draw the body
+	virtual void draw() const = 0;
 
 	/// \brief crossable setter
-	void setCrossable(bool b)		{crossable = b;};
+	void setCrossable(bool b) { _crossable = b; }
 	/// \brief is the body crossable ?
-	inline bool isCrossable()	const		{return crossable;};
+	[[nodiscard]] inline bool isCrossable()	const	{return _crossable; }
 
 	/// \brief deformable setter
-	void setDeformable(bool b)		{deformable = b;};
-	/// \brief is the Body deformable ?
-	inline bool isDeformable()	const		{return deformable;};
+	void setDeformable(bool b) { _deformable = b; }
+	/// \brief is the Body deformable?
+	[[nodiscard]] inline bool isDeformable() const { return _deformable; }
 
 	/// \brief weight setter
-	void setWeight(float pWeight)	{weight = pWeight;};
+	void setWeight(float pWeight)	{ _weight = pWeight; }
 	/// \brief weight getter
-	inline double getWeight() const			{return weight;};
-	
-protected:
-	bool crossable;		///< \brief boolean defining if other body can cross this body
-	bool deformable;	///< \brief boolean defining if other body can intersect this body
+	[[nodiscard]] inline double getWeight() const { return _weight; }
 
-	double weight;		///< \brief The body weight ( in gramme ?)
+protected:
+	bool _crossable;  ///< \brief boolean defining if other body can cross this body
+	bool _deformable; ///< \brief boolean defining if other body can intersect this body
+
+	double _weight;   ///< \brief The body weight ( in gramme ?)
 
 };
 
-#endif // BODY_HH
+#endif

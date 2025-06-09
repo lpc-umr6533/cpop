@@ -8,13 +8,9 @@ namespace cpop {
 class EventAction : public G4UserEventAction
 {
 public:
-    EventAction();
-    ~EventAction() = default;
-
-    virtual void BeginOfEventAction(const G4Event*evt);
-    virtual void EndOfEventAction(const G4Event*);
+	void BeginOfEventAction(const G4Event*evt) override;
 };
 
 }
 
-#endif // EVENTACTION_HH
+#endif

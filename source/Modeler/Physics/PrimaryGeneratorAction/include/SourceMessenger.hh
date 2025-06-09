@@ -13,30 +13,28 @@ namespace cpop {
 
 class Source;
 
-class SourceMessenger : public MessengerBase
-{
+class SourceMessenger : public MessengerBase {
 public:
-    SourceMessenger(Source* source);
-    ~SourceMessenger() = default;
+	SourceMessenger(Source* source);
 
-    virtual void BuildCommands(G4String base) override;
-    virtual void SetNewValue(G4UIcommand * command , G4String newValue) override;
+	void BuildCommands(G4String base) override;
+	void SetNewValue(G4UIcommand * command , G4String newValue) override;
 
 private:
-    Source* source_;
+	Source* _source;
 
-    // Commands
-    /// \brief Set particle to be generated
-    std::unique_ptr<G4UIcmdWithAString> particle_cmd_;
-    /// \brief Set ion to be generated
-    std::unique_ptr<G4UIcommand> ion_cmd_;
-    /// \brief Set spectrum file
-    std::unique_ptr<G4UIcmdWithAString> user_spectrum_cmd_;
-    /// \brief Particle table
-    G4ParticleTable* particle_table_;
+	// Commands
+	/// \brief Set particle to be generated
+	std::unique_ptr<G4UIcmdWithAString> _particleCmd;
+	/// \brief Set ion to be generated
+	std::unique_ptr<G4UIcommand> _ionCmd;
+	/// \brief Set spectrum file
+	std::unique_ptr<G4UIcmdWithAString> _userSpectrumCmd;
+	/// \brief Particle table
+	G4ParticleTable* _particleTable;
 
 };
 
 }
 
-#endif // SOURCEMESSENGER_HH
+#endif

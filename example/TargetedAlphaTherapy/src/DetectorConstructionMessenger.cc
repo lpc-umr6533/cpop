@@ -1,40 +1,28 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol,
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "DetectorConstructionMessenger.hh"
 
 #include "DetectorConstruction.hh"
 
 namespace cpop {
 
-DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstruction *det)
-    :G4UImessenger(),
-      m_detector(det)
+DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstruction *det):
+	_detector(det)
 {
-    m_dir = new G4UIdirectory("/detector/");
+	_dir = new G4UIdirectory("/detector/");
 
-    m_sizeCmd = new G4UIcmdWithADoubleAndUnit("/detector/size", this);
-    m_sizeCmd->SetGuidance("Set volume size");
-    m_sizeCmd->SetParameterName("WorldSize", false);
-    m_sizeCmd->SetRange("WorldSize>0");
-    m_sizeCmd->AvailableForStates(G4State_PreInit);
+	_sizeCmd = new G4UIcmdWithADoubleAndUnit("/detector/size", this);
+	_sizeCmd->SetGuidance("Set volume size");
+	_sizeCmd->SetParameterName("WorldSize", false);
+	_sizeCmd->SetRange("WorldSize>0");
+	_sizeCmd->AvailableForStates(G4State_PreInit);
 }
 
-DetectorConstructionMessenger::~DetectorConstructionMessenger()
-{
-    delete m_sizeCmd;
+DetectorConstructionMessenger::~DetectorConstructionMessenger() {
+	delete _sizeCmd;
 }
 
-void DetectorConstructionMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
-{
-    if( command == m_sizeCmd ) {
-        m_detector->setWorldSize(m_sizeCmd->GetNewDoubleValue(newValue));
-    }
+void DetectorConstructionMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
+	if(command == _sizeCmd)
+		_detector->setWorldSize(_sizeCmd->GetNewDoubleValue(newValue));
 }
 
 }

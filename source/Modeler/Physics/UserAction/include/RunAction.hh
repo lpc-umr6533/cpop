@@ -5,22 +5,20 @@
 
 namespace cpop {
 
-class RunAction : public G4UserRunAction
-{
+class RunAction : public G4UserRunAction {
 public:
-    RunAction();
-    ~RunAction();
-    virtual void BeginOfRunAction(const G4Run*);
-    virtual void EndOfRunAction(const G4Run*);
+	RunAction();
+	~RunAction() override;
+	void BeginOfRunAction(const G4Run*) override;
+	void EndOfRunAction(const G4Run*) override;
 
-    std::string file_name() const;
-    void setFile_name(const std::string &file_name);
+	[[nodiscard]] std::string file_name() const;
+	void setFile_name(const std::string &file_name);
 
 private:
-
-    std::string file_name_ = "";
+	std::string _filename = "";
 };
 
 }
 
-#endif // RUNACTION_HH
+#endif

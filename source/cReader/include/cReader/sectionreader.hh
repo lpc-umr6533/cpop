@@ -17,7 +17,6 @@
   * */
 namespace conf {
 
-
 /**
  * \class SectionReader
  * \brief Base class to create section reader.
@@ -27,85 +26,80 @@ namespace conf {
  *
  */
 template <typename T = int>
-class SectionReader
-{
-    zz::cfg::CfgParser* parser;
+class SectionReader {
+	zz::cfg::CfgParser* parser;
 
 protected:
-    T* objToFill;
+	T* objToFill;
 
 public:
-    /**
-     * \brief SectionReader constructor
-     */
-    SectionReader() {};
-    virtual ~SectionReader() {}
+	/**
+	 * \brief SectionReader constructor
+	 */
+	virtual ~SectionReader() = default;
 
-    /**
-     * \brief Parser getter
-     */
-    zz::cfg::CfgParser *getParser() const {
-        return parser;
-    }
+	/**
+	 * \brief Parser getter
+	 */
+	[[nodiscard]] zz::cfg::CfgParser *getParser() const {
+		return parser;
+	}
 
-    /**
-     * \brief Parser setter
-     */
-    void setParser(zz::cfg::CfgParser *value) {
-        parser = value;
-    }
+	/**
+	 * \brief Parser setter
+	 */
+	void setParser(zz::cfg::CfgParser *value) {
+		parser = value;
+	}
 
-    /**
-     * \brief Check if value contains data
-     *
-     * \return Returns TRUE if value contains something and FALSE otherwise
-     */
-    bool check(zz::cfg::Value value) {
-        return !value.empty();
-    }
+	/**
+	 * \brief Check if value contains data
+	 *
+	 * \return Returns TRUE if value contains something and FALSE otherwise
+	 */
+	bool check(zz::cfg::Value value) {
+		return !value.empty();
+	}
 
-    T *getObjToFill() const {
-        return objToFill;
-    }
+	T *getObjToFill() const {
+		return objToFill;
+	}
 
-    void setObjToFill(T *value) {
-        objToFill = value;
-    }
+	void setObjToFill(T *value) {
+		objToFill = value;
+	}
 
-    /**
-     * \brief Loads a value associated with keyname contained in sectionName
-     *
-     * \param sectionName section name in the configuration file
-     * \param keyName key name in the sectionName part of the configuration file
-     *
-     * \return Returns the stored value if it exists. Otherwise throw a std::invalid_argument exception
-     */
-    template <typename U>
-    U load(const char* sectionName, const char* keyName);
+	/**
+	 * \brief Loads a value associated with keyname contained in sectionName
+	 *
+	 * \param sectionName section name in the configuration file
+	 * \param keyName key name in the sectionName part of the configuration file
+	 *
+	 * \return Returns the stored value if it exists. Otherwise throw a std::invalid_argument exception
+	 */
+	template<typename U>
+	U load(std::string const& sectionName, std::string const& keyName);
 
-    virtual void fill() {}
-
+	virtual void fill() {}
 };
 
 template <typename T>
 template <typename U>
-U SectionReader<T>::load(const char *sectionName, const char *keyName)
+U SectionReader<T>::load(std::string const& sectionName, std::string const& keyName)
 {
-    zz::cfg::Value value = (*parser)(sectionName)[keyName];
+	zz::cfg::Value value = (*parser)(sectionName)[keyName];
 
-    if(!check(value)) {
-        std::stringstream errorMsg("");
+	if(!check(value)) {
+		std::stringstream errorMsg("");
 
-        errorMsg << "Section " << sectionName << "does not contain key " << keyName << std::endl;
+		errorMsg << "Section " << sectionName << "does not contain key " << keyName << std::endl;
 
-        throw std::invalid_argument(errorMsg.str().c_str());
-    }
+		throw std::invalid_argument(errorMsg.str().c_str());
+	}
 
-    return value.load<U>();
+	return value.load<U>();
 }
 
 }
 
-
-
-#endif // SECTIONREADER_H
+#endif

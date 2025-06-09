@@ -1,20 +1,10 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol,
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
-#ifndef DETECTORCONSTRUCTION_HH
-#define DETECTORCONSTRUCTION_HH
+#ifndef TARGETEDALPHATHERAPY_DETECTORCONSTRUCTION_HH
+#define TARGETEDALPHATHERAPY_DETECTORCONSTRUCTION_HH
 
 #include "G4VUserDetectorConstruction.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include "globals.hh"
 #include "G4LogicalVolume.hh"
-#include "G4UserLimits.hh"
 #include "Population.hh"
 
 namespace cpop {
@@ -25,27 +15,26 @@ class Population;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-    DetectorConstruction(const Population& population);
-    ~DetectorConstruction();
+	DetectorConstruction(const Population& population);
+	~DetectorConstruction() override;
 
-    virtual G4VPhysicalVolume* Construct();
+	G4VPhysicalVolume* Construct() override;
 
-    double getWorldSize() const;
-    void setWorldSize(double value);
+	[[nodiscard]] double getWorldSize() const;
+	void setWorldSize(double value);
 
 private:
-    double m_worldSize;
-    DetectorConstructionMessenger* m_messenger;
+	double _worldSize;
+	DetectorConstructionMessenger* _messenger;
 
-    G4VPhysicalVolume* fSpheroid;
-    G4LogicalVolume* fLogicalSpheroid;
-    G4Region*          fpRegion;
-    G4VPhysicalVolume* fWorld;
+	G4VPhysicalVolume*  fSpheroid;
+	G4LogicalVolume*    fLogicalSpheroid;
+	G4Region*           fpRegion;
+	G4VPhysicalVolume*  fWorld;
 
-    const Population* population_;
-
+	const Population* _population;
 };
 
 }
 
-#endif // DETECTORCONSTRUCTION_HH
+#endif

@@ -6,88 +6,87 @@
 
 namespace cpop {
 
-PGA_implMessenger::PGA_implMessenger(PGA_impl *pga_impl)
-    :MessengerBase(), pga_impl_(pga_impl)
+PGA_implMessenger::PGA_implMessenger(PGA_impl *pga_impl):
+	_pgaImpl(pga_impl)
 {
-
 }
 
-void PGA_implMessenger::BuildCommands(G4String base)
-{
-    // Save the base for source.BuildCommands()
-    base_ = base;
+void PGA_implMessenger::BuildCommands(G4String base) {
+	// Save the base for source.BuildCommands()
+	_base = base;
 
-    G4String cmd_base = base + "/addUniform";
-    uniform_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
-    uniform_cmd_->SetGuidance("Add a uniform source");
-    uniform_cmd_->SetParameterName("HsourceName", false);
-    uniform_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
+	G4String cmd_base = base + "/addUniform";
+	_uniformCmd = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
+	_uniformCmd->SetGuidance("Add a uniform source");
+	_uniformCmd->SetParameterName("HsourceName", false);
+	_uniformCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    cmd_base = base + "/addDistribution";
-    distributed_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
-    distributed_cmd_->SetGuidance("Add a distributed source");
-    distributed_cmd_->SetParameterName("NsourceName", false);
-    distributed_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
+	cmd_base = base + "/addDistribution";
+	_distributedCmd = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
+	_distributedCmd->SetGuidance("Add a distributed source");
+	_distributedCmd->SetParameterName("NsourceName", false);
+	_distributedCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    cmd_base = base + "/daughterDiffusion";
-    diffusion_cmd_ = std::make_unique<G4UIcommand>(cmd_base, this);
-    diffusion_cmd_->SetGuidance("Activate daughter diffusion");
-    G4UIparameter* bool_diffusion = new G4UIparameter("bool_diffusion", 's', false);
-    diffusion_cmd_->SetParameter(bool_diffusion);
-    G4UIparameter* half_life = new G4UIparameter("half_life", 'f', false);
-    diffusion_cmd_->SetParameter(half_life);
-    diffusion_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
+	cmd_base = base + "/daughterDiffusion";
+	_diffusionCmd = std::make_unique<G4UIcommand>(cmd_base, this);
+	_diffusionCmd->SetGuidance("Activate daughter diffusion");
+	auto* bool_diffusion = new G4UIparameter("bool_diffusion", 's', false);
+	_diffusionCmd->SetParameter(bool_diffusion);
+	auto* half_life = new G4UIparameter("half_life", 'f', false);
+	_diffusionCmd->SetParameter(half_life);
+	_diffusionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    cmd_base = base + "/usePositionsDirectionsTxt";
-    posi_direc_txt_cmd_ = std::make_unique<G4UIcommand>(cmd_base, this);
-    posi_direc_txt_cmd_->SetGuidance("usePositionsDirectionsTxt");
-    G4UIparameter* name_file = new G4UIparameter("name_file", 's', false);
-    posi_direc_txt_cmd_->SetParameter(name_file);
-    G4UIparameter* name_method = new G4UIparameter("name_method", 's', false);
-    posi_direc_txt_cmd_->SetParameter(name_method);
-    posi_direc_txt_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
+	cmd_base = base + "/usePositionsDirectionsTxt";
+	_posiDirecTxtCmd = std::make_unique<G4UIcommand>(cmd_base, this);
+	_posiDirecTxtCmd->SetGuidance("usePositionsDirectionsTxt");
+	auto* name_file = new G4UIparameter("name_file", 's', false);
+	_posiDirecTxtCmd->SetParameter(name_file);
+	auto* name_method = new G4UIparameter("name_method", 's', false);
+	_posiDirecTxtCmd->SetParameter(name_method);
+	_posiDirecTxtCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    cmd_base = base + "/EmitLi7BNCTSpectrum";
-    li7_BNCT_cmd_ = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
-    li7_BNCT_cmd_->SetGuidance("Choose Li7 spectrum if the energy of the"
-    "usePositionsDirectionsTxt file contained Helium energies from BNCT reaction");
-    li7_BNCT_cmd_->SetParameterName("EmitLi7BNCTSpectrum", false);
-    li7_BNCT_cmd_->AvailableForStates(G4State_PreInit,G4State_Idle);
+	cmd_base = base + "/EmitLi7BNCTSpectrum";
+	_li7BNCTCmd = std::make_unique<G4UIcmdWithAString>(cmd_base, this);
+	_li7BNCTCmd->SetGuidance(
+		"Choose Li7 spectrum if the energy of the"
+		"usePositionsDirectionsTxt file contained Helium energies from BNCT reaction"
+	);
+	_li7BNCTCmd->SetParameterName("EmitLi7BNCTSpectrum", false);
+	_li7BNCTCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    cmd_base = base + "/init";
-    init_cmd_ = std::make_unique<G4UIcmdWithoutParameter>(cmd_base, this);
-    init_cmd_->AvailableForStates(G4State_PreInit, G4State_Idle);
+	cmd_base = base + "/init";
+	_initCmd = std::make_unique<G4UIcmdWithoutParameter>(cmd_base, this);
+	_initCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
-void PGA_implMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
-{
-    if (command == uniform_cmd_.get()) {
-        UniformSource& added_source =  pga_impl_->addUniformSource(newValue.data());
-        G4String source_base = base_ + "/" + newValue;
-        added_source.messenger().BuildCommands(source_base);
-    } else if (command == distributed_cmd_.get()) {
-        DistributedSource& added_source = pga_impl_->addDistributedSource(newValue.data());
-        G4String source_base = base_ + "/" + newValue;
-        added_source.messenger().BuildCommands(source_base);
-    } else if (command == diffusion_cmd_.get()) {
-        G4String bool_diffusion;
-        G4double half_life; //s
-        std::istringstream is(newValue.data());
-        is >> bool_diffusion >> half_life;
-        pga_impl_->ActivateDiffusion(bool_diffusion, half_life);
-    } else if (command == init_cmd_.get()) {
-        pga_impl_->Initialize();
-    } else if (command == posi_direc_txt_cmd_.get()) {
-       G4String name_file;
-       G4String name_method;
+void PGA_implMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
+	if (command == _uniformCmd.get()) {
+		UniformSource& added_source =  _pgaImpl->addUniformSource(newValue.data());
+		G4String source_base = _base + "/" + newValue;
+		added_source.messenger().BuildCommands(source_base);
+	} else if (command == _distributedCmd.get()) {
+		DistributedSource& added_source = _pgaImpl->addDistributedSource(newValue.data());
+		G4String source_base = _base + "/" + newValue;
+		added_source.messenger().BuildCommands(source_base);
+	} else if (command == _diffusionCmd.get()) {
+		G4String bool_diffusion;
+		G4double half_life; //s
+		std::istringstream is(newValue.data());
+		is >> bool_diffusion >> half_life;
+		_pgaImpl->ActivateDiffusion(bool_diffusion, half_life);
+	} else if (command == _initCmd.get()) {
+		_pgaImpl->Initialize();
+	} else if (command == _posiDirecTxtCmd.get()) {
+		G4String name_file;
+		G4String name_method;
 
-       std::istringstream is(newValue.data());
-       is >> name_file >> name_method;
+		std::istringstream is(newValue.data());
+		is >> name_file >> name_method;
 
-       pga_impl_->SetTxtInfoPrimariesName_and_MethodName(name_file, name_method);
-    } else if (command == li7_BNCT_cmd_.get()) {
-        pga_impl_->SetLi7BNCTSpectrumBool(newValue);
-    }
+		_pgaImpl->SetTxtInfoPrimariesName_and_MethodName(name_file, name_method);
+	} else if (command == _li7BNCTCmd.get()) {
+		_pgaImpl->SetLi7BNCTSpectrumBool(newValue);
+	}
 }
 
 }

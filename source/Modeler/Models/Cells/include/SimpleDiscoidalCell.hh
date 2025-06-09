@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef SIMPLE_DISCOIDAL_CELL_STRUCTURE_HH
 #define SIMPLE_DISCOIDAL_CELL_STRUCTURE_HH
 
@@ -16,42 +8,42 @@ See LICENSE.md for further details
 
 using namespace Settings::Geometry;
 using namespace Settings::Geometry::Mesh2D;
-////////////////////////////////////////////////////////////////////////////
+
 /// \brief define a simple discoidal cell.
 /// A simple cell is composed of a deformable round cell membrane and a single round nucleus.
 /// @author Henri Payno
-////////////////////////////////////////////////////////////////////////////
-class SimpleDiscoidalCell : public DiscoidalCell
-{	
-	typedef std::vector<Mesh2D::Segment_2>::iterator shapeIterator;	///< \brief iterator on membrane cell mesh
+class SimpleDiscoidalCell : public DiscoidalCell {
+	using shapeIterator = std::vector<Mesh2D::Segment_2>::iterator;	///< \brief iterator on membrane cell mesh
 
 public:
-	/// \brief constructor
-	SimpleDiscoidalCell(const CellProperties*, Point_2 pOrigin, double pSpheroidRadius, double pNucleusRadius, eNucleusPosType pPosType = BARYCENTER, double pMass = 1., std::vector<Mesh2D::Segment_2> pMembraneShape=std::vector<Mesh2D::Segment_2>());
-	/// \brief destructor
-	virtual ~SimpleDiscoidalCell();
+	SimpleDiscoidalCell(
+		const CellProperties*, Point_2 pOrigin, double pSpheroidRadius, double pNucleusRadius, eNucleusPosType pPosType = BARYCENTER,
+		double pMass = 1., std::vector<Mesh2D::Segment_2> pMembraneShape=std::vector<Mesh2D::Segment_2>()
+	);
 
 	/// \brief membrane area getter
 	//virtual double getCytoplasmArea() const = 0;
+
 	/// \brief return the position of the nucleus according to his type of nucleus position
 	/// \warning this is not necessarily the one setted
-	virtual Point_2 getNucleusCenter(eNucleusPosType nucleusPositionType) const;
+	[[nodiscard]] Point_2 getNucleusCenter(eNucleusPosType nucleusPositionType) const override;
 	/// \brief set the position of the nucleus according to his type of nucleus position
-	virtual void setNucleusCenter();
+	void setNucleusCenter() override;
 	/// \brief return the set of points defining nuclei
-	std::vector<std::set<Point_2> > getNucleiPoints() const;
+	[[nodiscard]] std::vector<std::set<Point_2>> getNucleiPoints() const;
 	/// \brief will generate the nucleus shape
-	virtual void generateNuclei(std::vector<Line_2*> intersections);
+	void generateNuclei(std::vector<Line_2*> intersections) override;
 	/// \brief return true if nuclei radius are coherent
-	virtual bool checkNucleiRadius() const 			{ return nucleus->getRadius() > 0;};	
+	[[nodiscard]] bool checkNucleiRadius() const override { return _nucleus->getRadius() > 0; }
 	/// \brief reset the mesh
-	virtual void resetMesh();
+	void resetMesh() override;
 	/// \brief return the cell description
-	virtual QString getDescription()  const 		{ return "SimpleDiscoidalCell"; };
+	[[nodiscard]] QString getDescription() const override { return "SimpleDiscoidalCell"; }
 
 private:
 	/// \brief the nucleus
-	RoundNucleus<double, Point_2, Vector_2>* nucleus;
+	RoundNucleus<double, Point_2, Vector_2>* _nucleus;
+
 };
 
-#endif // SIMPLE_DISCOIDAL_CELL_STRUCTURE_HH
+#endif

@@ -9,23 +9,22 @@
 
 namespace cpop {
 
-class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
-{
+class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 public:
-    PrimaryGeneratorAction(PGA_impl& pga_impl);
+	PrimaryGeneratorAction(PGA_impl& pga_impl);
 
-    void GeneratePrimaries(G4Event* event) override;
-    int TotalEvent() const;
+	void GeneratePrimaries(G4Event* event) override;
+	[[nodiscard]] int TotalEvent() const;
 
-    UniformSource* uniform_source() const;
-    DistributedSource* distributed_source() const;
+	[[nodiscard]] UniformSource* uniform_source() const;
+	[[nodiscard]] DistributedSource* distributed_source() const;
 
-    PGA_implMessenger& messenger();
+	PGA_implMessenger& messenger();
 
 private:
-    PGA_impl* pga_impl_;
+	PGA_impl* pga_impl_;
 };
 
 }
 
-#endif // PRIMARYGENERATORACTION_HH
+#endif

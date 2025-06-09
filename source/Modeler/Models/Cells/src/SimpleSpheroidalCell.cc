@@ -1,18 +1,10 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol,
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "RandomEngineManager.hh"
 #include "CellMeshSettings.hh"
 #include "Geometry_Utils_Sphere.hh"
 #include "SimpleSpheroidalCell.hh"
 
 #include <CGAL/centroid.h>
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /// \param pCellProperties the cell properties
 /// \param pOrigin the origin to the cell
 /// \param pSpheroidRadius the radius of the cell membrane at rest
@@ -20,7 +12,6 @@ See LICENSE.md for further details
 /// \param pPosType the type of position to set to the nucleus
 /// \param pWeight the weight of the cell
 /// \param pMembraneShape the inital shape of the cell
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 SimpleSpheroidalCell::SimpleSpheroidalCell(
 	const CellProperties* pCellProperties,
 	Point_3 pOrigin,
@@ -31,35 +22,20 @@ SimpleSpheroidalCell::SimpleSpheroidalCell(
 	Mesh3D::Polyhedron_3 pMembraneShape):
 	SpheroidalCell(pCellProperties, pOrigin, pSpheroidRadius, pWeight, pMembraneShape)
 {
-	nucleus = new RoundNucleus<double, Point_3, Vector_3>(pNucleusRadius, pOrigin, pPosType );
-	nuclei.push_back(nucleus);
+	_nucleus = new RoundNucleus<double, Point_3, Vector_3>(pNucleusRadius, pOrigin, pPosType );
+	_nuclei.push_back(_nucleus);
 	//SpheroidalCell::convertToG4Structure()
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-SimpleSpheroidalCell::~SimpleSpheroidalCell()
-{
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param nucleusPositionType The type of position of the cell
 /// \return the center of the nucleus
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-Point_3 SimpleSpheroidalCell::getNucleusCenter(eNucleusPosType nucleusPositionType) const
-{
-	switch(nucleusPositionType)
-	{
-		case ORIGIN:
-		{
-			return getPosition();
-		}
+Point_3 SimpleSpheroidalCell::getNucleusCenter(eNucleusPosType nucleusPositionType) const {
+	switch(nucleusPositionType) {
+		case ORIGIN:      return getPosition();
 		case BARYCENTER:
 		{
 			// The centroid is the barycenter with equal weight for each vertices from the polyhedron
-			return CGAL::centroid(shape->points_begin(), shape->points_end(), CGAL::Dimension_tag<0>());
+			return CGAL::centroid(_shape->points_begin(), _shape->points_end(), CGAL::Dimension_tag<0>());
 		}
 		case NO_STANDARD:
 		{
@@ -74,68 +50,47 @@ Point_3 SimpleSpheroidalCell::getNucleusCenter(eNucleusPosType nucleusPositionTy
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-void SimpleSpheroidalCell::setNucleusCenter()
-{
-	nucleus->setOrigin( getNucleusCenter( nucleus->getPositionType()));
+void SimpleSpheroidalCell::setNucleusCenter() {
+	_nucleus->setOrigin( getNucleusCenter(_nucleus->getPositionType()));
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param intersections The plane defining the boundary
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-void SimpleSpheroidalCell::generateNuclei(std::vector<Plane_3*> intersections)
-{
+void SimpleSpheroidalCell::generateNuclei(std::vector<Plane_3*> intersections) {
 	assert(getRadius() > 0.);
-	assert(nucleus->getRadius() > 0.);
-	assert(getRadius() > nucleus->getRadius());
-	assert(maxRatioToCellRadius <= 1.);
-	assert(maxRatioToCellRadius > 0.);
+	assert(_nucleus->getRadius() > 0.);
+	assert(getRadius() > _nucleus->getRadius());
+	assert(_maxRatioToCellRadius <= 1.);
+	assert(_maxRatioToCellRadius > 0.);
 
 	// check intersection plane.
-	double maxRadius = maxRatioToCellRadius * this->getRadius();
-	double optimalRadius = nucleus->getRadius();	// the one requested
+	double maxRadius = _maxRatioToCellRadius * this->getRadius();
+	double optimalRadius = _nucleus->getRadius();	// the one requested
 
 	// if intersections
-	for(std::vector<Plane_3*>::const_iterator itPlane = intersections.begin(); itPlane != intersections.end(); ++itPlane)
-	{
-		assert(*itPlane);
-		double localRadius = sqrt( squared_distance((*itPlane)->projection(nucleus->getOrigin()), nucleus->getOrigin()) );
+	for(auto const& intersection : intersections) {
+		assert(intersection);
+		double localRadius = sqrt( squared_distance(intersection->projection(_nucleus->getOrigin()), _nucleus->getOrigin()) );
 		if(localRadius < optimalRadius)
-		{
 			optimalRadius = localRadius;
-		}
 	}
 
 	// if too larger radius
 	if(optimalRadius > maxRadius)
-	{
 		optimalRadius = maxRadius;
-	}
-	nucleus->setRadius( optimalRadius );
-	//cout << "changing nucleus radius : " << optimalRadius*CLHEP::um << endl;
-	//SpheroidalCell::
-	//cout << "mass  :  " << pWeight << endl;
 
-	assert(nucleus->getRadius() > 0);
+	_nucleus->setRadius(optimalRadius);
+
+	assert(_nucleus->getRadius() > 0);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-void SimpleSpheroidalCell::resetMesh()
-{
+void SimpleSpheroidalCell::resetMesh() {
 	SpheroidalCell::resetMesh();
 	/// nothing to do for the nucleus mesh
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \return The random spot requested on the cytoplasm
 /// \details here we optimize the function because we have only one nucleus and we can speed up this process.
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Point_3 SimpleSpheroidalCell::getSpotOnCytoplasm() const
-{
+Point_3 SimpleSpheroidalCell::getSpotOnCytoplasm() const {
 	//G4cout<< "\n\n\n getSpotOnCytoplasm" << G4endl;
 
 	// // pick a point on the membrane, then pick a point on the segment [MembranePoint/cellOrigin] Until we found one not on the nucleus
@@ -152,19 +107,15 @@ Point_3 SimpleSpheroidalCell::getSpotOnCytoplasm() const
 	// return res;
 
 
-	Vector_3 v( getSpotOnCellMembrane() - getPosition());
+	Vector_3 v(getSpotOnCellMembrane() - getPosition());
 	double x = RandomEngineManager::getInstance()->randd(0., 1.);
 	Point_3 res = getPosition() + x*(v);
 
-	std::vector<Nucleus<double, Point_3, Vector_3> *>::const_iterator itNuc;
-	for(itNuc = nuclei.begin(); itNuc != nuclei.end(); ++itNuc)
-	{
+	for(auto const& itNuc : _nuclei) {
 		// if point is on a nucleus, pick an other one
-		if((*itNuc)->hasIn(res))
-		{
+		if(itNuc->hasIn(res))
 			return getSpotOnCytoplasm();
-		}
 	}
-	return res;
 
+	return res;
 }

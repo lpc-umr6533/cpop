@@ -13,19 +13,19 @@ class Population;
 class ActionInitialization : public G4VUserActionInitialization
 {
 public:
-    ActionInitialization(const Population& population);
+	ActionInitialization(const Population& population);
 
-    virtual void BuildForMaster() const;
-    virtual void Build() const;
+	void BuildForMaster() const override;
+	void Build() const override;
 
 private:
-    // PGA_impl shared by all primary generators.
-    // Only owned by the ActionInitialization class
-    std::unique_ptr<PGA_impl> pga_impl_;
+	// PGA_impl shared by all primary generators.
+	// Only owned by the ActionInitialization class
+	std::unique_ptr<PGA_impl> _pgaImpl;
 
-    const Population* population_;
+	const Population* _population;
 };
 
 }
 
-#endif // ACTIONINITIALIZATION_HH
+#endif

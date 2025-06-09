@@ -3,25 +3,19 @@
 
 #include "CPOP_SpectrumRange.hh"
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 /// define a range of values for an histogram spectrum
-///////////////////////////////////////////////////////////////////////////////////////////////////
-class CPOP_HistogramSpectrumRange : public CPOP_SpectrumRange
-{
+class CPOP_HistogramSpectrumRange : public CPOP_SpectrumRange {
 public:
-	/// \brief constructor
-	CPOP_HistogramSpectrumRange(pair<G4float, G4double> pLowBound, pair<G4float, G4double> pLighBound);
-	/// \brief destructor
-	~CPOP_HistogramSpectrumRange();
+	CPOP_HistogramSpectrumRange(std::pair<G4float, G4double> pLowBound, std::pair<G4float, G4double> pLighBound);
 
-	G4double computeEnergy() const;
-	virtual G4double GetEnergy(G4double) const;
+	[[nodiscard]] G4double computeEnergy() const override;
+	[[nodiscard]] G4double GetEnergy(G4double) const override;
 
 protected:
 	/// \brief the energy low boundary
-	G4double energyLowBound;
+	G4double _energyLowBound;
 	/// \brief the energy high bounday
-	G4double energyHighBound;	
+	G4double _energyHighBound;
 };
 
-#endif // CPOP_HISTO_SPECTRUM_RANGE_HH
+#endif

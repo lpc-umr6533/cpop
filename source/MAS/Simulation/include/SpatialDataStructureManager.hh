@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef SPATIAL_DATA_STRUCTURE_MANAGER
 #define SPATIAL_DATA_STRUCTURE_MANAGER
 
@@ -21,7 +13,7 @@ using namespace Settings::Geometry;
 using namespace Settings::nAgent;
 
 //////////////////////////////////////////////////////////////////////////////////////////
-/// \brief  The spatial data structure manager register all SDS. Communicate with the SimulationManager 
+/// \brief  The spatial data structure manager register all SDS. Communicate with the SimulationManager
 /// to make all registred SDS is updated when needed
 /// \details Because we have to deal with n dimensions, SDS we have specify n request funtion.
 /// Defined as a singleton.
@@ -31,9 +23,6 @@ class SpatialDataStructureManager
 {
 
 public:
-	/// \brief constructor
-	SpatialDataStructureManager();
-	/// \brief destructor
 	~SpatialDataStructureManager();
 	/// \brief return the singleton of the spatialDataStructureMaanger
 	static SpatialDataStructureManager* getInstance();
@@ -93,64 +82,50 @@ private:
 
 ///////////////////// template function definitions ////////
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///   getNeighbours
 /// \param pAgent the agent for which we want the neighbours
 /// \return the set of neighbours
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
-std::set<const SpatialableAgent<Kernel, Point, Vector>* > SpatialDataStructureManager::getNeighbours(const SpatialableAgent<Kernel, 
-																				Point, Vector>* pAgent) const
+std::set<const SpatialableAgent<Kernel, Point, Vector>* > SpatialDataStructureManager::getNeighbours(
+	const SpatialableAgent<Kernel, Point, Vector>* pAgent
+) const
 {
 	InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, "unable to deal with this template parameters", "SpatialDataStructureManager");
 	return std::set<const Spatialable<Kernel, Point, Vector>*>();
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///   update
 /// \param pSDS  the spatial data structure we want to update
 /// \return true if success
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
-bool SpatialDataStructureManager::update(SpatialDataStructure<Kernel, Point, Vector>* pSDS )
-{
+bool SpatialDataStructureManager::update(SpatialDataStructure<Kernel, Point, Vector>* pSDS) {
 	InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, "update - unable to deal with this template parameters", "SpatialDataStructureManager");
 	return false;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // make registration
 /// \param pSDS  the spatial data structure we want to register
 /// \return true if success
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
-bool SpatialDataStructureManager::makeRegistration(SpatialDataStructure<Kernel, Point, Vector>* pSDS)
-{
+bool SpatialDataStructureManager::makeRegistration(SpatialDataStructure<Kernel, Point, Vector>* pSDS) {
 	InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, "make registration - unable to deal with this template parameters", "SpatialDataStructureManager");
 
 	return false;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // make unregistration
 /// \param pSDS  the spatial data structure we want to unregister
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
-void SpatialDataStructureManager::makeUnregistration(SpatialDataStructure<Kernel, Point, Vector>* pSDS)
-{
+void SpatialDataStructureManager::makeUnregistration(SpatialDataStructure<Kernel, Point, Vector>* pSDS) {
 	InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, "make unregistration - unable to deal with this template parameters", "SpatialDataStructureManager");
 
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is registred
 /// \param pSDS  the spatial data structure we want to know if registred
 /// \return true if registred
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
-bool SpatialDataStructureManager::isRegistred(SpatialDataStructure<Kernel, Point, Vector>* pSDS) const
-{
+bool SpatialDataStructureManager::isRegistred(SpatialDataStructure<Kernel, Point, Vector>* pSDS) const {
 	InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, "is registred - unable to deal with this template parameters", "SpatialDataStructureManager");
 	return false;
 }

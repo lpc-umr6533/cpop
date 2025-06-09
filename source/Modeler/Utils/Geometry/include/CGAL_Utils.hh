@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef CGAL_UTILS_HH
 #define CGAL_UTILS_HH
 
@@ -24,18 +16,11 @@ See LICENSE.md for further details
 
 #include <QString>
 
-//////////////////////////////////////////////////////////////////////////////
-/// \brief all utils functions
-/// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////
-namespace Utils
-{
-//////////////////////////////////////////////////////////////////////////////
 /// \brief utils functions relative to CGAL developped for CPOP
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////
-namespace myCGAL
+namespace Utils::myCGAL
 {
+
 using namespace Settings::Geometry;
 using namespace Settings::Geometry::Mesh3D;
 
@@ -81,10 +66,10 @@ double getConvexPolyhedronVolume(const Polyhedron_3*, Point_3);
 
 
 /// \brief convert the given point to box of given width
-vector<Point_2> convertPointToBox(Point_2 point, double width);
+std::vector<Point_2> convertPointToBox(Point_2 point, double width);
 
 /// \brief convert the given point to box of given width
-set<Point_3> convertPointToBox(Point_3 point, double width);
+std::set<Point_3> convertPointToBox(Point_3 point, double width);
 /// \brief option to save some operation made in CGAL_UTILS
 void setDebugOutput(bool);
 
@@ -92,16 +77,15 @@ void setDebugOutput(bool);
 Point_3 to_G4(const Point_3& point);
 /// \brief convert a Point in G4 unit to CPOP
 template <typename Point>
-Point_3 to_CPOP(const Point& point){
-    double conversionFrmG4ToCPOP = UnitSystemManager::getInstance()->getConversionFromG4();
-    return Point_3(
-                point.x()*conversionFrmG4ToCPOP,
-                point.y()*conversionFrmG4ToCPOP,
-                point.z()*conversionFrmG4ToCPOP
-                );
+Point_3 to_CPOP(const Point& point) {
+	double conversionFrmG4ToCPOP = UnitSystemManager::getInstance()->getConversionFromG4();
+	return Point_3(
+		point.x()*conversionFrmG4ToCPOP,
+		point.y()*conversionFrmG4ToCPOP,
+		point.z()*conversionFrmG4ToCPOP
+	);
 }
 
 }
-}
 
-#endif // CGAL_UTILS_HH
+#endif

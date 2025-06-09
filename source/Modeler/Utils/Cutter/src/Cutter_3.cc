@@ -1,38 +1,13 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "Cutter_3.hh"
 
-//////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////
-Cutter_3::Cutter_3(vector<t_SpatialableAgent_3*> pCells)
-{
-	uncutCells = pCells;
+Cutter_3::Cutter_3(std::vector<t_SpatialableAgent_3*> pCells) {
+	_uncutCells = pCells;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////
-Cutter_3::Cutter_3(set<t_SpatialableAgent_3*> pCells)
-{
-	uncutCells.insert(uncutCells.end(), pCells.begin(), pCells.end());
+Cutter_3::Cutter_3(std::set<t_SpatialableAgent_3*> pCells) {
+	_uncutCells.insert(_uncutCells.end(), pCells.begin(), pCells.end());
 }
 
-//////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////
-Cutter_3::~Cutter_3()
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief will removed the cells not on the range requested from the toCut vector.
 /// \details will move the one near the limit in the buffer and move the one put to cutted vector
 /// \param dir 			The direction to process the cut
@@ -42,26 +17,29 @@ Cutter_3::~Cutter_3()
 /// \param buffer 		Where to set buffered cells
 /// \param cutted 		Where to set cutted cells
 /// \param cutBuffer 	true if we are cutting the buffer, then we don't reinsert cell on buffer but on cutted
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void Cutter_3::processCut(Direction dir, double val, double bufferWidth, vector<t_SpatialableAgent_3*>* toCut, vector<t_SpatialableAgent_3*>* buffer, vector<t_SpatialableAgent_3*>* cutted, bool cutBuffer  )
+void Cutter_3::processCut(
+	Direction dir,
+	double val,
+	double bufferWidth,
+	std::vector<t_SpatialableAgent_3*>* toCut,
+	std::vector<t_SpatialableAgent_3*>* buffer,
+	std::vector<t_SpatialableAgent_3*>* cutted,
+	bool cutBuffer
+)
 {
-	vector<t_SpatialableAgent_3*>::iterator itCell = toCut->begin();
-	while(itCell != toCut->end())
-	{
+	auto itCell = toCut->begin();
+	while(itCell != toCut->end()) {
 		bool lCut = false;
 		bool moveToBuffer = false;
 
-		switch(dir)
-		{
+		switch(dir) {
 			case BOTTOM:
 			{
 				if((*itCell)->getPosition().z() < val )
 				{
-					if( (*itCell)->getPosition().z() < (val - bufferWidth))
-					{
+					if((*itCell)->getPosition().z() < (val - bufferWidth)) {
 						lCut = true;
-					}else
-					{
+					} else {
 						moveToBuffer = true;
 					}
 				}
@@ -69,13 +47,10 @@ void Cutter_3::processCut(Direction dir, double val, double bufferWidth, vector<
 			}
 			case TOP:
 			{
-				if((*itCell)->getPosition().z() > val )
-				{
-					if( (*itCell)->getPosition().z() > (val + bufferWidth))
-					{
+				if((*itCell)->getPosition().z() > val) {
+					if( (*itCell)->getPosition().z() > (val + bufferWidth)) {
 						lCut = true;
-					}else
-					{
+					} else {
 						moveToBuffer = true;
 					}
 				}
@@ -87,11 +62,9 @@ void Cutter_3::processCut(Direction dir, double val, double bufferWidth, vector<
 				if((*itCell)->getPosition().x() < val )
 				{
 					// if not in the buffer
-					if( (*itCell)->getPosition().x() < (val - bufferWidth))
-					{
+					if((*itCell)->getPosition().x() < (val - bufferWidth)) {
 						lCut = true;
-					}else
-					{
+					} else {
 						moveToBuffer = true;
 					}
 				}
@@ -99,13 +72,11 @@ void Cutter_3::processCut(Direction dir, double val, double bufferWidth, vector<
 			}
 			case RIGHT:
 			{
-				if((*itCell)->getPosition().x() > val )
+				if((*itCell)->getPosition().x() > val)
 				{
-					if( (*itCell)->getPosition().x() > (val + bufferWidth))
-					{
+					if( (*itCell)->getPosition().x() > (val + bufferWidth)) {
 						lCut = true;
-					}else
-					{
+					} else {
 						moveToBuffer = true;
 					}
 				}
@@ -113,13 +84,11 @@ void Cutter_3::processCut(Direction dir, double val, double bufferWidth, vector<
 			}
 			case BACK:
 			{
-				if((*itCell)->getPosition().y() < val )
+				if((*itCell)->getPosition().y() < val)
 				{
-					if( (*itCell)->getPosition().y() < (val - bufferWidth))
-					{
+					if((*itCell)->getPosition().y() < (val - bufferWidth)) {
 						lCut = true;
-					}else
-					{
+					} else {
 						moveToBuffer = true;
 					}
 				}
@@ -127,13 +96,10 @@ void Cutter_3::processCut(Direction dir, double val, double bufferWidth, vector<
 			}
 			case FRONT:
 			{
-				if((*itCell)->getPosition().y() > val )
-				{
-					if( (*itCell)->getPosition().y() > (val + bufferWidth))
-					{
+				if((*itCell)->getPosition().y() > val) {
+					if((*itCell)->getPosition().y() > (val + bufferWidth)) {
 						lCut = true;
-					}else
-					{
+					} else {
 						moveToBuffer = true;
 					}
 				}
@@ -141,84 +107,57 @@ void Cutter_3::processCut(Direction dir, double val, double bufferWidth, vector<
 			}
 		}
 		// update vectors
-		if( lCut )
-		{
-			if(cutted)
-			{
+		if(lCut) {
+			if(cutted) {
 				cutted->push_back(*itCell);
 			}
+
 			toCut->erase(itCell);
-		}else
-		if( moveToBuffer )
-		{
-			if(cutBuffer)
-			{
+		} else if(moveToBuffer) {
+			if(cutBuffer) {
 				++itCell;
-			}else
-			{
-				if(buffer)
-				{
+			} else {
+				if(buffer) {
 					buffer->push_back(*itCell);
 				}
 				toCut->erase(itCell);
 			}
-		}else
-		{
+		} else {
 			++itCell;
 		}
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
 /// \param dir 			The direction where to remove cells
 /// \param val 			The value from where to start the removing
 /// \param bufferWidth 	The value from where the buffer start
-//////////////////////////////////////////////////////////////////////////////
-void Cutter_3::cut(Direction dir, double val, double bufferWidth)
-{
+void Cutter_3::cut(Direction dir, double val, double bufferWidth) {
 	// update uncuted cells
-	processCut(dir, val, bufferWidth, &uncutCells, & cellsOnBuffer, &cutCells);
+	processCut(dir, val, bufferWidth, &_uncutCells, & _cellsOnBuffer, &_cutCells);
 
 	// update cells on buffer
-	vector<t_SpatialableAgent_3*> newBuffer;
-	processCut(dir, val, bufferWidth, &cellsOnBuffer, NULL, &cutCells, true);
+	std::vector<t_SpatialableAgent_3*> newBuffer;
+	processCut(dir, val, bufferWidth, &_cellsOnBuffer, nullptr, &_cutCells, true);
 	// cellsOnBuffer = newBuffer;
 }
 
-
-
-//////////////////////////////////////////////////////////////////////////////
 /// \param pColor The color to set to the targetted cells
-//////////////////////////////////////////////////////////////////////////////
-void Cutter_3::setColorToCellOnBuffer(CGAL::Color pColor)
-{
-	vector<t_SpatialableAgent_3*>::iterator itCell;
-	for(itCell = cellsOnBuffer.begin(); itCell != cellsOnBuffer.end(); ++itCell )
-	{
-		static_cast<Agent*>(*itCell)->setColor(pColor);
+void Cutter_3::setColorToCellOnBuffer(CGAL::Color pColor) {
+	for(auto& itCell : _cellsOnBuffer) {
+		static_cast<Agent*>(itCell)->setColor(pColor);
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
 /// \param pColor The color to set to the targetted cells
-//////////////////////////////////////////////////////////////////////////////
-void Cutter_3::setColorToUncuttedCell(CGAL::Color pColor)
-{
-	vector<t_SpatialableAgent_3*>::iterator itCell;
-	for(itCell = uncutCells.begin(); itCell != uncutCells.end(); ++itCell)
-	{
-		static_cast<Agent*>(*itCell)->setColor(pColor);
+void Cutter_3::setColorToUncuttedCell(CGAL::Color pColor) {
+	for(auto & _uncutCell : _uncutCells) {
+		static_cast<Agent*>(_uncutCell)->setColor(pColor);
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
 /// \param pColor The color to set to the targetted cells
-//////////////////////////////////////////////////////////////////////////////
-void Cutter_3::setColorToCuttedCell(CGAL::Color pColor)
-{
-	vector<t_SpatialableAgent_3*>::iterator itCell;
-	for( itCell = cutCells.begin(); itCell != cutCells.end(); ++itCell)
-	{
-		static_cast<Agent*>(*itCell)->setColor(pColor);
+void Cutter_3::setColorToCuttedCell(CGAL::Color pColor) {
+	for(auto & _cutCell : _cutCells) {
+		static_cast<Agent*>(_cutCell)->setColor(pColor);
 	}
 }

@@ -1,10 +1,8 @@
-// #ifndef EVENTACTION_HH
-// #define EVENTACTION_HH
+#ifndef TARGETEDALPHATHERAPY_EVENTACTION_HH
+#define TARGETEDALPHATHERAPY_EVENTACTION_HH
 
 #include "G4UserEventAction.hh"
-#include "globals.hh"
 #include <vector>
-#include <iostream>
 #include "Population.hh"
 #include "CpopRunAction.hh"
 
@@ -13,60 +11,57 @@ namespace cpop {
 
 class CpopRunAction;
 
-class CpopEventAction : public G4UserEventAction
-{
-  /// Victor Levrague : modification of begin and end of Event Action in order collect info at the event level
+class CpopEventAction : public G4UserEventAction {
+	/// Victor Levrague : modification of begin and end of Event Action in order collect info at the event level
 public:
-    CpopEventAction(const Population& population, CpopRunAction* runAction);
-    ~CpopEventAction() = default;
+	CpopEventAction(const Population& population, CpopRunAction* runAction);
 
-    std::string PreOrganelle;
+	std::string PreOrganelle;
 
-    virtual void BeginOfEventAction(const G4Event*evt);
-    virtual void EndOfEventAction(const G4Event*);
+	void BeginOfEventAction(const G4Event*evt) override;
+	void EndOfEventAction(const G4Event*) override;
 
-    void AddEdepNucl(G4double edepn, G4int id_cell) { fEdepn[id_cell] += edepn; }
-    void AddEdepCyto(G4double edepc, G4int id_cell) { fEdepc[id_cell] += edepc; }
-    void AddEdepSpheroid(G4double edep_sph) { fEdep_sph += edep_sph; }
+	void AddEdepNucl(G4double edepn, G4int id_cell) { fEdepn[id_cell] += edepn; }
+	void AddEdepCyto(G4double edepc, G4int id_cell) { fEdepc[id_cell] += edepc; }
+	void AddEdepSpheroid(G4double edep_sph) { fEdepSph += edep_sph; }
 
-    std::vector<double> Ei;
-    std::vector<double> Ef;
-    std::vector<int> ID_Cellule;
+	std::vector<double> Ei;
+	std::vector<double> Ef;
+	std::vector<int> idCell;
 
-    G4int tailleEi;
-    G4int tailleEf;
-    G4String nameParticle;
+	G4int sizeEi;
+	G4int sizeEf;
+	G4String nameParticle;
 
-    G4int compteurEi_He_DansPremierNoyau_EnStock;
-    G4int compteurArretdsNoyauApresGenDansLeNoyau;
-    G4double compteur_first_appearance;
+	G4int countEiHeDansPremierNoyauEnStock;
+	G4int countArretdsNoyauApresGenDansLeNoyau;
+	G4double countFirstAppearance;
 
-    G4String FirstVolume;
-    G4double Energie_emission;
+	G4String firstVolume;
+	G4double energyEmission;
 
-    G4double Ei_He_GenDansNoyau;
-    G4int ID_Cell_GenDansNoyau;
-    G4int ID_Cellule_ArretDsNoyau;
+	G4double EiHeGenDansNoyau;
+	G4int idCellGenDansNoyau;
+	G4int idCelluleArretDsNoyau;
 
-    G4int ID_Cell_D_Emission;
+	G4int idCellDEmission;
 
-    G4int evt_id;
+	G4int eventId;
 
-    G4int eventID_for_stepping_action;
+	G4int eventIDForSteppingAction;
 
-    std::vector<double> fEdepn;
-    std::vector<double> fEdepc;
-    G4double fEdep_sph;
+	std::vector<double> fEdepn;
+	std::vector<double> fEdepc;
+	G4double fEdepSph;
 
-    G4int indice_if_diffusion_event = 0;
+	G4int indiceIfDiffusionEvent = 0;
 
 private:
 
-    const Population* population_;
-    CpopRunAction* fRunAction;
-
+	const Population* _population;
+	CpopRunAction* fRunAction;
 };
 
 }
 
-// #endif // EVENTACTION_HH
+#endif

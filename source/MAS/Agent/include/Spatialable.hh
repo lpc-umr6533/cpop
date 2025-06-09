@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef SPATIALABLE_HH
 #define SPATIALABLE_HH
 
@@ -13,51 +5,38 @@ See LICENSE.md for further details
 	export
 #endif
 
-//////////////////////////////////////////////////////////////////////////////
 /// \brief The spatialable class. Define the ppossibility to be localizated
 /// and include on a SpatialDataStructure
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////
 template <typename Kernel, typename Point, typename Vector>
-class Spatialable
-{
+class Spatialable {
 public:
-	////////////////////////////////////////////////////////
 	/// \brief constructor
 	/// \param pPosition 	The initial position
 	/// \param pOrientation The inital orientation
-	////////////////////////////////////////////////////////
 	Spatialable(Point pPosition = Point(), Vector pOrientation = Vector()):
-		position(pPosition), orientation(pOrientation)
+		_position(pPosition), _orientation(pOrientation)
 	{
-
 	}
 
-	////////////////////////////////////////////////////////
-	/// \brief destructor
-	////////////////////////////////////////////////////////
-	virtual ~Spatialable()
-	{
-
-	};
+	virtual ~Spatialable() = default;
 
 	/// \brief  return the position of the object
-	/// CGALPOINT_µ2 and Point_3 doesn't heritates from an interesting 
+	/// CGALPOINT_µ2 and Point_3 doesn't heritates from an interesting
 	/// common class. We could use point_d but woul'd be heavier.
-	inline Point getPosition() const			{return position;}
+	[[nodiscard]] inline Point getPosition() const { return _position; }
 	/// \brief position stter for the spatialable
-	void setPosition(Point pPos)		{position = pPos;};
+	void setPosition(Point pPos) { _position = pPos; }
 	/// \brief return the orientation of the spatialable
-	inline Vector getOrientation()	const		{return orientation;};
+	[[nodiscard]] inline Vector const& getOrientation() const	{ return _orientation; }
 	/// \brief orientation setter
-	void setOrientation(Vector pOri)	{orientation = pOri;};
+	void setOrientation(Vector pOri) { _orientation = pOri; }
 
 protected:
 	/// \brief the position of the spatialable
-	Point position;
+	Point _position;
 	/// \brief the orientation of the spatialable
-	Vector orientation;
-
+	Vector _orientation;
 };
-#endif // SPATIALABLE_HH
 
+#endif

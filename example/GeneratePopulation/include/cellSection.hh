@@ -1,18 +1,9 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef CELL__SECTION__H
 #define CELL__SECTION__H
 
 #include <vector>
 #include <string>
 
-// CPOP header
 #include <cReader/sectionreader.hh>
 
 // How to create your own configuration reader to build a T object
@@ -52,28 +43,25 @@ See LICENSE.md for further details
 
 template <typename T>
 class CellSection: public conf::SectionReader<T> {
-
 public:
-    CellSection() {}
-    ~CellSection() {}
+	void fill() {
+		std::string sectionName("CellProperties");
 
-    void fill() {
-		const char sectionName[] = "CellProperties";
-		
-		std::vector<double> nucleusRadius = this->template load<std::vector<double>>(sectionName, "nucleusRadius");
+		auto const& nucleusRadius = this->template load<std::vector<double>>(sectionName, "nucleusRadius");
 		double minRadiusN = nucleusRadius[0], maxRadiusN = nucleusRadius[1];
-		
-		std::vector<double> membraneRadius = this->template load<std::vector<double>>(sectionName, "membraneRadius");
+
+		auto const& membraneRadius = this->template load<std::vector<double>>(sectionName, "membraneRadius");
 		double minRadiusM = membraneRadius[0], maxRadiusM = membraneRadius[1];
-		
-		std::string cytoplasmMaterials = this->template load<std::string>(sectionName, "cytoplasmMaterials");
-		
-		std::string nucleusMaterials = this->template load<std::string>(sectionName, "nucleusMaterials");
-		
-		this->objToFill->setCellProperties(minRadiusN, maxRadiusN,
-										   minRadiusM, maxRadiusM,
-										   cytoplasmMaterials, nucleusMaterials);
-    }
+
+		auto const& cytoplasmMaterials = this->template load<std::string>(sectionName, "cytoplasmMaterials");
+		auto const& nucleusMaterials = this->template load<std::string>(sectionName, "nucleusMaterials");
+
+		this->objToFill->setCellProperties(
+			minRadiusN, maxRadiusN,
+			minRadiusM, maxRadiusM,
+			cytoplasmMaterials, nucleusMaterials
+		);
+	}
 };
 
 #endif

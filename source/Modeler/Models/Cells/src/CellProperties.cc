@@ -1,18 +1,11 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol,
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "CellProperties.hh"
 #include "XMLSettings.hh"
 
-#include <assert.h>
+#include <cassert>
+#include <utility>
 
 using namespace XML::CPOP_Flag;
-//////////////////////////////////////////////////////////////////////////////////////////
+
 ///	\param pCellType 			The type of cellule
 /// \param pNucleusPosType 		The type of position of cell's nucleus
 /// \param pMasses 				The masses min/max values for each life state of the cell
@@ -20,166 +13,119 @@ using namespace XML::CPOP_Flag;
 /// \param pCytoplasmMaterials 	The material included on the membrane.
 /// \param pNucleiMaterials 	The material included on the nucleus.
 /// \param pDeformable 			True if the cell membrane deformable
-//////////////////////////////////////////////////////////////////////////////////////////
-CellProperties::CellProperties(	CellType pCellType,
-								eNucleusPosType pNucleusPosType,
-	 							std::map<LifeCycle, CellVariableAttribute<double> > pMasses,
-	 							std::map<LifeCycle, CellVariableAttribute<double> > pNucleusRadius,
-	 							std::map<LifeCycle, G4Material* > pCytoplasmMaterials,
-	 							std::map<LifeCycle, G4Material* > pNucleiMaterials,
-	 							bool pDeformable
-	 						) :
-	cellType(pCellType),
-	nucleusPosType(pNucleusPosType),
-	masses(pMasses),
-	nucleusRadius(pNucleusRadius),
-	cytoplasmMaterials(pCytoplasmMaterials),
-	nucleiMaterials(pNucleiMaterials),
-	deformable(pDeformable)
+CellProperties::CellProperties(
+	CellType pCellType,
+	eNucleusPosType pNucleusPosType,
+	std::map<LifeCycle, CellVariableAttribute<double>> pMasses,
+	std::map<LifeCycle, CellVariableAttribute<double>> pNucleusRadius,
+	std::map<LifeCycle, G4Material*> pCytoplasmMaterials,
+	std::map<LifeCycle, G4Material*> pNucleiMaterials,
+	bool pDeformable
+):
+	_cellType(pCellType),
+	_nucleusPosType(pNucleusPosType),
+	_masses(std::move(pMasses)),
+	_nucleusRadius(std::move(pNucleusRadius)),
+	_cytoplasmMaterials(std::move(pCytoplasmMaterials)),
+	_nucleiMaterials(std::move(pNucleiMaterials)),
+	_deformable(pDeformable)
 {
-	ID = IDManager::getInstance()->getSpecificIDFor(CellProperties_IDMapName);
+	_id = IDManager::getInstance()->getSpecificIDFor(CellProperties_IDMapName);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////////////////
-CellProperties::~CellProperties()
-{
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////////////////
-void CellProperties::print() const
-{
+void CellProperties::print() const {
 	std::cout << std::endl;
 	std::cout << propertiesInfos().toStdString() << std::endl;
-	std::map<LifeCycle, CellVariableAttribute<double> >::const_iterator itAtt;
 	std::cout << "   masses " << std::endl;
-	for(itAtt = masses.begin(); itAtt != masses.end(); ++itAtt)
-	{
-		std::cout << "      - " << getName(itAtt->first).toStdString() << std::endl;
-		std::cout << itAtt->second.var_min() << "  -> " << itAtt->second.var_max() << std::endl;
-	}
 
+	for(auto const& masse : _masses) {
+		std::cout << "      - " << getName(masse.first).toStdString() << std::endl;
+		std::cout << masse.second.var_min() << "  -> " << masse.second.var_max() << std::endl;
+	}
 	std::cout << "   nucleus radius : " << std::endl;
-	for(itAtt = nucleusRadius.begin(); itAtt != nucleusRadius.end(); ++itAtt)
-	{
-		std::cout << "      - " << getName(itAtt->first).toStdString() << std::endl;
-		std::cout << itAtt->second.var_min() << "  -> " << itAtt->second.var_max() << std::endl;
+	for(auto const& nucleusRadiu : _nucleusRadius) {
+		std::cout << "      - " << getName(nucleusRadiu.first).toStdString() << std::endl;
+		std::cout << nucleusRadiu.second.var_min() << "  -> " << nucleusRadiu.second.var_max() << std::endl;
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
 /// \param pLifeCycle The life state we want the masses for
-//////////////////////////////////////////////////////////////////////////////////////////
-CellVariableAttribute<double> CellProperties::getMasses(LifeCycle pLifeCycle) const
-{
-	if(masses.find(pLifeCycle) == masses.end())
-	{
+CellVariableAttribute<double> CellProperties::getMasses(LifeCycle pLifeCycle) const {
+	if(_masses.find(pLifeCycle) == _masses.end()) {
 		QString mes = "unknow masses for requested LifeCycle" + QString::number(pLifeCycle);
 		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mes.toStdString(), "Cell properties");
-		return CellVariableAttribute<double>(0., 0.);
+		return {0., 0.};
 	}
-	return masses.find(pLifeCycle)->second;
+
+	return _masses.find(pLifeCycle)->second;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
 /// \param pLifeCycle The life state we want the nucleusRadius for
-//////////////////////////////////////////////////////////////////////////////////////////
-bool CellProperties::hasNucleusRadius(LifeCycle pLifeCycle) const
-{
-	return (nucleusRadius.find(pLifeCycle) != nucleusRadius.end());
+bool CellProperties::hasNucleusRadius(LifeCycle pLifeCycle) const {
+	return _nucleusRadius.find(pLifeCycle) != _nucleusRadius.end();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
 /// \param pLifeCycle The life state we want the nucleusRadius for
-//////////////////////////////////////////////////////////////////////////////////////////
-CellVariableAttribute<double> CellProperties::getNucleusRadius(LifeCycle pLifeCycle) const
-{
-	if(!hasNucleusRadius(pLifeCycle))
-	{
+CellVariableAttribute<double> CellProperties::getNucleusRadius(LifeCycle pLifeCycle) const {
+	if(!hasNucleusRadius(pLifeCycle)) {
 		QString mes = "unknow nucleus radius for requested LifeCycle " + QString::number(pLifeCycle);
 		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mes.toStdString(), "Cell properties");
-		return CellVariableAttribute<double>(0., 0.);
+		return {0., 0.};
 	}
-	return nucleusRadius.find(pLifeCycle)->second;
+
+	return _nucleusRadius.find(pLifeCycle)->second;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
 /// \param pLifeCycle The life state we want the nucleusRadius for
-//////////////////////////////////////////////////////////////////////////////////////////
-G4Material* CellProperties::getCytoplasmMaterial(LifeCycle pLifeCycle)	const
-{
+G4Material* CellProperties::getCytoplasmMaterial(LifeCycle pLifeCycle) const {
 	// if no material
-	if(cytoplasmMaterials.find(pLifeCycle) == cytoplasmMaterials.end())
-	{
-		return NULL;
-	}else
-	{
-		return cytoplasmMaterials.find(pLifeCycle)->second;
+	if(_cytoplasmMaterials.find(pLifeCycle) == _cytoplasmMaterials.end()) {
+		return nullptr;
+	} else {
+		return _cytoplasmMaterials.find(pLifeCycle)->second;
 	}
 }
-//////////////////////////////////////////////////////////////////////////////////////////
+
 /// \param pLifeCycle The life state we want the nucleusRadius for
 /// \return the nucleus material for the given life cycle
-//////////////////////////////////////////////////////////////////////////////////////////
-G4Material* CellProperties::getNucleusMaterial(LifeCycle pLifeCycle)	const
-{
+G4Material* CellProperties::getNucleusMaterial(LifeCycle pLifeCycle) const {
 	// if no material
-	if(nucleiMaterials.find(pLifeCycle) == nucleiMaterials.end())
-	{
-		return NULL;
-	}else
-	{
-		return nucleiMaterials.find(pLifeCycle)->second;
+	if(_nucleiMaterials.find(pLifeCycle) == _nucleiMaterials.end()) {
+		return nullptr;
+	} else {
+		return _nucleiMaterials.find(pLifeCycle)->second;
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
 /// \param writer where to redirect writing of information
-//////////////////////////////////////////////////////////////////////////////////////////
-void CellProperties::write(QXmlStreamWriter& writer) const
-{
+void CellProperties::write(QXmlStreamWriter& writer) const {
 	writer.writeStartElement(cell_property_flag);
 	/// write cell attributes
 	writeProperties(writer);
 
 	writer.writeEndElement();
-
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////////////////
-void CellProperties::writeProperties(QXmlStreamWriter& writer) const
-{
+void CellProperties::writeProperties(QXmlStreamWriter& writer) const {
 	// write cell properties ID
-	writer.writeAttribute(cell_properties_ID_flag, 	QString::number(getID()));
+	writer.writeAttribute(cell_properties_ID_flag, QString::number(getID()));
 	// write cell types
-	writer.writeAttribute(cell_shape_type_flag, 	getCellTypeName( cellType));
+	writer.writeAttribute(cell_shape_type_flag, getCellTypeName( _cellType));
 	// write nucleus pos type
-	writer.writeAttribute(nucleus_pos_type_flag, 	QString::number(nucleusPosType) );
+	writer.writeAttribute(nucleus_pos_type_flag, QString::number(_nucleusPosType));
 
 	// write active life cycle
-	set<LifeCycle>::const_iterator itLC;
-	for(itLC = availableLifeCycle.begin(); itLC != availableLifeCycle.end(); ++ itLC)
-	{
-		writer.writeTextElement(life_cycle_flag, 	QString::number(*itLC) );
-	}
+	for(auto const& itLC : availableLifeCycle)
+		writer.writeTextElement(life_cycle_flag, 	QString::number(itLC));
 
 	// write masses
 	{
 		writer.writeStartElement(mass_flag);
-		map<LifeCycle, t_CellVarAtt_d >::const_iterator itMass;
-		for(itMass = masses.begin(); itMass != masses.end(); ++itMass)
-		{
+		for(auto const& _masse : _masses) {
 			writer.writeStartElement(variable_attribute_flag);
-			writer.writeAttribute(life_cycle_flag, 	QString::number(itMass->first));
-			writer.writeAttribute(min_flag, 		QString::number(itMass->second.var_min()) );
-			writer.writeAttribute(max_flag, 		QString::number(itMass->second.var_max()) );
+			writer.writeAttribute(life_cycle_flag, QString::number(_masse.first));
+			writer.writeAttribute(min_flag, QString::number(_masse.second.var_min()) );
+			writer.writeAttribute(max_flag, QString::number(_masse.second.var_max()) );
 			writer.writeEndElement(); // var_prop
 		}
 		writer.writeEndElement(); // mass_flag
@@ -188,13 +134,11 @@ void CellProperties::writeProperties(QXmlStreamWriter& writer) const
 	// write nucleus prop
 	{
 		writer.writeStartElement(nucleus_radius_flag);
-		map<LifeCycle, t_CellVarAtt_d >::const_iterator itNucleus;
-		for(itNucleus = nucleusRadius.begin(); itNucleus != nucleusRadius.end(); ++itNucleus)
-		{
+		for(auto const& nucleusRadiu : _nucleusRadius) {
 			writer.writeStartElement(variable_attribute_flag);
-			writer.writeAttribute(life_cycle_flag, 	QString::number(itNucleus->first));
-			writer.writeAttribute(min_flag, 		QString::number(itNucleus->second.var_min()) );
-			writer.writeAttribute(max_flag, 		QString::number(itNucleus->second.var_max()) );
+			writer.writeAttribute(life_cycle_flag, 	QString::number(nucleusRadiu.first));
+			writer.writeAttribute(min_flag, 		QString::number(nucleusRadiu.second.var_min()) );
+			writer.writeAttribute(max_flag, 		QString::number(nucleusRadiu.second.var_max()) );
 			writer.writeEndElement(); // var_prop
 		}
 		writer.writeEndElement(); // nucleus_radius_flag
@@ -203,12 +147,11 @@ void CellProperties::writeProperties(QXmlStreamWriter& writer) const
 	// write cytplasm materials
 	{
 		writer.writeStartElement(cytoplasms_mat_flag);
-		map<LifeCycle, G4Material* >::const_iterator itCytoMaterial;
-		for(itCytoMaterial = cytoplasmMaterials.begin(); itCytoMaterial != cytoplasmMaterials.end(); ++itCytoMaterial)
-		{
+		std::map<LifeCycle, G4Material* >::const_iterator itCytoMaterial;
+		for(auto const& cytoplasmMaterial : _cytoplasmMaterials) {
 			writer.writeStartElement(variable_attribute_flag);
-			writer.writeAttribute(life_cycle_flag, 	QString::number(itCytoMaterial->first));
-			writer.writeAttribute(material_flag, 	QString(itCytoMaterial->second->GetName()) );
+			writer.writeAttribute(life_cycle_flag, 	QString::number(cytoplasmMaterial.first));
+			writer.writeAttribute(material_flag, 	QString(cytoplasmMaterial.second->GetName()) );
 			writer.writeEndElement(); // var_prop
 		}
 		writer.writeEndElement(); // cytoplasms_mat_flag
@@ -217,144 +160,96 @@ void CellProperties::writeProperties(QXmlStreamWriter& writer) const
 	// write nucleus materials
 	{
 		writer.writeStartElement(nuclei_mat_flag);
-		map<LifeCycle, G4Material* >::const_iterator itNucleiMaterial;
-		for(itNucleiMaterial = nucleiMaterials.begin(); itNucleiMaterial != nucleiMaterials.end(); ++itNucleiMaterial)
-		{
+		for(auto const& nucleiMaterial : _nucleiMaterials) {
 			writer.writeStartElement(variable_attribute_flag);
-			writer.writeAttribute(life_cycle_flag, 	QString::number(itNucleiMaterial->first));
-			writer.writeAttribute(material_flag, 	QString(itNucleiMaterial->second->GetName()) );
+			writer.writeAttribute(life_cycle_flag, 	QString::number(nucleiMaterial.first));
+			writer.writeAttribute(material_flag, 	QString(nucleiMaterial.second->GetName()) );
 			writer.writeEndElement(); // var_prop
 		}
 		writer.writeEndElement(); // nuclei_mat_flag
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param pMasses The default masses values
 /// \param pNucleusRadius The default nuclei radius values
 /// \param pNucleusPosType The default nuclei position type
 /// \param pCytoplasmMaterial The default cytoplsam material
 /// \param pNucleiMaterial The default nuclei material
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void CellProperties::automaticFill(t_CellVarAtt_d pMasses, t_CellVarAtt_d pNucleusRadius,
 	eNucleusPosType pNucleusPosType, G4Material* pCytoplasmMaterial, G4Material* pNucleiMaterial)
 {
-
 	std::map<LifeCycle, t_CellVarAtt_d > newMasses;
 	std::map<LifeCycle, t_CellVarAtt_d > newNucleusRadii;
-	std::map<LifeCycle, G4Material*> newCytoplasmMaterials;				///< \brief the material present on cells membrane
-	std::map<LifeCycle, G4Material*> newNucleiMaterials;				///< \brief the material present on nuclei
+	std::map<LifeCycle, G4Material*> newCytoplasmMaterials; ///< \brief the material present on cells membrane
+	std::map<LifeCycle, G4Material*> newNucleiMaterials;    ///< \brief the material present on nuclei
 
-	for(int iState = 0; iState != LifeCycles::NA; iState++)
-	{
-		LifeCycle lLifeState = static_cast<LifeCycle>(iState);
+	for(int iState = 0; iState != LifeCycles::NA; iState++) {
+		auto lLifeState = static_cast<LifeCycle>(iState);
 
 		// set mass
-		newMasses.insert(make_pair(lLifeState, pMasses));
+		newMasses.insert(std::make_pair(lLifeState, pMasses));
 		// set nucleus radius
-		newNucleusRadii.insert(make_pair(lLifeState, pNucleusRadius));
+		newNucleusRadii.insert(std::make_pair(lLifeState, pNucleusRadius));
 		// set cytoplsam materials
-		newCytoplasmMaterials.insert(make_pair(lLifeState, pCytoplasmMaterial));
+		newCytoplasmMaterials.insert(std::make_pair(lLifeState, pCytoplasmMaterial));
 		// set nuclei materials
-		newNucleiMaterials.insert(make_pair(lLifeState, pNucleiMaterial));
+		newNucleiMaterials.insert(std::make_pair(lLifeState, pNucleiMaterial));
 	}
 
 	setNucleusPosType(pNucleusPosType);
 	setMasses(newMasses);
 	setNucleusRadius(newNucleusRadii);
 
-	cytoplasmMaterials = newCytoplasmMaterials;
-	nucleiMaterials = newNucleiMaterials;
+	_cytoplasmMaterials = newCytoplasmMaterials;
+	_nucleiMaterials = newNucleiMaterials;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-double CellProperties::getMinRadius() const
-{
+double CellProperties::getMinRadius() const {
 	double minRadius = std::numeric_limits<double>::max();
-	map<LifeCycle, t_CellVarAtt_d >::const_iterator itRad;
 
-	for(itRad = nucleusRadius.begin(); itRad != nucleusRadius.end(); ++itRad)
-	{
-		if( itRad->second.var_min() < minRadius)
-		{
-			minRadius = itRad->second.var_min();
-		}
+	for(auto const& nucleusRadius : _nucleusRadius) {
+		if(nucleusRadius.second.var_min() < minRadius)
+			minRadius = nucleusRadius.second.var_min();
 	}
+
 	return minRadius;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-double CellProperties::getMaxRadius() const
-{
+double CellProperties::getMaxRadius() const {
 	double maxRadius = -1;
-	map<LifeCycle, t_CellVarAtt_d >::const_iterator itRad;
 
-	for(itRad = nucleusRadius.begin(); itRad != nucleusRadius.end(); ++itRad)
-	{
-		if( itRad->second.var_max() > maxRadius)
-		{
-			maxRadius = itRad->second.var_max();
-		}
+	for(auto const& nucleusRadius : _nucleusRadius) {
+		if(nucleusRadius.second.var_max() > maxRadius)
+			maxRadius = nucleusRadius.second.var_max();
 	}
+
 	return maxRadius;
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param pRad the new value to set
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void CellProperties::setMinNucleusRadius(double pRad)
-{
-	map<LifeCycle, t_CellVarAtt_d >::iterator itRad;
-
-	for(itRad = nucleusRadius.begin(); itRad != nucleusRadius.end(); ++itRad)
-	{
-		itRad->second.setMin(pRad);
-	}
+void CellProperties::setMinNucleusRadius(double pRad) {
+	for(auto& nucleusRadius : _nucleusRadius)
+		nucleusRadius.second.setMin(pRad);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param pRad the new value to set
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void CellProperties::setMaxNucleusRadius(double pRad)
-{
-	map<LifeCycle, t_CellVarAtt_d >::iterator itRad;
-
-	for(itRad = nucleusRadius.begin(); itRad != nucleusRadius.end(); ++itRad)
-	{
-		itRad->second.setMax(pRad);
-	}
+void CellProperties::setMaxNucleusRadius(double pRad) {
+	for(auto& nucleusRadius : _nucleusRadius)
+		nucleusRadius.second.setMax(pRad);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param pMat the material to set for cytoplasm for all defined life cycles
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void CellProperties::setCytoplasmMaterial(G4Material* pMat)
-{
+void CellProperties::setCytoplasmMaterial(G4Material* pMat) {
 	assert(pMat);
 
-	map<LifeCycle, G4Material* >::iterator itMat;
-	for(itMat = cytoplasmMaterials.begin(); itMat != cytoplasmMaterials.end(); ++itMat)
-	{
-		itMat->second = pMat;
-	}
-
+	for(auto& cytoplasmMaterial : _cytoplasmMaterials)
+		cytoplasmMaterial.second = pMat;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param pMat the material to set for nucleus for all defined life cycles
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void CellProperties::setNucleusMaterial(G4Material* pMat)
-{
+void CellProperties::setNucleusMaterial(G4Material* pMat) {
 	assert(pMat);
 
-	map<LifeCycle, G4Material* >::iterator itMat;
-	for(itMat = nucleiMaterials.begin(); itMat != nucleiMaterials.end(); ++itMat)
-	{
-		itMat->second = pMat;
-	}
+	for(auto& nucleiMaterial : _nucleiMaterials)
+		nucleiMaterial.second = pMat;
 }

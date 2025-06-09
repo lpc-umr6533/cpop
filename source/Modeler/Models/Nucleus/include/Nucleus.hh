@@ -1,17 +1,9 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef NUCLEUS_POSITION_TYPE_HH
 #define NUCLEUS_POSITION_TYPE_HH
 
 #ifdef WITH_GDML_EXPORT
 	#define CONVERT_TO_G4
-#endif 
+#endif
 #ifdef WITH_GEANT_4
 	#define CONVERT_TO_G4
 #endif
@@ -26,25 +18,20 @@ See LICENSE.md for further details
 #include "MeshOutFormats.hh"
 #include "StatsDataEmitter.hh"
 #include "Writable.hh"
+#include "XMLSettings.hh"
 
 #include <QString>
 #include <vector>
 
 using namespace XML::CPOP_Flag;
 
-////////////////////////////////////////////////////////////////////////
 /// \brief define the possible spatial position for nucleus.
 /// @author Henri Payno
-////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
-class Nucleus : public Writable, public StatsDataEmitter
-{
+class Nucleus : public Writable, public StatsDataEmitter {
 public:
-
-	/// \brief constructor
 	Nucleus(eNucleusType, eNucleusPosType);
-	/// \brief destructor
-	virtual ~Nucleus()	{};
+
 	/// \brief return the area of the nucleus
 	// virtual double getArea() const = 0;	// <\todo
 	/// \brief return a random spot on the nucleus
@@ -55,22 +42,22 @@ public:
 	virtual std::vector<Point> getShapePoints() const = 0;
 	/// \brief return the statistic of the mesh for a mesh type given.
 	virtual Kernel getMeshVolume(MeshOutFormats::outputFormat meshType) const = 0;
-	/// \brief will return cell mesh specificities for R. 
+	/// \brief will return cell mesh specificities for R.
 	/// By default : no specifities.
 	/// \warning must be in correlation with the R treatment.
-	virtual QString addStatsData() const		= 0;
+	[[nodiscard]] QString addStatsData() const override = 0;
 	/// \brief inform about the statistics exported by the meitter
-	virtual QString writeStatsHeader() const 	= 0;
+	[[nodiscard]] QString writeStatsHeader() const override = 0;
 	/// \todo : write nucleus shape
 	/// \brief print cell information (used also to save the cell on a .txt file)
-	virtual void write(QXmlStreamWriter&) const;
+	void write(QXmlStreamWriter&) const override;
 	/// \brief print cell information (used also to save the cell on a .txt file)
 	virtual void writeAttributes(QXmlStreamWriter&) const = 0;
 
 	/// \brief pos type setter
-	void setPositionType(eNucleusPosType pType)	{ posType = pType;};
+	void setPositionType(eNucleusPosType pType)	{ _posType = pType;};
 	/// \brief pos type getter
-	eNucleusPosType getPositionType() const 	{ return posType;};		
+	[[nodiscard]] eNucleusPosType getPositionType() const	{ return _posType;};
 	/// \brief return true if point is in the nucleus
 	virtual bool hasIn(Point) const = 0;
 
@@ -82,8 +69,8 @@ public:
 #endif
 
 private:
-	eNucleusType shapeType;				///< \brief the type of shape : round, ellipsoidal...
-	eNucleusPosType posType;			///< \brief the type of position of the nucleus inside the cell : barycenter, random...
+	eNucleusType _shapeType;  ///< \brief the type of shape : round, ellipsoidal...
+	eNucleusPosType _posType; ///< \brief the type of position of the nucleus inside the cell : barycenter, random...
 
 };
 
@@ -92,24 +79,19 @@ template<typename Kernel, typename Point, typename Vector>
 Nucleus<Kernel, Point, Vector>::Nucleus(eNucleusType pNucleusType, eNucleusPosType pNucleusPosType):
 	Writable(),
 	StatsDataEmitter(),
-	shapeType(pNucleusType),
-	posType(pNucleusPosType)
+	_shapeType(pNucleusType),
+	_posType(pNucleusPosType)
 {
-
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param writer where to redirect writing of information
-///
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
-void Nucleus<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) const
-{
+void Nucleus<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) const {
 	writer.writeStartElement(nucleus_flag);
-	writer.writeAttribute(nucleus_pos_type_flag, QString::number(posType));
-	writer.writeAttribute(nucleus_shape_type_flag, QString::number(shapeType));
+	writer.writeAttribute(nucleus_pos_type_flag, QString::number(_posType));
+	writer.writeAttribute(nucleus_shape_type_flag, QString::number(_shapeType));
 	writeAttributes(writer);
 	writer.writeEndElement(); // nucleus_flag
 }
 
-#endif // NUCLEUS_POSITION_TYPE_HH
+#endif

@@ -1,10 +1,9 @@
 #include <iostream>
-#include <filesystem> // Include the filesystem library
+#include <filesystem>
 
 // CPOP headers
 #include <cReader/configreader.hh>
 #include <cReader/zupply.hpp>
-
 
 #include "unitSection.hh"
 #include "cellSection.hh"
@@ -21,12 +20,13 @@ using namespace zz;
 int main(int argc, char** argv) {
 	std::string home_path = std::filesystem::current_path().string();
 	std::string output_txt_folder = home_path + "/OutputTxt";
-	if (!std::filesystem::exists(output_txt_folder))
-		{
-			if (!std::filesystem::create_directory(output_txt_folder))
-			{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
+	if (!std::filesystem::exists(output_txt_folder)) {
+		if (!std::filesystem::create_directory(output_txt_folder)) {
+			std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";
 		}
-	std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", fstream::trunc);
+	}
+
+	std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::fstream::trunc);
 
 	// First we add an argument parser to simplify the use of the population generator
 	zz::cfg::ArgParser argparser;
@@ -43,8 +43,7 @@ int main(int argc, char** argv) {
 	argparser.parse(argc, argv);
 
 	// check errors
-	if (argparser.count_error() > 0)
-	{
+	if (argparser.count_error() > 0) {
 		std::cout << argparser.get_error() << std::endl;
 		// print help
 		std::cout << argparser.get_help() << std::endl;
@@ -54,7 +53,7 @@ int main(int argc, char** argv) {
 
 	// Extract the basename of the input file in order to create output files
 	// Example : ../config.cfg will produce config.xml (and config.off if --vis is used)
-	std::string basename =  zz::os::path_split_basename(input);
+	std::string basename = zz::os::path_split_basename(input);
 
 	// Create the configuration file
 	// Each section read one part of the configuration file
@@ -74,31 +73,31 @@ int main(int argc, char** argv) {
 	 * delete reader;
 	 * delete myObject;
 	 */
-	conf::ConfigReader<SimulationEnvironment>* reader = new conf::ConfigReader<SimulationEnvironment>();
-    reader->addSection<UnitSection>();
-    reader->addSection<CellSection>();
-    reader->addSection<SpheroidSection>();
-    reader->addSection<MeshSection>();
-    reader->addSection<ForceSection>();
-    reader->addSection<SimulationSection>();
+	auto* reader = new conf::ConfigReader<SimulationEnvironment>();
+	reader->addSection<UnitSection>();
+	reader->addSection<CellSection>();
+	reader->addSection<SpheroidSection>();
+	reader->addSection<MeshSection>();
+	reader->addSection<ForceSection>();
+	reader->addSection<SimulationSection>();
 
 	// Parse the configuration file and start the simulation
 	// SimulationEnvironment contains everything required to create a cell population
 	// (documentation in simulationEnvironment.hh and simulationEnvironment.cc)
-    SimulationEnvironment* simulationEnv = reader->parse(input.c_str());
+	SimulationEnvironment* simulationEnv = reader->parse(input.c_str());
 
-    // Start the simulation to apply elastic force
-    simulationEnv->startSimulation();
+	// Start the simulation to apply elastic force
+	simulationEnv->startSimulation();
 
-    // Save the generated cell population in an xml file
-		std::string outputDir = std::filesystem::absolute("output").string();
-		std::filesystem::create_directories(outputDir);
-		std::string outputPath = outputDir + "/" + basename + ".xml";
-    simulationEnv->savePopulation(outputPath.c_str());
-    std::cout << "Generated : "<< outputPath << std::endl;
+	// Save the generated cell population in an xml file
+	std::string outputDir = std::filesystem::absolute("output").string();
+	std::filesystem::create_directories(outputDir);
+	std::string outputPath = outputDir + "/" + basename + ".xml";
+	simulationEnv->savePopulation(outputPath.c_str());
+	std::cout << "Generated : "<< outputPath << std::endl;
 
-    // If vis flag is used, create an off file
-    if (vis) {
+	// If vis flag is used, create an off file
+	if (vis) {
 		std::string outputVis = std::filesystem::absolute("outputVis").string();
 		std::filesystem::create_directories(outputVis);
 		std::string outputPathOff = outputVis + "/" + basename;
@@ -106,8 +105,6 @@ int main(int argc, char** argv) {
 		std::cout << "Generated : "<< outputPathOff + ".off" << std::endl;
 	}
 
-
-    delete reader;
-    delete simulationEnv;
-	return 0;
+	delete reader;
+	delete simulationEnv;
 }

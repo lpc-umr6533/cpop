@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef CPOP_CIRCLE_HH
 #define CPOP_CIRCLE_HH
 
@@ -13,36 +5,24 @@ See LICENSE.md for further details
 
 using namespace Settings::Geometry;
 
-//////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Define CPOP Circle. 
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////////////////////
-class CPOP_Circle
-{
+class CPOP_Circle {
 public:
-
-	/// \brief constructor
-	CPOP_Circle(Point_3 pCenter, double r)
-	{
-		center = pCenter;
-		radius = r;
-	};
-
-	/// \brief destructor
-	~CPOP_Circle()
-	{
-
-	};
+	CPOP_Circle(Point_3 pCenter, double r):
+		_center(pCenter),
+		_radius(r)
+	{}
 
 	/// \brief radisu getter
-	double getRadius() const	{return radius;};
+	[[nodiscard]] double getRadius() const { return _radius; }
 
 	/// \brief center getter
-	Point_3 getCenter()	const 	{return center;};
+	[[nodiscard]] Point_3 getCenter()	const { return _center; }
 
 private:
-	Point_3 center;	///< \brief the center of the circle
-	double radius;	///< \brief the radius of the circle
+	Point_3 _center;  ///< \brief the center of the circle
+	double _radius;   ///< \brief the radius of the circle
 };
 
-#endif // CPOP_CIRCLE_HH
+#endif

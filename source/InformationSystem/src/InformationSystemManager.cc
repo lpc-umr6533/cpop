@@ -1,79 +1,37 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "InformationSystemManager.hh"
-#include <sstream> 
+#include <iostream>
+#include <sstream>
 
-static InformationSystemManager* informationManager = 0;
+static InformationSystemManager* informationManager = nullptr;
 
-//////////////////////////////////////////////////////////////////////////////////
-/// 
-//////////////////////////////////////////////////////////////////////////////////
-InformationSystemManager::InformationSystemManager():
-	on(true)
-{
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-/// 
-//////////////////////////////////////////////////////////////////////////////////
-InformationSystemManager::~InformationSystemManager()
-{
-	
-}
-
-//////////////////////////////////////////////////////////////////////////////////
 /// \return the singleton of InformationSystemManager
-//////////////////////////////////////////////////////////////////////////////////
-InformationSystemManager* InformationSystemManager::getInstance()
-{
+InformationSystemManager* InformationSystemManager::getInstance() {
 	if(!informationManager)
-	{
 		informationManager = new InformationSystemManager();
-	}
 	return informationManager;
 }
 
-//////////////////////////////////////////////////////////////////////////////////
 /// \warning : a call between lock output and unlock output must not contain any Message.
-//////////////////////////////////////////////////////////////////////////////////
-void InformationSystemManager::lockOutput()
-{
-	printLock.lock();
+void InformationSystemManager::lockOutput() {
+	_printLock.lock();
 }
 
-//////////////////////////////////////////////////////////////////////////////////
 /// \warning : a call between lock output and unlock output must not contain any Message.
-//////////////////////////////////////////////////////////////////////////////////
-void InformationSystemManager::unlockOutput()
-{
-	printLock.unlock();
+void InformationSystemManager::unlockOutput() {
+	_printLock.unlock();
 }
 
-//////////////////////////////////////////////////////////////////////////////////
 /// \param pMessType 	The type of message
 /// \param pMessage 	The inforamtion to display
 /// \param pSource 		The origin of message
-//////////////////////////////////////////////////////////////////////////////////
-void InformationSystemManager::Message(MessageType pMessType, std::string pMessage, std::string pSource)
-{
+void InformationSystemManager::Message(MessageType pMessType, std::string pMessage, std::string pSource) {
 	std::stringstream global;
-	/// if mute mode : no display. But no message saves.
-	if(!on)
-	{
-		return;
-	}
+	// if mute mode : no display. But no message saves.
+	if(!_on) return;
 
 	// printLock.lock();
 	/// TODO : color display according to message type
-	switch(pMessType)
-	{
+	switch(pMessType) {
 		case CANT_PROCESS_MES :
 		{
 			global << "  ---    CAN'T PROCESS   ---";
@@ -82,7 +40,7 @@ void InformationSystemManager::Message(MessageType pMessType, std::string pMessa
 		case DEBUG_MES :
 		{
 #ifndef NDEBUG
-			global << "  --- DEBUG INFORMATION  ---"; 
+			global << "  --- DEBUG INFORMATION  ---";
 #endif
 			break;
 		}
@@ -104,6 +62,6 @@ void InformationSystemManager::Message(MessageType pMessType, std::string pMessa
 	}
 	global << " @@@ " << pSource;
 	global << " : " << pMessage << std::endl;
-	
+
 	std::cout << global.str();
 }

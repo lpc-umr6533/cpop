@@ -1,21 +1,3 @@
-##########################################################
-# Copyright (C): Henri Payno, Axel Delsol, Alexis Pereda #
-# Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA  #
-#                                                        #
-# This software is distributed under the terms           #
-# of the GNU Lesser General  Public Licence (LGPL)       #
-# See LICENSE.md for further detais                      #
-##########################################################
-#------------------------------------------------------------------------------
-# CMakeLists.txt
-# Module : InformationSystem
-# Package: CPOP
-#
-# $Date$ 05/2018
-# $Revision$ 0
-# $Author$ Delsol Axel
-#------------------------------------------------------------------------------
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake) # main (top) cmake dir
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) # project specific cmake dir
 

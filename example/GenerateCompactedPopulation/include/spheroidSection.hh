@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol,
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef SPHEROID__SECTION__H
 #define SPHEROID__SECTION__H
 
@@ -48,21 +40,17 @@ See LICENSE.md for further details
 
 template <typename T>
 class SpheroidSection: public conf::SectionReader<T> {
-
 public:
-    SpheroidSection() {}
-    ~SpheroidSection() {}
-
-    void fill() {
-		const char sectionName[] = "SpheroidProperties";
+	void fill() {
+		std::string sectionName("SpheroidProperties");
 
 		double internalRadius = this->template load<double>(sectionName, "internalRadius");
 		double externalRadius = this->template load<double>(sectionName, "externalRadius");
 		double compaction = (this->template load<double>(sectionName, "compaction"))/100.;
-    double precision = (this->template load<double>(sectionName, "precision_compaction"))/100.;
+		double precision = (this->template load<double>(sectionName, "precision_compaction"))/100.;
 
 		this->objToFill->setSpheroidProperties(internalRadius, externalRadius, compaction, precision);
-    }
+	}
 };
 
 #endif

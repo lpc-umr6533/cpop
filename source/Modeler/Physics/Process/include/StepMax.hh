@@ -7,36 +7,31 @@ namespace cpop {
 
 class StepMaxMessenger;
 
-class StepMax : public G4VDiscreteProcess
-{
+class StepMax : public G4VDiscreteProcess {
 public:
-    StepMax(const G4String& processName = "UserMaxStep");
+	StepMax(const G4String& processName = "UserMaxStep");
 
-    virtual G4bool IsApplicable(const G4ParticleDefinition&particle);
+	G4bool IsApplicable(const G4ParticleDefinition&particle) override;
 
-    void SetMaxStep(G4double step);
+	void SetMaxStep(G4double step);
 
-    G4double GetMaxStep() {return max_charged_step_;}
+	G4double GetMaxStep() { return _maxChargedStep; }
 
-    virtual
-    G4double PostStepGetPhysicalInteractionLength( const G4Track& aTrack,
-                                                   G4double previousStepSize,
-                                                   G4ForceCondition* condition);
+	G4double PostStepGetPhysicalInteractionLength(
+		const G4Track& aTrack, G4double previousStepSize, G4ForceCondition* condition
+	) override;
 
-    virtual
-    G4VParticleChange* PostStepDoIt(const G4Track&aTrack, const G4Step&);
+	G4VParticleChange* PostStepDoIt(const G4Track&aTrack, const G4Step&) override;
 
-    virtual
-    G4double GetMeanFreePath(const G4Track&, G4double,G4ForceCondition*)
-    {return DBL_MAX;}
-
-    //StepMaxMessenger& messenger();
+	G4double GetMeanFreePath(const G4Track&, G4double,G4ForceCondition*) override {
+		return DBL_MAX;
+	}
 
 private:
-    G4double max_charged_step_;
-    //std::unique_ptr<StepMaxMessenger> messenger_;
+	G4double _maxChargedStep;
+	//std::unique_ptr<StepMaxMessenger> messenger_;
 };
 
 }
 
-#endif // STEPMAX_HH
+#endif

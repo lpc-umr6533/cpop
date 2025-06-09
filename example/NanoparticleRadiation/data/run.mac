@@ -81,6 +81,13 @@
 # number of particles to be generated from this source
 #/cpop/source/gamma/totalParticle 10000
 
+# Does it work for 'genericIoc' (all particles)? No.
+# Does it work for any spectrum? Yes.
+# rename .spec → .txt
+# Rename Nanoparticle → ?
+# addHomogeneous → addUniform?
+# addNanoparticle → addMulti?
+
 # add a gadolinium source
 /cpop/source/addDistribution gadolinium
 

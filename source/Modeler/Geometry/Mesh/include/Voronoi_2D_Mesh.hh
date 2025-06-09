@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef VORONOI_2D_MESH_HH
 #define VORONOI_2D_MESH_HH
 
@@ -22,50 +14,45 @@ using namespace Settings::Geometry;
 using namespace Settings::Geometry::Mesh2D;
 using namespace Settings::nAgent;
 
-//////////////////////////////////////////////////////////////////////////////
 /// \brief Define a 2D_Voronoi mesh
-/// \warning this class is able to deal with weighted points. 
+/// \warning this class is able to deal with weighted points.
 /// If none specified will create homogeneous weight
 /// @author Henri Payno
-///
-//////////////////////////////////////////////////////////////////////////////
-class Voronoi_2D_Mesh : public Mesh<double, Point_2, Vector_2>, public Delaunay_2D_SDS
-{
+class Voronoi_2D_Mesh : public Mesh<double, Point_2, Vector_2>, public Delaunay_2D_SDS {
 	using Delaunay_2D_SDS::add;
 	using Delaunay_2D_SDS::remove;
 
 public:
-	/// \brief constructor
 	Voronoi_2D_Mesh(unsigned int, double, std::set<t_Cell_2*> pInitSpatialables = std::set<t_Cell_2*>());
-	/// \brief destructor
-	virtual ~Voronoi_2D_Mesh();
+	~Voronoi_2D_Mesh() override;
 
 	/// \brief add a point to the mesh
-	virtual bool add(t_Cell_2*);
+	bool add(t_Cell_2*) override;
 	/// \brief remove a point to the mesh
-	virtual void remove(t_Cell_2*);
+	void remove(t_Cell_2*) override;
 	/// \brief the mesh exporter
-	virtual int exportToFile(QString, MeshOutFormats::outputFormat, bool);
+	int exportToFile(QString, MeshOutFormats::outputFormat, bool) override;
 	/// \brief return the bounding box of the mesh.
-	Iso_rectangle_2 getBoundingBox() const;
+	[[nodiscard]] Iso_rectangle_2 getBoundingBox() const;
 
 	/// \brief max number of segment per cell setter
-	void setNBMaxSegPerCell(unsigned int pNb)	{maxNumberOfSegPerCell = pNb;};
+	void setNBMaxSegPerCell(unsigned int pNb)	{ _maxNumberOfSegPerCell = pNb; }
 	/// \brief max number of segment per cell getter
-	unsigned int getMaxNbSegPerCell()			{return maxNumberOfSegPerCell;};
+	unsigned int getMaxNbSegPerCell() { return _maxNumberOfSegPerCell; }
 
 	/// \brief threshold refinnement setter
-	void setDeltaGain(double pGain)				{deltaGain = pGain;};
+	void setDeltaGain(double pGain) { _deltaGain = pGain; }
 	/// \brief threshold refinnement setter
-	double getDeltaWin()							{return deltaGain;};
+	double getDeltaWin() { return _deltaGain; }
 	/// \brief get all polygons from the delaunay mesh.
 	virtual std::vector<DiscoidalCell*> generateMesh();
 	/// \brief check if the mesh is valid <=> no mesh recovery
 	bool isValid();
 	/// \brief return the cell contained on the mesh
-	std::set<t_Cell_2*> getCells() const;
+	[[nodiscard]] std::set<t_Cell_2*> getCells() const override;
 	/// \brief return the cell contained on the mesh
-	std::set<t_Cell_2*> getCellsWithShape() const;
+	[[nodiscard]] std::set<t_Cell_2*> getCellsWithShape() const override;
+
 protected:
 	/// \brief remove node in conflict
 	virtual void removeConflicts();
@@ -83,19 +70,18 @@ protected:
 	void generateNeighbourhood();
 
 protected:
-	std::map<Point_2, double> weights;			///< \brief weights of the each point included on the mesh
+	std::map<Point_2, double> _weights;			///< \brief weights of the each point included on the mesh
 	/// \brief the neighbourhood construction
-	std::map<DiscoidalCell*, std::set<const DiscoidalCell*> > neighboursCell;
-	
+	std::map<DiscoidalCell*, std::set<const DiscoidalCell*>> _neighboursCell;
+
 private:
-	double minWeight;							///< \brief the minimal weight included on the mesh.
-	std::vector<RT_2::Vertex_handle> boundSpa;	///< \brief the vector of spatialables used to spatially limit the tesselation.
+	double _minWeight; ///< \brief the minimal weight included on the mesh.
+	std::vector<RT_2::Vertex_handle> _boundSpa; ///< \brief the vector of spatialables used to spatially limit the tesselation.
 
-	unsigned int maxNumberOfSegPerCell;			///< \brief The maximal number of segment a cell must contained
-	double deltaGain;							///< \brief The minimal value for which we continu to reffine
-	
-	std::map<const t_SpatialableAgent_2*, DiscoidalCell*> mConstCellToDiscoidal;	///< \brief map from T_Spatialable_2 to DiscoidalCell
+	unsigned int _maxNumberOfSegPerCell;  ///< \brief The maximal number of segment a cell must contained
+	double _deltaGain;                    ///< \brief The minimal value for which we continu to reffine
 
+	std::map<const t_SpatialableAgent_2*, DiscoidalCell*> _constCellToDiscoidal; ///< \brief map from T_Spatialable_2 to DiscoidalCell
 };
 
 #endif

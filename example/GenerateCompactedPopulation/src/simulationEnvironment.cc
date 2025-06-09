@@ -1,18 +1,11 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol,
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "simulationEnvironment.hh"
 
 #include "Grid.hh"
 #include "Spheroid.hh"
 #include "SpheroidalCellMesh.hh"
+#include <G4String.hh>
 #include <G4UnitsTable.hh>
-#include <math.h>
+#include <cmath>
 
 #include "IDManager.hh"
 #include <filesystem>
@@ -33,11 +26,9 @@ SimulationEnvironment::SimulationEnvironment() {
 
 	// simulation
 	platform = nullptr;
-
 }
 
 SimulationEnvironment::~SimulationEnvironment() {
-
 	if (cellProperties) delete cellProperties;
 	if (env)            delete env;
 	if (platform)       delete platform;
@@ -69,11 +60,12 @@ G4Material* SimulationEnvironment::parseMaterial(const char* material) {
 	return mat;
 }
 
-void SimulationEnvironment::setCellProperties(double minRadiusNucleus, double maxRadiusNucleus,
-					   double minRadiusMembrane, double maxRadiusMembrane,
-					   const std::string& cytoplasmMaterials,
-					   const std::string& nucleusMaterials)
-{
+void SimulationEnvironment::setCellProperties(
+	double minRadiusNucleus, double maxRadiusNucleus,
+	double minRadiusMembrane, double maxRadiusMembrane,
+	const std::string& cytoplasmMaterials,
+	const std::string& nucleusMaterials
+) {
 	cellProperties = new RoundCellProperties();
 
 	// cells weights range (not used for the simulation but needed to call automaticFill)
@@ -90,7 +82,6 @@ void SimulationEnvironment::setCellProperties(double minRadiusNucleus, double ma
 	G4Material* nucleusMat =  	parseMaterial(nucleusMaterials.c_str());
 	// fill with those parameters for all life cycle.
 	cellProperties->automaticFill(membraneRadius, weights, nucleusRadius, BARYCENTER, cytoMat, nucleusMat);
-
 }
 
 void SimulationEnvironment::setSpheroidProperties(double internalRadius, double externalRadius, double required_compaction, double precision_compaction) {
@@ -98,7 +89,7 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 	//env = new t_Environment_3("main Environment");
 	Point_3 center(0., 0., 0.);
 	// tell where the cells should be created (here in a spheroid)
-	SpheresSDelimitation* subEnvSD = new SpheresSDelimitation(internalRadius*metricSystem, externalRadius*metricSystem, center);
+	auto* subEnvSD = new SpheresSDelimitation(internalRadius*metricSystem, externalRadius*metricSystem, center);
 
 	CLHEP::MTwistEngine defaultEngine(1234567);
 	RandomEngineManager::getInstance()->setEngine(&defaultEngine);
@@ -111,18 +102,20 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 	int nbCell_mid;
 
 	const int max_iterations = 50;
- 	int iteration = 0;
+	int iteration = 0;
 
-	while (fabs(computed_compaction - required_compaction) > precision && iteration < max_iterations)
-	{	std::string home_path = std::filesystem::current_path().string();
+	while (fabs(computed_compaction - required_compaction) > precision && iteration < max_iterations) {
+		std::string home_path = std::filesystem::current_path().string();
 		std::string output_txt_folder = home_path + "/OutputTxt";
-		if (!std::filesystem::exists(output_txt_folder))
-			{
-				if (!std::filesystem::create_directory(output_txt_folder))
-				{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
+
+		if (!std::filesystem::exists(output_txt_folder)) {
+			if (!std::filesystem::create_directory(output_txt_folder)) {
+				std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";
 			}
-		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", fstream::trunc);
-		
+		}
+
+		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::fstream::trunc);
+
 		nbCell_mid = (nbCell_min + nbCell_max) / 2;
 		// New distribution
 		env = new t_Environment_3("main Environment");
@@ -133,11 +126,10 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 		computed_compaction = ComputeCompaction(simulatedEnv, externalRadius);
 		G4cout << "Iteration " << iteration + 1 << ", Compaction: " << computed_compaction << G4endl;
 		// Bisection
-		if (computed_compaction > required_compaction + precision)
-		{nbCell_max = nbCell_mid;
-		}
-		else if (computed_compaction < required_compaction - precision)
-		{nbCell_min = nbCell_mid;
+		if (computed_compaction > required_compaction + precision) {
+			nbCell_max = nbCell_mid;
+		} else if (computed_compaction < required_compaction - precision) {
+			nbCell_min = nbCell_mid;
 		}
 		iteration++;
 
@@ -147,14 +139,15 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 
 	G4cout << "\n\n\nFinal compaction: " << computed_compaction * 100 << " %\n\n\n" << G4endl;
 
-	if (iteration >= max_iterations)
-	{G4cout << "Warning: Maximum iterations reached. Solution may not be optimal." << G4endl;}
-
+	if (iteration >= max_iterations) {
+		G4cout << "Warning: Maximum iterations reached. Solution may not be optimal." << G4endl;
+	}
 }
 
-double SimulationEnvironment::ComputeCompaction(const t_Sub_Env_3* simulatedEnv,
-																								double externalRadius)
-{
+double SimulationEnvironment::ComputeCompaction(
+	const t_Sub_Env_3* simulatedEnv,
+	double externalRadius
+) {
 	int error;
 	t_Mesh_3* voronoiMesh = MeshFactory::getInstance()->create_3DMesh(&error, simulatedEnv, MeshTypes::Round_Cell_Tesselation, numberOfFacetPerCell);
 	dynamic_cast<SpheroidalCellMesh*>(voronoiMesh)->generateMesh();
@@ -172,33 +165,30 @@ double SimulationEnvironment::ComputeCompaction(const t_Sub_Env_3* simulatedEnv,
 	return cell_packing;
 }
 
-void SimulationEnvironment::PrintMassOfCells(G4LogicalVolume* logicalVolume)
-{
-	if (logicalVolume->GetName().contains("LV_cell"))
-	{G4cout << "logicalVolume mass: " << G4BestUnit(logicalVolume->GetMass(), "Mass") << " of " << logicalVolume->GetName() << G4endl;}
-	for (size_t i = 0; i < logicalVolume->GetNoDaughters(); ++i)
-	 {
-			 G4VPhysicalVolume* physVol = logicalVolume->GetDaughter(i);
-			 PrintMassOfCells(physVol->GetLogicalVolume());
-	 }
+void SimulationEnvironment::PrintMassOfCells(G4LogicalVolume* logicalVolume) {
+	if (G4StrUtil::contains(logicalVolume->GetName(), "LV_cell")) {
+		G4cout << "logicalVolume mass: " << G4BestUnit(logicalVolume->GetMass(), "Mass") << " of " << logicalVolume->GetName() << G4endl;
+	}
+
+	for (size_t i = 0; i < logicalVolume->GetNoDaughters(); ++i) {
+		G4VPhysicalVolume* physVol = logicalVolume->GetDaughter(i);
+		PrintMassOfCells(physVol->GetLogicalVolume());
+	}
 }
 
-void SimulationEnvironment::ComputeMassOfCells(G4LogicalVolume* logicalVolume, double& mass_cells)
-{
-	if (logicalVolume->GetName().contains("LV_cell"))
-	{
-	mass_cells += logicalVolume->GetMass();
-	// G4cout << "logicalVolume mass: " << G4BestUnit(logicalVolume->GetMass(), "Mass") << " of " << logicalVolume->GetName() << G4endl;
+void SimulationEnvironment::ComputeMassOfCells(G4LogicalVolume* logicalVolume, double& mass_cells) {
+	if (G4StrUtil::contains(logicalVolume->GetName(), "LV_cell")) {
+		mass_cells += logicalVolume->GetMass();
+		// G4cout << "logicalVolume mass: " << G4BestUnit(logicalVolume->GetMass(), "Mass") << " of " << logicalVolume->GetName() << G4endl;
 	}
-	for (size_t i = 0; i < logicalVolume->GetNoDaughters(); ++i)
-	 {
-			 G4VPhysicalVolume* physVol = logicalVolume->GetDaughter(i);
-			 ComputeMassOfCells(physVol->GetLogicalVolume(), mass_cells);
-	 }
+
+	for (size_t i = 0; i < logicalVolume->GetNoDaughters(); ++i) {
+		G4VPhysicalVolume* physVol = logicalVolume->GetDaughter(i);
+		ComputeMassOfCells(physVol->GetLogicalVolume(), mass_cells);
+	}
 }
 
 void SimulationEnvironment::setMeshProperties(int nOfFacetPerCell) {
-
 	numberOfFacetPerCell = nOfFacetPerCell;
 }
 
@@ -206,55 +196,50 @@ void SimulationEnvironment::setForceProperties(double ratioToStableLength, doubl
 	int error;
 	// get the generated cells
 	t_Mesh_3* voronoiMesh = MeshFactory::getInstance()->create_3DMesh(&error, simulatedEnv, MeshTypes::Round_Cell_Tesselation, numberOfFacetPerCell);
-	set<t_Cell_3*> lCells = voronoiMesh->getCells();
+	std::set<t_Cell_3*> lCells = voronoiMesh->getCells();
 	delete voronoiMesh;
 
 	// apply elastic forces to each cells
-	set<t_Cell_3*>::iterator itCell;
-	for(itCell = lCells.begin(); itCell != lCells.end(); ++itCell)
-	{
-		t_ElasticForce_3* elasForce = new t_ElasticForce_3( *itCell, rigidity, ratioToStableLength);
-		(*itCell)->addForce(elasForce);
+	for(auto const& lCell : lCells) {
+		auto* elasForce = new t_ElasticForce_3( lCell, rigidity, ratioToStableLength);
+		lCell->addForce(elasForce);
 	}
-
 }
 
-void SimulationEnvironment::setSimulationProperties(double duration, int numberOfAgentToExecute,
-							 double displacementThreshold,
-							 double stepDuration)
-{
+void SimulationEnvironment::setSimulationProperties(
+	double duration, int numberOfAgentToExecute,
+	double displacementThreshold,
+	double stepDuration
+) {
 	// 4. execute agent define a MASPlatform
 	/// 4.1 create platform
 	platform = new MASPlatform();
 
 	/// 4.2 set up platform
-	platform->setLayerToSimulate(		simulatedEnv);
-	platform->setStepDuration(			stepDuration);
-	platform->setDuration(				duration);
-	platform->setDisplacementThreshold(	displacementThreshold);
-	platform->limiteNbAgentToSimulate(	numberOfAgentToExecute);
-
+	platform->setLayerToSimulate(simulatedEnv);
+	platform->setStepDuration(stepDuration);
+	platform->setDuration(duration);
+	platform->setDisplacementThreshold(displacementThreshold);
+	platform->limiteNbAgentToSimulate(numberOfAgentToExecute);
 }
 
 void SimulationEnvironment::startSimulation() {
 	/// 4.3 set the adapted spatial data structure permitting agent to know their neighbors)
-	simulatedEnv->addSpatialDataStructure( new Delaunay_3D_SDS( " my spatial data structure"));
+	simulatedEnv->addSpatialDataStructure(new Delaunay_3D_SDS(" my spatial data structure"));
 
 	platform->startSimulation();
 }
 
-void SimulationEnvironment::savePopulation(const char* filename) {
-	IO::CPOP::save(static_cast<Writable*>(env), filename);
+void SimulationEnvironment::savePopulation(std::string const& filename) {
+	IO::CPOP::save(static_cast<Writable*>(env), filename.c_str());
 }
 
-void SimulationEnvironment::exportToVis(const char* filename) {
+void SimulationEnvironment::exportToVis(std::string const& filename) {
 	int error;
 	t_Mesh_3* voronoiMesh = MeshFactory::getInstance()->create_3DMesh(&error, simulatedEnv, MeshTypes::Round_Cell_Tesselation, numberOfFacetPerCell);
 
-	QString outputName = filename;
-	voronoiMesh->exportToFile(outputName, MeshOutFormats::OFF);
+	voronoiMesh->exportToFile(QString::fromStdString(filename), MeshOutFormats::OFF);
 
 	// delete mesh used
 	delete voronoiMesh;
-
 }

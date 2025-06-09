@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef SIMULATION_MANAGER_HH
 #define SIMULATION_MANAGER_HH
 
@@ -19,55 +11,53 @@ See LICENSE.md for further details
 #include <vector>
 #include <set>
 
-#include <assert.h>
+#include <cassert>
 
-using namespace std;
-//////////////////////////////////////////////////////////////////////////////
 /// \brief The simulation manager handles agent allocation to ThreadAgentGroup in order to make sure
-/// each agent are at top execute once (multithreading). 
+/// each agent are at top execute once (multithreading).
 /// \details The simulation is defined as a singleton.
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////
-class SimulationManager : public QThread
-{
-	Q_OBJECT	
+class SimulationManager: public QThread {
+	Q_OBJECT
 	friend class MASPlatform;
 
 public:
-	/// \brief constructor
 	SimulationManager();
-	/// \brief destructor
-	~SimulationManager();
+	~SimulationManager() override;
+
 	/// \brief start the run based on registred paramters
-	void run();
+	void run() override;
 	/// \brief return the instance of the simulation manager
 	static SimulationManager* getInstance();
 
 	/// \brief return the number of agent on the simulation
-	unsigned int getNbAgent() const {return (int)agentHandler.size();};
+	[[nodiscard]] unsigned int getNbAgent() const { return (int)_agentHandler.size(); }
 
 	/// \brief reset the manager.
 	void reset();
 	/// \brief displacementThreshold getter
-	double getDisplacementThreshold() const						{ return displacementThreshold; };
+	[[nodiscard]] double getDisplacementThreshold() const { return _displacementThreshold; };
 
 protected:
 	/// \brief add the agent on the simulation
 	int addAgent(Agent*);
 	/// \brief the initialization of the simulation manager.
-	int init(); 
+	int init();
 	/// \brief conflict solver adder
-	void addConflictSolver(ConflictSolver* pConflictSolver)		{assert(pConflictSolver); conflictSolvers.push_back( pConflictSolver);};
+	void addConflictSolver(ConflictSolver* pConflictSolver) {
+		assert(pConflictSolver);
+		_conflictSolvers.push_back(pConflictSolver);
+	}
 	/// \brief conflict solver remover
 	void removeConflictSolver(ConflictSolver* pConflictSolver);
 
 	/// \brief displacementThreshold setter
-	void setDisplacementThreshold(double pThreshold)			{ displacementThreshold = pThreshold; };
+	void setDisplacementThreshold(double pThreshold) { _displacementThreshold = pThreshold; }
 
-	/// \brief we will execute randomly a limited number of agent 
-	void limiteNbAgentToSimulate(unsigned int i )				{numberOfAgentToExecute = i;};
+	/// \brief we will execute randomly a limited number of agent
+	void limiteNbAgentToSimulate(unsigned int i) { _numberOfAgentToExecute = i; }
 	/// \brief avoid limitation of agent, execute all agent
-	void unlimiteNbAgentToSimulate(bool b)						{bExecuteAllAgent = b;};
+	void unlimiteNbAgentToSimulate(bool b) { _bExecuteAllAgent = b; }
 
 private:
 	/// \brief return the best trhad to set this agent on.
@@ -79,16 +69,16 @@ private:
 	int getNextThreadID();
 	/// \brief run the next step of the simulation
 	bool runOneStep();
-	/// \brief run one step by the intermediary thread agent group 
+	/// \brief run one step by the intermediary thread agent group
 	bool runOneStepWithThread();
 	/// \brief pick randomly agent from the one to simulate
-	set<Agent*> pickRandomlyAgts(unsigned int);
+	std::set<Agent*> pickRandomlyAgts(unsigned int);
 	/// \brief setter  of the maximal number of thread
-	void setMaxNumberOfThread(int nb) {maxThreadAgentGroup = nb;};
+	void setMaxNumberOfThread(int nb) { _maxThreadAgentGroup = nb; }
 	/// \brief top layer setter, needed to know SDS to update.
 	void setTopLayer(Layer*);
 	/// \brief return all the agents running
-	vector<Agent*> getAllAgents();
+	std::vector<Agent*> getAllAgents();
 	/// \brief update spatial data structures
 	void updateSDS();
 	/// \brief run all conflict manager
@@ -97,35 +87,35 @@ private:
 	bool updateAgentState();
 	/// \brief tag agent to execute during the next simulation step
 	void updateAgentToExecute();
-	
+
 private:
 	/// \brief the map of agent group. The key is the trehad ID
-	map<int, ThreadAgentGroup*> agentGroups; 
+	std::map<int, ThreadAgentGroup*> _agentGroups;
 	/// \brief the map of the agent handlers
-	map<Agent*, ThreadAgentGroup*> agentHandler;
+	std::map<Agent*, ThreadAgentGroup*> _agentHandler;
 	/// \brief store all agent manage
-	vector<Agent*> managedAgents;
+	std::vector<Agent*> _managedAgents;
 
 	/// \brief the set of threads the simulation is waiting for to process next state
-	set<int> threadRunning;
+	std::set<int> _threadRunning;
 
 	/// \brief the maximal number of thread we enable to launch.
-	int maxThreadAgentGroup;
+	int _maxThreadAgentGroup;
 	/// \brief the next thread ID.
-	int nextThreadID;
+	int _nextThreadID;
 	/// \brief The conflict solver which wiil permit agent to run without contradictions
-	vector<ConflictSolver*> conflictSolvers;
+	std::vector<ConflictSolver*> _conflictSolvers;
 	/// \brief the top layer we are running the simulation for, to make SDS updates
-	Layer* topLayer;
+	Layer* _topLayer;
 	/// \brief the displacement threshold for each step simulation. If negative none
-	double displacementThreshold;
+	double _displacementThreshold;
 
 	/// \brief do we execute all agent
-	bool bExecuteAllAgent;
+	bool _bExecuteAllAgent;
 	/// \brief the number of agent to exexute if we want to execute a limited number of them.
-	unsigned int numberOfAgentToExecute;
+	unsigned int _numberOfAgentToExecute;
 	/// \brief the set of agent executed last step
-	set<Agent*> agentExecutedLastStep;
+	std::set<Agent*> _agentExecutedLastStep;
 
 signals:
 	/// \brief the signal of the step has end run

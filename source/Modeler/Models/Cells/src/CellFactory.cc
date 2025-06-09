@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol,
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #include "CellFactory.hh"
 #include "ParametersGetter.hh"
 #include "RandomEngineManager.hh"
@@ -20,31 +12,10 @@ See LICENSE.md for further details
 
 static CellFactory* factory = 0;	/// the factory defined as a singleton
 
-///////////////////////////////////////////////////////
-///
-///////////////////////////////////////////////////////
-CellFactory::CellFactory()
-{
-
-}
-
-///////////////////////////////////////////////////////
-///
-///////////////////////////////////////////////////////
-CellFactory::~CellFactory()
-{
-
-}
-
-///////////////////////////////////////////////////////
 /// \return { The cell factory singleton}
-///////////////////////////////////////////////////////
-CellFactory* CellFactory::getInstance()
-{
+CellFactory* CellFactory::getInstance() {
 	if(!factory)
-	{
-		factory = new CellFactory();
-	}
+		factory = new CellFactory;
 	return factory;
 }
 
@@ -56,35 +27,26 @@ CellFactory* CellFactory::getInstance()
 
 using namespace Settings::Geometry;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief 3D specialization of produce
 /// \param pCellProp The propertie to give to the cell
 /// \param pLifeCycle The life cycle to give to this cell
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-Cell<double, Point_3, Vector_3>* CellFactory::produce(const CellProperties* pCellProp, const LifeCycles::LifeCycle pLifeCycle)
-{
+Cell<double, Point_3, Vector_3>* CellFactory::produce(const CellProperties* pCellProp, const LifeCycles::LifeCycle pLifeCycle) {
 	LifeCycles::LifeCycle lLifeCycle = pLifeCycle;
 	// if life state is unknow :  pick one randomly
 	if(lLifeCycle == LifeCycles::NA)
-	{
-		lLifeCycle = static_cast<LifeCycles::LifeCycle> ( RandomEngineManager::getInstance()->randi( 0, (int)LifeCycles::NA -1 ));
-	}
+		lLifeCycle = static_cast<LifeCycles::LifeCycle> ( RandomEngineManager::getInstance()->randi( 0, (int)LifeCycles::NA -1));
 
-	switch(pCellProp->getCellType())
-	{
+	switch(pCellProp->getCellType()) {
 		// --- 3D shapes defined
 		case SIMPLE_ROUND :
 		{
 			// get cell radius
 			double radius;
-			const RoundCellProperties* lDSProp = dynamic_cast<const RoundCellProperties*>(pCellProp);
-			if(lDSProp)
-			{
+			const auto* lDSProp = dynamic_cast<const RoundCellProperties*>(pCellProp);
+			if(lDSProp) {
 				radius = RandomEngineManager::getInstance()->randd(lDSProp->getMembraneRadius(pLifeCycle).var_min(), lDSProp->getMembraneRadius(pLifeCycle).var_max());
-			}
-			else
-			{
+			} else {
 				QString mess = "!!! Unable to find radius for the requested cell from cell properties";
 				InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, mess.toStdString(), "CellFactory::produce");
 				exit(0);
@@ -95,7 +57,7 @@ Cell<double, Point_3, Vector_3>* CellFactory::produce(const CellProperties* pCel
 			// get masse
 			double masse = RandomEngineManager::getInstance()->randd(pCellProp->getMasses(lLifeCycle).var_min(), pCellProp->getMasses(lLifeCycle).var_max());
 			// create cell
-			SimpleSpheroidalCell* cell = new SimpleSpheroidalCell(pCellProp, Point_3(0., 0., 0.), radius, nucleusRadius, pCellProp->getNucleusPosType(), masse);
+			auto* cell = new SimpleSpheroidalCell(pCellProp, Point_3(0., 0., 0.), radius, nucleusRadius, pCellProp->getNucleusPosType(), masse);
 
 			assert(cell);
 			return cell;
@@ -108,44 +70,36 @@ Cell<double, Point_3, Vector_3>* CellFactory::produce(const CellProperties* pCel
 			exit(0);
 		}
 	}
-	return NULL;
+
+	return nullptr;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \param pCellProp The propertie to give to the cell
 /// \param pLifeCycle The life cycle to give to this cell
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-Cell<double, Point_2, Vector_2>* CellFactory::produce(const CellProperties* pCellProp, const LifeCycles::LifeCycle pLifeCycle)
-{
+Cell<double, Point_2, Vector_2>* CellFactory::produce(const CellProperties* pCellProp, const LifeCycles::LifeCycle pLifeCycle) {
 	LifeCycles::LifeCycle lLifeCycle = pLifeCycle;
 	/// if life state is unknow :  pick one randomly
 	if(lLifeCycle == LifeCycles::NA)
-	{
 		lLifeCycle = static_cast<LifeCycles::LifeCycle> ( RandomEngineManager::getInstance()->randi( 0, (int)LifeCycles::NA -1));
-	}
 
 	/// FOR now we only generate cell weight and volume from a random distribution
-	switch(pCellProp->getCellType())
-	{
+	switch(pCellProp->getCellType()) {
 		/// 2D shapes defined
 		case SIMPLE_ROUND :
 		{
 			// cell radius
 			double radius;
-			const RoundCellProperties* lDSProp = dynamic_cast<const RoundCellProperties*>(pCellProp);
-			if(lDSProp)
-			{
+			const auto* lDSProp = dynamic_cast<const RoundCellProperties*>(pCellProp);
+			if(lDSProp) {
 				radius = RandomEngineManager::getInstance()->randd(lDSProp->getMembraneRadius(pLifeCycle).var_min(), lDSProp->getMembraneRadius(pLifeCycle).var_max());
-			}
-			else
-			{
+			} else {
 				QString mess = "!!! Unable to find radius for the requested cell from cell properties";
 				InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, mess.toStdString(), "CellFactory");
 				exit(0);
 			}
 
-			G4cout<< "\n\n\n CellFactory \n\n\n" << G4endl;
+			G4cout << "\n\n\n CellFactory \n\n\n" << G4endl;
 
 			// nucleus radius
 			double nucleusRadius = RandomEngineManager::getInstance()->randd(pCellProp->getNucleusRadius(lLifeCycle).var_min(), pCellProp->getNucleusRadius(lLifeCycle).var_max());
@@ -153,7 +107,7 @@ Cell<double, Point_2, Vector_2>* CellFactory::produce(const CellProperties* pCel
 			double masse = RandomEngineManager::getInstance()->randd(pCellProp->getMasses(lLifeCycle).var_min(), pCellProp->getMasses(lLifeCycle).var_max());
 
 			// create cell
-			SimpleDiscoidalCell* cell = new SimpleDiscoidalCell(pCellProp, Point_2(), radius, nucleusRadius, pCellProp->getNucleusPosType(), masse);
+			auto* cell = new SimpleDiscoidalCell(pCellProp, Point_2(), radius, nucleusRadius, pCellProp->getNucleusPosType(), masse);
 
 			assert(cell);
 			return cell;
@@ -164,5 +118,6 @@ Cell<double, Point_2, Vector_2>* CellFactory::produce(const CellProperties* pCel
 			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "CellFactory");
 		}
 	}
-	return NULL;
+
+	return nullptr;
 }

@@ -1,11 +1,3 @@
-/*----------------------
-Copyright (C): Henri Payno, Axel Delsol, 
-Laboratoire de Physique de Clermont UMR 6533 CNRS-UCA
-
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
 #ifndef BOX_SHAPE_HH
 #define BOX_SHAPE_HH
 
@@ -15,56 +7,34 @@ See LICENSE.md for further details
 #include <InformationSystemManager.hh>
 
 using namespace Settings::Geometry;
-//////////////////////////////////////////////////////////////////////////////
 /// \brief the discoid shape definition
 /// @author Henri Payno
-//////////////////////////////////////////////////////////////////////////////
 /// \todo : doit plutôt hérité de SpatialDelimitation<Kernel, Point, Vector>
 template<typename Kernel, typename Point, typename Vector>
-class Box_Shape : public Shape
-{
+class Box_Shape : public Shape {
 public:
-
-	/// \brief constructor
 	Box_Shape(Point, Point);
-	/// \brief destructor
-	~Box_Shape();
 
 	/// \brief called when require to draw the body
-	void draw() const;
+	void draw() const override;
 
 private:
-	Point bottomLeft;	///< \brief bottom left corner
-	Point topRight;		///< \brief top right corner
+	Point _bottomLeft;  ///< \brief bottom left corner
+	Point _topRight;    ///< \brief top right corner
 };
 
 /////////////////////////// FUNCTION DEFINITIONS ///////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
 /// \param pBottomLeft 	The bottom left point
 /// \param pTopRight 	The top right point
-////////////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
 Box_Shape<Kernel, Point, Vector>::Box_Shape(Point pBottomLeft, Point pTopRight):
 	Shape(ShapeTypes::BOX),
-	bottomLeft(pBottomLeft),
-	topRight(pTopRight)
+	_bottomLeft(pBottomLeft),
+	_topRight(pTopRight)
 {
-
 }
 
-////////////////////////////////////////////////////////////////////////////////
-/// 
-////////////////////////////////////////////////////////////////////////////////
-template<typename Kernel, typename Point, typename Vector>
-Box_Shape<Kernel, Point, Vector>::~Box_Shape()
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/// draw
-////////////////////////////////////////////////////////////////////////////////
 template<typename Kernel, typename Point, typename Vector>
 void Box_Shape<Kernel, Point, Vector>::draw() const
 {
@@ -80,4 +50,4 @@ void Box_Shape<double, Point_2, Vector_2>::draw() const;
 template<>
 void Box_Shape<double, Point_3, Vector_3>::draw() const;
 
-#endif // BOX_SHAPE_HH
+#endif

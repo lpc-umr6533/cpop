@@ -10,24 +10,20 @@ namespace cpop {
 
 class PhysicsList;
 
-class PhysicsListMessenger : public MessengerBase
-{
+class PhysicsListMessenger : public MessengerBase {
 public:
-    PhysicsListMessenger(PhysicsList* physics_list);
-    ~PhysicsListMessenger() = default;
+	PhysicsListMessenger(PhysicsList* physics_list);
 
-    virtual void BuildCommands(G4String base) override;
-    virtual void SetNewValue(G4UIcommand * command , G4String newValue) override;
+	void BuildCommands(G4String base) override;
+	void SetNewValue(G4UIcommand * command , G4String newValue) override;
 
 private:
-    PhysicsList* physics_list_;
+	PhysicsList* _physicsList;
 
-    /// \brief Select a eletromagnetic physics list
-    std::unique_ptr<G4UIcmdWithAString> select_physics_;
-
-    std::unique_ptr<G4UIcmdWithADoubleAndUnit> step_max_cmd_;
-
-    std::unique_ptr<G4UIcmdWithADoubleAndUnit> electron_cut_cmd_;
+	/// \brief Select a eletromagnetic physics list
+	std::unique_ptr<G4UIcmdWithAString> _selectPhysics;
+	std::unique_ptr<G4UIcmdWithADoubleAndUnit> _stepMaxCmd;
+	std::unique_ptr<G4UIcmdWithADoubleAndUnit> _electronCutCmd;
 };
 
 }
