@@ -234,11 +234,11 @@ void SimulationEnvironment::savePopulation(std::string const& filename) {
 	IO::CPOP::save(static_cast<Writable*>(env), filename.c_str());
 }
 
-void SimulationEnvironment::exportToVis(std::string const& filename) {
+void SimulationEnvironment::exportToVis(std::string const& filename, bool divided) {
 	int error;
 	t_Mesh_3* voronoiMesh = MeshFactory::getInstance()->create_3DMesh(&error, simulatedEnv, MeshTypes::Round_Cell_Tesselation, numberOfFacetPerCell);
 
-	voronoiMesh->exportToFile(QString::fromStdString(filename), MeshOutFormats::OFF);
+	voronoiMesh->exportToFile(QString::fromStdString(filename), MeshOutFormats::OFF, divided);
 
 	// delete mesh used
 	delete voronoiMesh;

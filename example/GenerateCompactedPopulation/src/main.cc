@@ -23,8 +23,9 @@ int main(int argc, char** argv) {
 	zz::cfg::ArgParser argparser;
 
 	// Generate visualization file. Specify option --vis in the command line. This is an optional flag
-	bool vis;
-	argparser.add_opt_flag(-1,"vis","generate off file to visualize population", &vis);
+	bool vis, divided;
+	argparser.add_opt_flag(-1, "vis", "generate off file to visualize population", &vis);
+	argparser.add_opt_flag(-1, "divided", "generate one OFF file per cell", &divided);
 
 	// Get the configuration file from the command line. Specify option -f <fileName>
 	std::string input;
@@ -92,7 +93,7 @@ int main(int argc, char** argv) {
 		std::string outputVis = std::filesystem::absolute("outputVis").string();
 		std::filesystem::create_directories(outputVis);
 		std::string outputPathOff = outputVis + "/" + basename;
-		simulationEnv->exportToVis(outputPathOff.c_str());
+		simulationEnv->exportToVis(outputPathOff.c_str(), divided);
 		std::cout << "Generated : "<< outputPathOff + ".off" << std::endl;
 	}
 
