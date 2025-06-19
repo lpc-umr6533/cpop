@@ -9,6 +9,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_3.h>
 
+#include <cstdint>
 #include <string>
 #include <fstream>
 
@@ -130,7 +131,7 @@ void Voronoi_3D_Mesh::remove(t_Cell_3* pSpatialable) {
 
 /// \param pPath The output path file
 /// \param cells The list of cell to export
-/// \param pDivided True if we want to create a nbew file for each polyhedron
+/// \param pDivided True if we want to create a new file for each polyhedron
 /// \return return values
 ///					- 0 : success
 ///					- 1 : not implemented yet
@@ -141,6 +142,20 @@ int Voronoi_3D_Mesh::exportToFileOff(QString pPath, std::vector<SpheroidalCell*>
 	} else {
 		return exportToFileOff_undivided(pPath, &cells);
 	}
+}
+
+/// \param pPath The output path file
+/// \param cells The list of cell to export
+/// \param pDivided True if we want to create a new file for each polyhedron
+/// \return return values
+///					- 0 : success
+///					- 1 : not implemented yet
+///					- 2 : failed during export
+int Voronoi_3D_Mesh::exportToFileSTL(QString pPath, std::vector<SpheroidalCell*> cells, bool pDivided) {
+	if(pDivided)
+		return exportToFileSTL_divided(pPath, &cells);
+	else
+		return exportToFileSTL_undivided(pPath, &cells);
 }
 
 /// \param pPath The output path file
@@ -206,7 +221,66 @@ int Voronoi_3D_Mesh::exportToFileOff_undivided(QString pPath, std::vector<Sphero
 	return 0;
 }
 
-/// \param pPath Theoputput path file
+/// \param pPath The output path file
+/// \param cells The list of cells to export
+/// \return values :
+///					- 0 : success
+///					- 1 : not implemented yet
+///					- 2 : failed during export
+///
+int Voronoi_3D_Mesh::exportToFileSTL_undivided(QString pPath, std::vector<SpheroidalCell*>* cells) {
+	std::uint32_t nbFacets = 0;
+
+	std::set<Point_3, comparePoint_3> points;
+	std::map<Point_3, unsigned long int, comparePoint_3> indexes;
+
+	std::vector<SpheroidalCell*>::iterator itCell;
+	for(auto const& cell : *cells) {
+		// add shape points
+		for(auto itPolyPts = cell->shape_points_begin(); itPolyPts != cell->shape_points_end(); ++itPolyPts)
+			points.insert(*itPolyPts);
+		nbFacets += Utils::myCGAL::getNumberOfFacets(cell->getShape());
+	}
+
+	// write STL file
+	pPath += ".stl";
+	std::ofstream of(pPath.toStdString(), std::ios::trunc | std::ios::binary);
+
+	// header, ignored but must not contain "solid"
+	for(int i = 0; i < 80; ++i) of.write("*", 1);
+	of.write(reinterpret_cast<char*>(&nbFacets), sizeof nbFacets);
+
+	for(auto* cell: *cells) {
+		auto const& shape = cell->getShape();
+		for(auto it = shape->faces_begin(); it != shape->faces_end(); ++it) {
+			auto const& points = {
+				(*it).halfedge()->vertex()->point(),
+				(*it).halfedge()->next()->vertex()->point(),
+				(*it).halfedge()->next()->next()->vertex()->point()
+			};
+
+			float nx = 0, ny = 0, nz = 0;
+			of.write(reinterpret_cast<char*>(&nx), sizeof nx);
+			of.write(reinterpret_cast<char*>(&ny), sizeof ny);
+			of.write(reinterpret_cast<char*>(&nz), sizeof nz);
+
+			for(auto& point : points) {
+				float x = point.x(), y = point.y(), z = point.z();
+
+				of.write(reinterpret_cast<char*>(&x), sizeof x);
+				of.write(reinterpret_cast<char*>(&y), sizeof y);
+				of.write(reinterpret_cast<char*>(&z), sizeof z);
+			}
+
+			std::uint16_t zero = 0;
+			of.write(reinterpret_cast<char*>(&zero), sizeof zero);
+		}
+	}
+
+	return 0;
+}
+
+/// \param pPath The oputput path file
 /// \param cells The list of cells to export
 /// \return return values :
 ///					- 0 : success
@@ -215,8 +289,7 @@ int Voronoi_3D_Mesh::exportToFileOff_undivided(QString pPath, std::vector<Sphero
 int Voronoi_3D_Mesh::exportToFileOff_divided(QString pPath, std::vector<SpheroidalCell*>* cells) {
 	std::map<Point_3, unsigned long int> indexes;
 	unsigned long int iFile = 0;
-	for(auto const& curCell : *cells)
-	{
+	for(auto const& curCell : *cells) {
 		QString fileName = pPath + "_" + QString::number(iFile);
 		std::vector<SpheroidalCell*> cell;
 		cell.push_back(curCell);
@@ -224,6 +297,28 @@ int Voronoi_3D_Mesh::exportToFileOff_divided(QString pPath, std::vector<Spheroid
 			return 2;
 		iFile++;
 	}
+
+	return 0;
+}
+
+/// \param pPath The oputput path file
+/// \param cells The list of cells to export
+/// \return return values :
+///					- 0 : success
+///					- 1 : not implemented yet
+///					- 2 : failed during export
+int Voronoi_3D_Mesh::exportToFileSTL_divided(QString pPath, std::vector<SpheroidalCell*>* cells) {
+	std::map<Point_3, unsigned long int> indexes;
+	unsigned long int iFile = 0;
+	for(auto const& curCell : *cells) {
+		QString fileName = pPath + "_" + QString::number(iFile);
+		std::vector<SpheroidalCell*> cell;
+		cell.push_back(curCell);
+		if(exportToFileSTL_undivided(fileName, &cell) != 0 )
+			return 2;
+		iFile++;
+	}
+
 	return 0;
 }
 
@@ -236,7 +331,7 @@ void Voronoi_3D_Mesh::removeConflicts() {
 	// create shape
 	std::set<Vertex_3_handle> verticesToRemove; // we will remove all vertices which aren'Gabriel
 
-	std::ofstream id_cell_file("OutputTxt/IDCell.txt", std::fstream::app);
+	std::ofstream id_cell_file("OutputTxt/IDCell.txt", std::ios::app);
 
 	id_cell_file << " ";
 

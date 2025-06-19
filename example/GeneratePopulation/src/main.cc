@@ -26,29 +26,25 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::fstream::trunc);
+	std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::ios::trunc);
 
 	// First we add an argument parser to simplify the use of the population generator
 	zz::cfg::ArgParser argparser;
 
 	// Generate visualization file. Specify option --vis in the command line. This is an optional flag
-	bool vis, divided;
+	bool vis, divided, stl;
 	argparser.add_opt_flag(-1, "vis", "generate off file to visualize population", &vis);
 	argparser.add_opt_flag(-1, "divided", "generate one OFF file per cell", &divided);
+	argparser.add_opt_flag(-1, "stl", "generate STL file", &stl);
 
 	// Get the configuration file from the command line. Specify option -f <fileName>
 	std::string input;
 	auto inputArg = argparser.add_opt_value('f', "", input, std::string("input_filename.cfg"), "configuration file", "file").require();
 
-	//Retrieve arguments from command line
 	argparser.parse(argc, argv);
-
-	// check errors
 	if (argparser.count_error() > 0) {
 		std::cout << argparser.get_error() << std::endl;
-		// print help
 		std::cout << argparser.get_help() << std::endl;
-		// continue or exit()??
 		exit(-1);
 	}
 
@@ -56,36 +52,31 @@ int main(int argc, char** argv) {
 	// Example : ../config.cfg will produce config.xml (and config.off if --vis is used)
 	std::string basename = zz::os::path_split_basename(input);
 
-	// Create the configuration file
-	// Each section read one part of the configuration file
-
 	// How to create your own configuration reader to build a T object
 	/* 1) Declare a ConfigReader object
-	 * conf::ConfigReader<T>* reader = new conf::ConfigReader<T>();
+	 * conf::ConfigReader<T> reader;
 	 *
 	 * 2) Add sections to the reader (documentation in xxxSection.hh)
-	 * reader->addSection<Section1>();
-	 * reader->addSection<Section2>();
+	 * reader.addSection<Section1>();
 	 *
 	 * 3) Parse your file and retrieve your object
-	 * T* myObject = reader->parse(configFile);
+	 * T* myObject = reader.parse(configFile);
 	 *
 	 * 4) Do not forget to free memory when you do not need it anymore
-	 * delete reader;
 	 * delete myObject;
 	 */
-	auto* reader = new conf::ConfigReader<SimulationEnvironment>();
-	reader->addSection<UnitSection>();
-	reader->addSection<CellSection>();
-	reader->addSection<SpheroidSection>();
-	reader->addSection<MeshSection>();
-	reader->addSection<ForceSection>();
-	reader->addSection<SimulationSection>();
+	conf::ConfigReader<SimulationEnvironment> reader;
+	reader.addSection<UnitSection>();
+	reader.addSection<CellSection>();
+	reader.addSection<SpheroidSection>();
+	reader.addSection<MeshSection>();
+	reader.addSection<ForceSection>();
+	reader.addSection<SimulationSection>();
 
 	// Parse the configuration file and start the simulation
 	// SimulationEnvironment contains everything required to create a cell population
 	// (documentation in simulationEnvironment.hh and simulationEnvironment.cc)
-	SimulationEnvironment* simulationEnv = reader->parse(input.c_str());
+	SimulationEnvironment* simulationEnv = reader.parse(input);
 
 	// Start the simulation to apply elastic force
 	simulationEnv->startSimulation();
@@ -102,10 +93,17 @@ int main(int argc, char** argv) {
 		std::string outputVis = std::filesystem::absolute("outputVis").string();
 		std::filesystem::create_directories(outputVis);
 		std::string outputPathOff = outputVis + "/" + basename;
-		simulationEnv->exportToVis(outputPathOff.c_str(), divided);
+		simulationEnv->exportToVis(outputPathOff, divided);
 		std::cout << "Generated : "<< outputPathOff + ".off" << std::endl;
 	}
 
-	delete reader;
+	if (stl) {
+		std::string outputDir = std::filesystem::absolute("output_stl").string();
+		std::filesystem::create_directories(outputDir);
+		std::string outputPath = outputDir + "/" + basename;
+		simulationEnv->exportToSTL(outputPath, divided);
+		std::cout << "Generated : "<< outputPath + ".stl" << std::endl;
+	}
+
 	delete simulationEnv;
 }

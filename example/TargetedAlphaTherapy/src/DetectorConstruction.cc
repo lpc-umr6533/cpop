@@ -51,7 +51,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 		nullptr,        // its mother  volume
 		false,          // no boolean operations
 		0,              // copy number
-		false           // surface overlaps
+		true // surface overlaps
 	);
 
 	// const Population* population = population_;

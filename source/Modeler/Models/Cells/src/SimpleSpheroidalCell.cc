@@ -22,7 +22,7 @@ SimpleSpheroidalCell::SimpleSpheroidalCell(
 	Mesh3D::Polyhedron_3 pMembraneShape):
 	SpheroidalCell(pCellProperties, pOrigin, pSpheroidRadius, pWeight, pMembraneShape)
 {
-	_nucleus = new RoundNucleus<double, Point_3, Vector_3>(pNucleusRadius, pOrigin, pPosType );
+	_nucleus = new RoundNucleus<double, Point_3, Vector_3>(pNucleusRadius, pOrigin, pPosType);
 	_nuclei.push_back(_nucleus);
 	//SpheroidalCell::convertToG4Structure()
 }
@@ -39,7 +39,7 @@ Point_3 SimpleSpheroidalCell::getNucleusCenter(eNucleusPosType nucleusPositionTy
 		}
 		case NO_STANDARD:
 		{
-			return getNucleusCenter( static_cast<eNucleusPosType>(RandomEngineManager::getInstance()->randi(0, (int)END_CHOICE - 2)));
+			return getNucleusCenter(static_cast<eNucleusPosType>(RandomEngineManager::getInstance()->randi(0, (int)END_CHOICE - 2)));
 		}
 		default:
 		{

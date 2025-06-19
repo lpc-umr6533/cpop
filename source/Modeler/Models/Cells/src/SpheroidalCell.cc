@@ -395,6 +395,7 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 		pMother,                   // its mother  volume
 		false,                     // no boolean operations
 		0                          // copy number
+		, true
 	);
 
 	std::string home_path = std::filesystem::current_path().string();
@@ -405,7 +406,7 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 		{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
 	}
 
-	std::ofstream masses_file(output_txt_folder + "/MassesCell.txt", std::fstream::app);
+	std::ofstream masses_file(output_txt_folder + "/MassesCell.txt", std::ios::app);
 
 	// try to remove overlaps by reducing membrane radius
 	if(checkOverLaps) {

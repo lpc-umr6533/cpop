@@ -12,6 +12,8 @@ QString getFormatName(outputFormat pFormat) {
 			return "GEANT_4";			
 		case GATE:
 			return "GATE";
+		case STL:
+			return "STL";
 		default:
 			return "Unknow";
 	}

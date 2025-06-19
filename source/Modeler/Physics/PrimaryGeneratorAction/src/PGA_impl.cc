@@ -155,7 +155,7 @@ void PGA_impl::writingInfoPrimariesTxt(
 	G4double energy,
 	G4String name_file
 ) {
-	std::ofstream file(name_file, std::fstream::app);
+	std::ofstream file(name_file, std::ios::app);
 
   if (file.is_open()) {
 		// file << G4BestUnit(position, "Length") << " " << direction << " " <<

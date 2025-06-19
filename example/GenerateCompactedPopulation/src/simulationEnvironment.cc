@@ -114,7 +114,7 @@ void SimulationEnvironment::setSpheroidProperties(double internalRadius, double 
 			}
 		}
 
-		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::fstream::trunc);
+		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::ios::trunc);
 
 		nbCell_mid = (nbCell_min + nbCell_max) / 2;
 		// New distribution
@@ -237,9 +237,6 @@ void SimulationEnvironment::savePopulation(std::string const& filename) {
 void SimulationEnvironment::exportToVis(std::string const& filename, bool divided) {
 	int error;
 	t_Mesh_3* voronoiMesh = MeshFactory::getInstance()->create_3DMesh(&error, simulatedEnv, MeshTypes::Round_Cell_Tesselation, numberOfFacetPerCell);
-
 	voronoiMesh->exportToFile(QString::fromStdString(filename), MeshOutFormats::OFF, divided);
-
-	// delete mesh used
 	delete voronoiMesh;
 }

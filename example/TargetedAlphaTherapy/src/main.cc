@@ -36,110 +36,100 @@ namespace fs = std::filesystem;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-int main(int argc, char** argv)
-{
-		auto start = std::chrono::high_resolution_clock::now();
+int main(int argc, char** argv) {
+	auto start = std::chrono::high_resolution_clock::now();
 
+	CLHEP::MTwistEngine defaultEngine(time(nullptr));
+	G4Random::setTheEngine(&defaultEngine);
+	//G4int seed = time(NULL);
+	//G4Random::setTheSeed(seed);
 
-    CLHEP::MTwistEngine defaultEngine(time(NULL));
-    G4Random::setTheEngine(&defaultEngine);
-    //G4int seed = time(NULL);
-    //G4Random::setTheSeed(seed);
+	CLHEP::MTwistEngine defaultEngineCPOP(time(nullptr));
+	//CLHEP::MTwistEngine defaultEngineCPOP(1234567);
+	RandomEngineManager::getInstance()->setEngine(&defaultEngineCPOP);
 
-    CLHEP::MTwistEngine defaultEngineCPOP(time(NULL));
-    //CLHEP::MTwistEngine defaultEngineCPOP(1234567);
-    RandomEngineManager::getInstance()->setEngine(&defaultEngineCPOP);
+	// Command line arguments
 
-    // Command line arguments
-
-    // First we add an argument parser to add parameters
-    zz::cfg::ArgParser parser;
+	// First we add an argument parser to add parameters
+	zz::cfg::ArgParser parser;
 
 #ifdef G4MULTITHREADED
-    // Get the spectrum file. Specify option -t nbThread or --thread nbThread
-    int nThreads;
-    parser.add_opt_value('t', "thread", nThreads, 0, "number of threads", "int");
+	// Get the spectrum file. Specify option -t nbThread or --thread nbThread
+	int nThreads;
+	parser.add_opt_value('t', "thread", nThreads, 0, "number of threads", "int");
 #endif
 
-    // Get the macro file. Specify option -m <fileName> or --macro <filename>
-    std::string macro;
-    parser.add_opt_value('m', "macro", macro, std::string("input_filename.mac"), "macro file", "file").require();
+	// Get the macro file. Specify option -m <fileName> or --macro <filename>
+	std::string macro;
+	parser.add_opt_value('m', "macro", macro, std::string("input_filename.mac"), "macro file", "file").require();
 
-    parser.parse(argc, argv);
+	parser.parse(argc, argv);
+	if (parser.count_error() > 0) {
+		std::cout << parser.get_error() << std::endl;
+		std::cout << parser.get_help() << std::endl;
+		exit(-1);
+	}
 
-    // check errors
-    if (parser.count_error() > 0)
-    {
-        std::cout << parser.get_error() << std::endl;
-        // print help
-        std::cout << parser.get_help() << std::endl;
-        // continue or exit()??
-        exit(-1);
-    }
-
-
-    // Construct the default run manager
-    //
+	// Construct the default run manager
 #ifdef G4MULTITHREADED
-    G4MTRunManager * runManager = new G4MTRunManager;
-    if ( nThreads > 0 ) {
-        runManager->SetNumberOfThreads(nThreads);
-    }
+	auto* runManager = new G4MTRunManager;
+	if ( nThreads > 0 ) {
+		runManager->SetNumberOfThreads(nThreads);
+	}
 #else
-    G4RunManager * runManager = new G4RunManager;
+	auto* runManager = new G4RunManager;
 #endif
 
-		// Create a population
+	// Create a population
+	cpop::Population population;
+	population.messenger().BuildCommands("/cpop");
 
-		cpop::Population population;
-		population.messenger().BuildCommands("/cpop");
+	std::string home_path = std::filesystem::current_path().string();
+	std::string output_txt_folder = home_path + "/OutputTxt";
+	if (!fs::exists(output_txt_folder)) {
+		if (!fs::create_directory(output_txt_folder)) {
+			std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";
+		}
+	}
+	std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::ios::trunc);
 
-		std::string home_path = std::filesystem::current_path().string();
-		std::string output_txt_folder = home_path + "/OutputTxt";
-		if (!fs::exists(output_txt_folder))
-			{
-				if (!fs::create_directory(output_txt_folder))
-				{std::cerr << "Error: Failed to create directory: " << output_txt_folder << "\n";}
-			}
-		std::ofstream id_cell_file(output_txt_folder + "/IDCell.txt", std::fstream::trunc);
+	// Set mandatory initialization classes
+	// Set the geometry ie a box filled with G4_WATER
+	auto* detector = new cpop::DetectorConstruction(population);
+	runManager->SetUserInitialization(detector);
 
-		// Set mandatory initialization classes
+	// Set the physics list
+	auto* physicsList = new cpop::PhysicsList();
+	physicsList->messenger().BuildCommands("/cpop/physics");
+	runManager->SetUserInitialization(physicsList);
 
-    // Set the geometry ie a box filled with G4_WATER
-    cpop::DetectorConstruction* detector = new cpop::DetectorConstruction(population);
-    runManager->SetUserInitialization(detector);
-
-    // Set the physics list
-    cpop::PhysicsList* physicsList = new cpop::PhysicsList();
-    physicsList->messenger().BuildCommands("/cpop/physics");
-    runManager->SetUserInitialization(physicsList);
-
-    // Set custom action to extract informations from the simulation
-    cpop::CpopActionInitialization* actionInitialisation = new cpop::CpopActionInitialization(population);
-    runManager->SetUserInitialization(actionInitialisation);
+	// Set custom action to extract informations from the simulation
+	auto* actionInitialisation = new cpop::CpopActionInitialization(population);
+	runManager->SetUserInitialization(actionInitialisation);
 
 
-    // Get the pointer to the User Interface manager
-    G4UImanager* UImanager = G4UImanager::GetUIpointer();
-    G4String command = "/control/execute ";
-    UImanager->ApplyCommand(command+macro);
+	// Get the pointer to the User Interface manager
+	auto* UImanager = G4UImanager::GetUIpointer();
+	G4String command = "/control/execute ";
+	UImanager->ApplyCommand(command+macro);
 
-		id_cell_file.close();
+	id_cell_file.close();
 
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end - start;
+	auto end = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> elapsed_seconds = end - start;
 
-     std::cout << "elapsed time: " << elapsed_seconds.count() << " s\n";
+	std::cout << "elapsed time: " << elapsed_seconds.count() << " s\n";
 
-    // Job termination
-    // Free the store: user actions, physics_list and detector_description are
-    // owned and deleted by the run manager, so they should not be deleted
-    // in the main() program
-    delete runManager;
+	{
+		std::string outputDir = std::filesystem::absolute("output_stl").string();
+		std::filesystem::create_directories(outputDir);
+		std::string outputPath = outputDir + "/" + "cell";
+		// simulationEnv->exportToSTL(outputPath, divided);
+	}
 
-
-    return 0;
-
+	// Job termination
+	// Free the store: user actions, physics_list and detector_description are
+	// owned and deleted by the run manager, so they should not be deleted
+	// in the main() program
+	delete runManager;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....

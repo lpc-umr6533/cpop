@@ -13,6 +13,7 @@ enum outputFormat {
 	GDML,
 	GEANT_4,
 	GATE,
+	STL,
 	Unknow	///< \warning Unknow foramt must always stay last
 };
 

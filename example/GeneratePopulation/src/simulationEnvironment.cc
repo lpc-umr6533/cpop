@@ -147,7 +147,7 @@ void SimulationEnvironment::setSimulationProperties(
 
 void SimulationEnvironment::startSimulation() {
 	/// 4.3 set the adapted spatial data structure permitting agent to know their neighbors)
-	simulatedEnv->addSpatialDataStructure(new Delaunay_3D_SDS( " my spatial data structure"));
+	simulatedEnv->addSpatialDataStructure(new Delaunay_3D_SDS("my spatial data structure"));
 
 	platform->startSimulation();
 }
@@ -160,7 +160,12 @@ void SimulationEnvironment::exportToVis(std::string const& filename, bool divide
 	int error;
 	t_Mesh_3* voronoiMesh = MeshFactory::getInstance()->create_3DMesh(&error, simulatedEnv, MeshTypes::Round_Cell_Tesselation, numberOfFacetPerCell);
 	voronoiMesh->exportToFile(QString::fromStdString(filename), MeshOutFormats::OFF, divided);
+	delete voronoiMesh;
+}
 
-	// delete mesh used
+void SimulationEnvironment::exportToSTL(std::string const& filename, bool divided) {
+	int error;
+	t_Mesh_3* voronoiMesh = MeshFactory::getInstance()->create_3DMesh(&error, simulatedEnv, MeshTypes::Round_Cell_Tesselation, numberOfFacetPerCell);
+	voronoiMesh->exportToFile(QString::fromStdString(filename), MeshOutFormats::STL, divided);
 	delete voronoiMesh;
 }

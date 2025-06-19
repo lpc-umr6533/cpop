@@ -68,6 +68,7 @@ public:
 
 	// export to off format to visualise the population
 	void exportToVis(std::string const& filename, bool divided);
+	void exportToSTL(std::string const& filename, bool divided);
 };
 
 #endif

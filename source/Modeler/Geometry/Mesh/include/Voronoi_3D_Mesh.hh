@@ -62,9 +62,14 @@ protected:
 	/// \brief export to an off file
 	virtual int exportToFileOff(QString pPath, std::vector<SpheroidalCell*> cells, bool pDivided);
 	/// \brief export all cells on the same file
-	virtual int exportToFileOff_undivided(QString pPath, std::vector<SpheroidalCell*>* );
+	virtual int exportToFileOff_undivided(QString pPath, std::vector<SpheroidalCell*>*);
 	/// \brief export all cells on the same file
-	virtual int exportToFileOff_divided(QString pPath, std::vector<SpheroidalCell*>* );
+	virtual int exportToFileOff_divided(QString pPath, std::vector<SpheroidalCell*>*);
+
+	virtual int exportToFileSTL(QString pPath, std::vector<SpheroidalCell*> cells, bool pDivided);
+	virtual int exportToFileSTL_undivided(QString pPath, std::vector<SpheroidalCell*>*);
+	virtual int exportToFileSTL_divided(QString pPath, std::vector<SpheroidalCell*>*);
+
 	/// \brief get all polygons from the delaunay mesh.
 	std::vector<SpheroidalCell*> getCellsStructure();
 	/// \brief define all the neighbouring cell for each cell

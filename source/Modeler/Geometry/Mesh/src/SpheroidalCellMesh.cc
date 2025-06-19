@@ -103,6 +103,11 @@ int SpheroidalCellMesh::exportToFile(QString pPath, MeshOutFormats::outputFormat
 			error = exportToFileOff(pPath, cells, pDivided);
 			break;
 		}
+		case MeshOutFormats::STL:
+		{
+			error = exportToFileSTL(pPath, cells, pDivided);
+			break;
+		}
 		default:
 		{
 			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES,
@@ -424,7 +429,7 @@ G4LogicalVolume* SpheroidalCellMesh::convertToG4Logical(
 		}
 	}
 
-	std::ofstream masses_file(output_txt_folder + "/MassesCell.txt", std::fstream::trunc);
+	std::ofstream masses_file(output_txt_folder + "/MassesCell.txt", std::ios::trunc);
 	masses_file << "MassNucleus Unit MassCytoplasm Unit" << "\n";
 	masses_file.close();
 

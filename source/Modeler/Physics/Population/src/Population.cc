@@ -1,6 +1,7 @@
 #include "Population.hh"
 #include <stdexcept>
 
+#include "Voronoi_3D_Mesh.hh"
 #include "cReader/zupply.hpp"
 #include "EnvironmentSettings.hh"
 #include "MeshFactory.hh"
@@ -169,6 +170,9 @@ void Population::loadPopulation() {
 	//Call of this function allow to write geometry informations in .gdml (HACKED FOR NOW)
 	//A sub call of SpheroidalCell:convertToG4Structure writes the masses of cells in a txt file
 	dynamic_cast<SpheroidalCellMesh*>(_voronoiMesh)->exportToFile("",MeshOutFormats::GDML , false);
+
+	// TODO move
+	dynamic_cast<Voronoi_3D_Mesh*>(_voronoiMesh)->exportToFile("output_stl/cell", MeshOutFormats::STL, true);
 
 	// create the vector of cells
 	{
