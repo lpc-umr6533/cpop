@@ -38,7 +38,7 @@ public:
 	/// \brief reset the mesh
 	void resetMesh() override;
 	/// \brief return the cell description
-	[[nodiscard]] QString getDescription() const override { return "SimpleDiscoidalCell"; }
+	[[nodiscard]] std::string getDescription() const override { return "SimpleDiscoidalCell"; }
 
 private:
 	/// \brief the nucleus

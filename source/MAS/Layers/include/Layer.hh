@@ -1,14 +1,11 @@
 #ifndef LAYER_HH
 #define LAYER_HH
 
-#include "Agent.hh"
-#include "SpatialDataStructure.hh"
-
-#include <QString>
-
 #include <map>
 #include <set>
 #include <vector>
+
+#include "Agent.hh"
 
 /// \brief Define a layer.
 /// a layer handle mainly the display procedures.
@@ -27,7 +24,7 @@ public:
 	};
 
 public:
-	Layer(QString, Layer* parent = nullptr, LayerType pType = LEAF);
+	Layer(std::string, Layer* parent = nullptr, LayerType layerType = LEAF);
 	virtual ~Layer();
 
 	/// \brief alpha display parameter getter
@@ -36,7 +33,7 @@ public:
 	void setAlpha(float pAlpha) { _alpha = pAlpha; }
 
 	/// \brief return the layer name / ID
-	[[nodiscard]] QString getName() const { return _name; }
+	[[nodiscard]] std::string getName() const { return _name; }
 
 	/// \brief display the layer and all the agent included
 	virtual void draw() const;
@@ -60,9 +57,9 @@ public:
 	virtual void init();
 
 	/// \brief layers getter
-	[[nodiscard]] std::map<QString, Layer*> getChilds() const	{return _childLayers;};
+	[[nodiscard]] auto const& getChilds() const	{ return _childLayers; }
 	/// \brief layer getter from hisID
-	[[nodiscard]] Layer* getChild(QString) const;
+	[[nodiscard]] Layer* getChild(std::string const&) const;
 	/// \brief return the fisrst child of the layer in the alphabetical order, Null if none
 	[[nodiscard]] Layer* getFirstChild() const;
 	/// \brief return n agent randomly. We assure their unicity
@@ -77,9 +74,9 @@ protected:
 	/// no setter because the WorldLayer will be able to add some but not the world
 	std::set<Agent*> _agents;
 
-	QString _name;                            ///< \brief the name of the layer
+	std::string _name;                        ///< \brief the name of the layer
 	float _alpha;                             ///< \brief the alpha parameter for the display
-	std::map<QString, Layer*>	_childLayers;   ///< \brief layers included inside this layer
+	std::map<std::string, Layer*>	_childLayers;   ///< \brief layers included inside this layer
 	std::vector<float> _color;		            ///< \brief the color of the layer for display
 
 	LayerType _layerType;                     ///< \brief the position of the layer inside the layer tree

@@ -100,8 +100,8 @@ void DynamicAgent<Kernel, Point, Vector>::draw() const {
 /// \param deltaT The duration during steps, in sec
 template<typename Kernel, typename Point, typename Vector>
 void DynamicAgent<Kernel, Point, Vector>::updatePosition(double deltaT) {
-	QString mess = "Failed to update the dynamic agent " + QString::number(Agent::getID()) + " dynamic agent not implemented for this templates parameters";
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Dynamic agent");
+	std::string mess = "Failed to update the dynamic agent " + std::to_string(Agent::getID()) + " dynamic agent not implemented for this templates parameters";
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Dynamic agent");
 }
 
 ////////// Update position specialization ///////

@@ -264,8 +264,6 @@ bool SimulationManager::runOneStep() {
 		std::cout.flush();
 	}
 
-	QString mess;
-
 	// update agent state to set if to execute or not
 	updateAgentToExecute();
 	// run them
@@ -285,8 +283,8 @@ bool SimulationManager::runOneStepWithThread()
 		agentGroup.second->start(SIMU_THREAD_PRIORITY);
 		if(DEBUG_SIMULATION_MANAGER)
 		{
-			QString mess = "Starting thread with ID : " + QString::number(agentGroup.second->getID());
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "SimulationManager");
+			std::string mess = "Starting thread with ID : " + std::to_string(agentGroup.second->getID());
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "SimulationManager");
 		}
 	}
 

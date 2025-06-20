@@ -10,7 +10,6 @@
 #include "XMLSettings.hh"
 
 #include <set>
-#include <map>
 
 using namespace XML::CPOP_Flag;
 
@@ -23,7 +22,7 @@ class SubEnvironment;
 template<typename Kernel, typename Point, typename Vector>
 class Environment : public World<Kernel, Point, Vector>, public Writable {
 public:
-	Environment(QString pName, std::set<SubEnvironment<Kernel, Point, Vector>*> pSubEnvs = std::set<SubEnvironment<Kernel, Point, Vector>*>());
+	Environment(std::string pName, std::set<SubEnvironment<Kernel, Point, Vector>*> pSubEnvs = std::set<SubEnvironment<Kernel, Point, Vector>*>());
 
 	/// \brief add a subEnvrionement to the environment.
 	void add(SubEnvironment<Kernel, Point, Vector>*);
@@ -35,11 +34,10 @@ private:
 };
 
 //////////////////////// FUNCTION DEFINITIONS //////////////////////////////////////////
- 
+
 template<typename Kernel, typename Point, typename Vector>
-Environment<Kernel, Point, Vector>::Environment(QString pName, std::set<SubEnvironment<Kernel, Point, Vector>*> pSubEnvs):
-	World<Kernel, Point, Vector>(pName),
-	Writable()
+Environment<Kernel, Point, Vector>::Environment(std::string pName, std::set<SubEnvironment<Kernel, Point, Vector>*> pSubEnvs):
+	World<Kernel, Point, Vector>(std::move(pName))
 {
 	for(auto itSE = pSubEnvs.begin(); itSE != pSubEnvs.end(); ++itSE)
 		add(*itSE);
@@ -50,7 +48,7 @@ template<typename Kernel, typename Point, typename Vector>
 void Environment<Kernel, Point, Vector>::add(SubEnvironment<Kernel, Point, Vector>* pSubEnv) {
 	assert(pSubEnv);
 	Layer::addChild(static_cast<WorldLayer<Kernel, Point, Vector>*>(pSubEnv));
-	
+
 	/// for mirrored environments !!!
 	if(subEnvs.find(pSubEnv) == subEnvs.end())
 		subEnvs.insert(pSubEnv);
@@ -63,23 +61,22 @@ void Environment<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) const {
 	// write imself
 	{
 		writer.writeStartElement(environment_flag);	// start env
-		writer.writeAttribute(dimension_flag, QString::number( Dimensioned_Layer<Kernel, Point, Vector>::getDimension()));
-		writer.writeAttribute(name_flag, Layer::getName());
+		writer.writeAttribute(dimension_flag, QString::number(Dimensioned_Layer<Kernel, Point, Vector>::getDimension()));
+		writer.writeAttribute(name_flag, QString::fromStdString(Layer::getName()));
 
 		// ask his child to write themself
-		std::map<QString, Layer*> childs = Layer::getChilds();
-		std::map<QString, Layer*>::iterator itChild;
-		for(itChild = childs.begin(); itChild != childs.end(); ++itChild) {
+		auto const& childs = Layer::getChilds();
+		for(auto itChild = childs.begin(); itChild != childs.end(); ++itChild) {
 			if(dynamic_cast<Writable*>(itChild->second))
-				dynamic_cast<Writable*>(itChild->second)->write(writer);	
+				dynamic_cast<Writable*>(itChild->second)->write(writer);
 		}
 		writer.writeEndElement(); // "Environment"
 	}
 
 	// export cells
-	std::set<const Cell<Kernel, Point, Vector>*> lCells;	
+	std::set<const Cell<Kernel, Point, Vector>*> lCells;
 	// request to all unique agent to print themself ( to make sure no doublon )
-	std::set<Agent*> lAllAgents = Layer::getUniqueAgentsAndSubAgents();
+	auto const& lAllAgents = Layer::getUniqueAgentsAndSubAgents();
 	{
 		writer.writeStartElement(cells_flag);	// start cell
 

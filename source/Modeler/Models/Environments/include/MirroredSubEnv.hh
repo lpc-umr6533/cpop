@@ -5,14 +5,14 @@
 #include "SimulatedSubEnv.hh"
 
 /// \brief Defined a sub environement that we will mirror from a simulated environment.
-/// That mean that we will duplicate agent included inside the simulatedEnvironement. But we will never 
+/// That mean that we will duplicate agent included inside the simulatedEnvironement. But we will never
 /// execute them from this object.
 /// @author Henri Payno
 template <typename Kernel, typename Point, typename Vector>
 class MirroredSubEnv : public SubEnvironment<Kernel, Point, Vector> {
 public:
 	MirroredSubEnv(
-		SimulatedSubEnv<Kernel, Point, Vector>* pToMirror, 
+		SimulatedSubEnv<Kernel, Point, Vector>* pToMirror,
 		QString pName, Vector pRelativePos, Vector pRelativeOrientation
 	);
 
@@ -33,12 +33,12 @@ private:
 /// \param pRelativeOrientation The relative orientation of the mirror from the simulated environment.
 template <typename Kernel, typename Point, typename Vector>
 MirroredSubEnv<Kernel, Point, Vector>::MirroredSubEnv(
-	SimulatedSubEnv<Kernel, Point, Vector>* pToMirror, 
-	QString pName, 
-	Vector pRelativePos, 
+	SimulatedSubEnv<Kernel, Point, Vector>* pToMirror,
+	QString pName,
+	Vector pRelativePos,
 	Vector pRelativeOrientation ):
-	SubEnvironment<Kernel, Point, Vector>(pToMirror->getParent(), pName), toMirror(pToMirror), 
-	relativePos(pRelativePos), 
+	SubEnvironment<Kernel, Point, Vector>(pToMirror->getParent(), pName), toMirror(pToMirror),
+	relativePos(pRelativePos),
 	relativeOrientation(pRelativeOrientation)
 {
 }
@@ -46,8 +46,8 @@ MirroredSubEnv<Kernel, Point, Vector>::MirroredSubEnv(
 template <typename Kernel, typename Point, typename Vector>
 void MirroredSubEnv<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) const {
 	writer.writeStartElement(mirrored_sub_env_flag);
-	writer.writeAttribute( name_flag, Layer::getName() );
-	writer.writeAttribute( mirrored_env_link_ID, toMirror->getName() );
+	writer.writeAttribute(name_flag, QString::fromStdString(Layer::getName()));
+	writer.writeAttribute(mirrored_env_link_ID, QString::fromStdString(toMirror->getName()));
 
 	writer.writeEndElement(); // "mirrored_sub_env_flag"
 }

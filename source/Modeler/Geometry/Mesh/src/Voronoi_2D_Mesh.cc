@@ -59,8 +59,8 @@ bool Voronoi_2D_Mesh::add(t_Cell_2* pToAdd) {
 	/// complete the map
 	auto* cell = dynamic_cast<DiscoidalCell*> (pToAdd);
 	if(!cell) {
-		QString mess = "Unable to add the cell " + QString::number(cell->getID()) + ", none discoidal cell";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Voronoi_2D_Mesh");
+		std::string mess = "Unable to add the cell " + std::to_string(cell->getID()) + ", none discoidal cell";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Voronoi_2D_Mesh");
 		return false;
 	}
 
@@ -114,10 +114,10 @@ void Voronoi_2D_Mesh::remove(t_Cell_2* pSpatialable) {
 ///					- 0 : success
 ///					- 1 : not implemented yet
 ///					- 2 : failed during export
-int Voronoi_2D_Mesh::exportToFile(QString pPath, MeshOutFormats::outputFormat pFormat, bool pDivided) {
-	switch(pFormat) {
+int Voronoi_2D_Mesh::exportToFile(std::string const& path, MeshOutFormats::outputFormat format, bool divided) {
+	switch(format) {
 		case MeshOutFormats::OFF :
-			return exportToFileOff(pPath, pDivided);
+			return exportToFileOff(path, divided);
 		default:
 		{
 			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, "Exporter do not deal with this kind of format yet", "Weighted Voronoi 2D");
@@ -231,8 +231,8 @@ std::vector<DiscoidalCell*> Voronoi_2D_Mesh::generateMesh() {
 
 	removeConflicts();
 
-	QString mess = "start exporting for "  + QString::number(_delaunayTriangulation.number_of_vertices() ) + " Cell(s) ";
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Vornoi_2DMesh");
+	std::string mess = "start exporting for "  + std::to_string(_delaunayTriangulation.number_of_vertices()) + " Cell(s) ";
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Vornoi_2DMesh");
 
 	std::vector<DiscoidalCell*> cells = getCellsStructure();
 
@@ -261,8 +261,8 @@ std::vector<DiscoidalCell*> Voronoi_2D_Mesh::generateMesh() {
 			unsigned int threadID = 0;
 			while(reffinementThreads.size() < nbThreadToCreate) {
 				if(VORONOI_2D_MESH_DEBUG) {
-					mess = "create a new thread of ID "  + QString::number(threadID);
-					InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Voronoi_2DMesh");
+					mess = "create a new thread of ID "  + std::to_string(threadID);
+					InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Voronoi_2DMesh");
 				}
 
 				reffinementThreads.push_back(
@@ -317,13 +317,13 @@ std::vector<DiscoidalCell*> Voronoi_2D_Mesh::generateMesh() {
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Direction_2.h>
 
-int Voronoi_2D_Mesh::exportToFileOff(QString pPath, bool pDivided) {
-	std::vector<DiscoidalCell*> cells = generateMesh();
+int Voronoi_2D_Mesh::exportToFileOff(std::string const& path, bool divided) {
+	auto cells = generateMesh();
 	int error = 0;
-	if(pDivided) {
-		error = exportToFileOff_divided(pPath, &cells);
+	if(divided) {
+		error = exportToFileOff_divided(path, cells);
 	} else {
-		error = exportToFileOff_undivided(pPath, &cells);
+		error = exportToFileOff_undivided(path, cells);
 	}
 
 	return error;
@@ -335,15 +335,12 @@ int Voronoi_2D_Mesh::exportToFileOff(QString pPath, bool pDivided) {
 ///					- 0 : success
 ///					- 1 : not implemented yet
 ///					- 2 : failed during export
-int Voronoi_2D_Mesh::exportToFileOff_divided(QString pPath, std::vector<DiscoidalCell*>* cells) {
+int Voronoi_2D_Mesh::exportToFileOff_divided(std::string const& path, DiscoidalCells const& cells) {
 	std::map<Point_3, unsigned long int> indexes;
 	unsigned long int iFile = 0;
-	for(auto const& curCell : *cells)
-	{
-		QString fileName = pPath + "_" + QString::number(iFile);
-		std::vector<DiscoidalCell*> cell;
-		cell.push_back(curCell);
-		if(exportToFileOff_undivided(fileName, &cell) != 0 )
+	for(auto const& curCell : cells) {
+		std::string fileName = path + "_" + std::to_string(iFile);
+		if(exportToFileOff_undivided(fileName, {curCell}) != 0 )
 			return 2;
 		iFile++;
 	}
@@ -356,29 +353,28 @@ int Voronoi_2D_Mesh::exportToFileOff_divided(QString pPath, std::vector<Discoida
 ///					- 0 : success
 ///					- 1 : not implemented yet
 ///					- 2 : failed during export
-int Voronoi_2D_Mesh::exportToFileOff_undivided(QString pPath, std::vector<DiscoidalCell*>* cells) {
+int Voronoi_2D_Mesh::exportToFileOff_undivided(std::string const& path, DiscoidalCells const& cells) {
 	std::map<Point_2, unsigned long int> indexes;
 	std::ofstream* voronoiOut = nullptr;
 
-	pPath += ".off";
-	voronoiOut = IO::OFF::createOffFileWithHeader(pPath.toStdString());
+	std::string fullPath = path + ".off";
+	voronoiOut = IO::OFF::createOffFileWithHeader(fullPath);
 
 	/// export voronoi points
 	std::set<Point_2> points;
-	std::vector<Segment_2>::iterator itPolyPts;
-	for(auto const& cell : *cells) {
+	for(auto const* cell : cells) {
 		// add shape points
-		for(itPolyPts = cell->shape_begin(); itPolyPts != cell->shape_end(); ++itPolyPts)
+		for(auto itPolyPts = cell->shape_begin(); itPolyPts != cell->shape_end(); ++itPolyPts)
 			points.insert(itPolyPts->source());
 	}
 
-	*voronoiOut << points.size() << " " << cells->size() << " 0" << std::endl;
+	*voronoiOut << points.size() << " " << cells.size() << " 0" << std::endl;
 	IO::OFF::exportVerticesToOff(points, indexes, voronoiOut);
 
 	// export polyhedrons
-	for(auto const& cell : *cells) {
+	for(auto const* cell : cells) {
 		*voronoiOut << cell->shape_size();
-		for(itPolyPts = cell->shape_begin(); itPolyPts != cell->shape_end(); ++itPolyPts)
+		for(auto itPolyPts = cell->shape_begin(); itPolyPts != cell->shape_end(); ++itPolyPts)
 			*voronoiOut << " " << indexes[itPolyPts->source()];
 		*voronoiOut << " " << IO::exportColor(cell->getColor()).toStdString() << std::endl; /// add a random color to each voronoi cell
 	}

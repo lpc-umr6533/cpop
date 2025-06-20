@@ -36,10 +36,9 @@ Box_Shape<Kernel, Point, Vector>::Box_Shape(Point pBottomLeft, Point pTopRight):
 }
 
 template<typename Kernel, typename Point, typename Vector>
-void Box_Shape<Kernel, Point, Vector>::draw() const
-{
-	QString mess = "unable to draw shape for this king of template parameter";
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Box shape");	
+void Box_Shape<Kernel, Point, Vector>::draw() const {
+	std::string mess = "unable to draw shape for this king of template parameter";
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Box shape");	
 }
 
 /// 2D specialization

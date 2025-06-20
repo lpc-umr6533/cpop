@@ -57,13 +57,15 @@ public:
 	/// \brief return true if nuclei radius are coherent
 	[[nodiscard]] bool checkNucleiRadius() const override = 0;
 
+	virtual void exportNucleiToFile(std::string const& path) const = 0;
+
 	/// \brief reset the mesh
 	void resetMesh() override;
 
 	/// \brief return the statistic about the current mesh
-	[[nodiscard]] QString getMeshStats(MeshOutFormats::outputFormat meshType) const;
+	[[nodiscard]] std::string getMeshStats(MeshOutFormats::outputFormat meshType) const;
 	/// \brief return the cell description
-	[[nodiscard]] QString getDescription() const override = 0;
+	[[nodiscard]] std::string getDescription() const override = 0;
 	/// \brief return the volume defined by the mesh
 	[[nodiscard]] double getMeshVolume(MeshOutFormats::outputFormat meshType) const override;
 	// \brief return the volume occupy by the cell mesh without nuclei meshes volumes
@@ -84,11 +86,11 @@ public:
 
 #if defined(WITH_GEANT_4) || defined(WITH_GDML_EXPORT)
 	/// \brief convert the membrane shape to a G4 entity
-	virtual G4LogicalVolume* convertMembraneToG4(QString);
+	virtual G4LogicalVolume* convertMembraneToG4(std::string const&);
 	/// \brief convert the cell geometries (including nuclei) to G4 geometries
 	virtual G4PVPlacement* convertToG4Structure(
 		G4LogicalVolume* pMother,
-		QString pName,
+		std::string const& pName,
 		bool checkOverLaps,
 		const std::map<SpheroidalCell*, std::set<const SpheroidalCell*>>* pNeighbourCells,
 		unsigned int pNbFacet,

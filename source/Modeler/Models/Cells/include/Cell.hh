@@ -87,15 +87,15 @@ public:
 	/// \brief reset the mesh
 	virtual void resetMesh() = 0;
 	/// \brief return the cell description
-	[[nodiscard]] virtual QString getDescription() const = 0;
+	[[nodiscard]] virtual std::string getDescription() const = 0;
 	/// \brief return the volume defined by the mesh
 	virtual Kernel getMeshVolume(MeshOutFormats::outputFormat meshType) const = 0;
 	/// \brief will return cell mesh specificities for R.
 	/// By default : no specifities.
 	/// \warning must be in correlation with the R treatment.
-	[[nodiscard]] QString addStatsData() const override;
+	[[nodiscard]] std::string addStatsData() const override;
 	/// \brief inform about the statistics exported by the meitter
-	[[nodiscard]] QString writeStatsHeader() const override;
+	[[nodiscard]] std::string writeStatsHeader() const override;
 	/// \brief print cell information (used also to save the cell on a .txt file)
 	void write(QXmlStreamWriter&) const override;
 	/// \brief write the cell properties
@@ -103,9 +103,9 @@ public:
 	/// \brief write the nuclei properties
 	void writeNuclei(QXmlStreamWriter&) const;
 	/// \brief return the position to be saved on the stats files
-	[[nodiscard]] QString getPositionForStates() const;
+	[[nodiscard]] std::string getPositionForStates() const;
 	/// \brief return the flag used for each position
-	[[nodiscard]] QString getPositionFlag() const;
+	[[nodiscard]] std::string getPositionFlag() const;
 	/// \brief return true id the point is in one of the nucleoplasm
 	bool hasInNucleoplasm(Point) const;
 
@@ -129,8 +129,6 @@ protected:
 
 #include <InformationSystemManager.hh>
 #include <Scheduler.hh>
-
-#include <QString>
 
 /// \brief  constructor
 /// \param pCellProperties The properties of the cell line
@@ -171,12 +169,13 @@ Cell<Kernel, Point, Vector>::~Cell() {
 }
 
 #include "File_CPOP_Utils.hh"
+
 /// \param writer where to redirect writing of information
 template<typename Kernel, typename Point, typename Vector>
 void Cell<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) const {
 	writer.writeStartElement(cell_flag);
 	/// write the cell dimension
-	writer.writeAttribute(dimension_flag, QString::number(getDimension()) );
+	writer.writeAttribute(dimension_flag, QString::fromStdString(std::to_string(getDimension())));
 	/// write cell attributes
 	writeAttributes(writer);
 	/// write nuclei attributes
@@ -187,10 +186,10 @@ void Cell<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) const {
 /// \param writer where to redirect writing of information
 template<typename Kernel, typename Point, typename Vector>
 void Cell<Kernel, Point, Vector>::writeAttributes(QXmlStreamWriter& writer) const {
-	writer.writeAttribute(agent_ID_flag, QString::number(Agent::getID()));
-	writer.writeAttribute(mass_flag, QString::number(getMass()));
-	writer.writeAttribute(cell_properties_ID_flag, QString::number(this->getCellProperties()->getID()));
-	writer.writeAttribute(life_cycle_flag, QString::number(getLifeCycle()));
+	writer.writeAttribute(agent_ID_flag, QString::fromStdString(std::to_string(Agent::getID())));
+	writer.writeAttribute(mass_flag, QString::fromStdString(std::to_string(getMass())));
+	writer.writeAttribute(cell_properties_ID_flag, QString::fromStdString(std::to_string(this->getCellProperties()->getID())));
+	writer.writeAttribute(life_cycle_flag, QString::fromStdString(std::to_string(getLifeCycle())));
 
 	IO::CPOP::writePoint(position_flag, writer, Spatialable<Kernel, Point, Vector>::getPosition());
 }
@@ -218,8 +217,8 @@ int Cell<Kernel, Point, Vector>::exec() {
 	/// then call dynamic agent exec (update position)
 	DynamicAgent<Kernel, Point, Vector>::exec();
 	if(DEBUG_CELL) {
-		QString mess = "agent " + QString::number( Agent::getID()) + " running at t = " + QString::number(Scheduler::getInstance()->getRunningTime());
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess.toStdString(), "Cell");
+		std::string mess = "agent " + std::to_string(Agent::getID()) + " running at t = " + std::to_string(Scheduler::getInstance()->getRunningTime());
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess, "Cell");
 	}
 
 	return 0;
@@ -229,8 +228,8 @@ int Cell<Kernel, Point, Vector>::exec() {
 template<typename Kernel, typename Point, typename Vector>
 int Cell<Kernel, Point, Vector>::init() {
 	if(DEBUG_CELL) {
-		QString mess = " Initialization of agent" + QString::number(Agent::getID());
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess.toStdString(), "Cell");
+		std::string mess = " Initialization of agent" + std::to_string(Agent::getID());
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess, "Cell");
 	}
 
 	return 0;
@@ -241,8 +240,8 @@ template<typename Kernel, typename Point, typename Vector>
 int Cell<Kernel, Point, Vector>::start() {
 	DynamicAgent<Kernel, Point, Vector>::start();
 	if(DEBUG_CELL) {
-		QString mess = " start agent " + QString::number( Agent::getID());
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess.toStdString(), "Cell");
+		std::string mess = " start agent " + std::to_string(Agent::getID());
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess, "Cell");
 	}
 
 	return 0;
@@ -253,8 +252,8 @@ template<typename Kernel, typename Point, typename Vector>
 int Cell<Kernel, Point, Vector>::stop() {
 	DynamicAgent<Kernel, Point, Vector>::stop();
 	if(DEBUG_CELL) {
-		QString mess = " stop agent " + QString::number( Agent::getID());
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess.toStdString(), "Cell");
+		std::string mess = " stop agent " + std::to_string(Agent::getID());
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess, "Cell");
 	}
 
 	return 0;
@@ -285,8 +284,8 @@ Point Cell<Kernel, Point, Vector>::getSpotOnOrganelle(Organelle Organelle) const
 		case _CELL_MEMBRANE:    return getSpotOnCellMembrane();
 		default:
 		{
-			QString mess = " unknow Organelle requested for a spot. Returning spot on O";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Cell");
+			std::string mess = " unknow Organelle requested for a spot. Returning spot on O";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Cell");
 			return Point();
 		}
 	}
@@ -304,20 +303,20 @@ template<>
 Dimension Cell<double, Point_3, Vector_3>::getDimension() const;
 
 template<typename Kernel, typename Point, typename Vector>
-QString Cell<Kernel, Point, Vector>::addStatsData() const {
+std::string Cell<Kernel, Point, Vector>::addStatsData() const {
 	return (
-		QString::number(Agent::getID()) + "\t" +
-		QString::number(_cellProperties->getCellType()) + "\t" +
-		QString::number(_state) + "\t" +
-		QString::number(_mass) + "\t" +
-		QString::number(_age) + "\t" +
+		std::to_string(Agent::getID()) + "\t" +
+		std::to_string(_cellProperties->getCellType()) + "\t" +
+		std::to_string(_state) + "\t" +
+		std::to_string(_mass) + "\t" +
+		std::to_string(_age) + "\t" +
 		getPositionForStates()
 	);
 }
 
 template<typename Kernel, typename Point, typename Vector>
-QString Cell<Kernel, Point, Vector>::writeStatsHeader() const {
-	return QString(
+std::string Cell<Kernel, Point, Vector>::writeStatsHeader() const {
+	return std::string(
 		Settings::Statistics::Cell_ID_flag + "\t" +
 		Settings::Statistics::Cell_Type_flag + "\t" +
 		Settings::Statistics::Cell_State_flag + "\t" +
@@ -341,25 +340,25 @@ bool Cell<Kernel, Point, Vector>::hasInNucleoplasm(Point pt) const {
 }
 
 template<typename Kernel, typename Point, typename Vector>
-QString Cell<Kernel, Point, Vector>::getPositionForStates() const {
+std::string Cell<Kernel, Point, Vector>::getPositionForStates() const {
 	return {};
 }
 
 template<>
-QString Cell<double, Point_2, Vector_2>::getPositionForStates() const;
+std::string Cell<double, Point_2, Vector_2>::getPositionForStates() const;
 
 template<>
-QString Cell<double, Point_3, Vector_3>::getPositionForStates() const;
+std::string Cell<double, Point_3, Vector_3>::getPositionForStates() const;
 
 template<typename Kernel, typename Point, typename Vector>
-QString Cell<Kernel, Point, Vector>::getPositionFlag() const {
+std::string Cell<Kernel, Point, Vector>::getPositionFlag() const {
 	return {};
 }
 
 template<>
-QString Cell<double, Point_2, Vector_2>::getPositionFlag() const;
+std::string Cell<double, Point_2, Vector_2>::getPositionFlag() const;
 
 template<>
-QString Cell<double, Point_3, Vector_3>::getPositionFlag() const;
+std::string Cell<double, Point_3, Vector_3>::getPositionFlag() const;
 
 #endif

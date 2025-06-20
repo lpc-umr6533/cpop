@@ -6,8 +6,6 @@
 #include <set>
 #include <cassert>
 
-#include <QString>
-
 /// \brief Define a spatial data structure able to handle 2D or 3D spatialables
 /// @author Henri Payno
 template<typename Kernel, typename Point, typename Vector>
@@ -16,7 +14,7 @@ class SpatialDataStructure
 	using t_SpatialableAgent = SpatialableAgent<Kernel, Point, Vector>;	///< \brief a spatialable agent depending on SDS dimensions
 
 public:
-	SpatialDataStructure(const QString);
+	SpatialDataStructure(std::string);
 	SpatialDataStructure(SpatialDataStructure const&);
 	virtual ~SpatialDataStructure();
 
@@ -37,25 +35,24 @@ public:
 	/// \brief return the list of neighbours
 	virtual std::set<const t_SpatialableAgent*> getNeighbours(const t_SpatialableAgent*) const = 0;
 	/// \brief name getter
-	[[nodiscard]] QString getName() const	{return _name;};
+	[[nodiscard]] std::string getName() const	{ return _name; }
 	/// \brief return the contained agent
 	std::set<const t_SpatialableAgent*> getContainedSpatialables() const { return _containedSpatialables; }
 
 protected:
 	bool _iterative; ///< \brief Is the stapial data will include agents from layer child
 	std::set<const t_SpatialableAgent*> _containedSpatialables;	///< \brief the spatialable agent contained on the SDS
-	const QString _name; ///< \brief name of the SDS
+	const std::string _name; ///< \brief name of the SDS
 };
 
 //////////////////////////////// TEMPLATE FUNCTIONS DEFINITION ///////////////////////////////////
 
 #include <InformationSystemManager.hh>
-#include <QString>
 
 /// \param pName the name to set to the SDS
 template<typename Kernel, typename Point, typename Vector>
-SpatialDataStructure<Kernel, Point, Vector>::SpatialDataStructure(const QString pName):
-	_name(pName)
+SpatialDataStructure<Kernel, Point, Vector>::SpatialDataStructure(std::string name):
+	_name(std::move(name))
 {
 }
 

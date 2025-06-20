@@ -55,8 +55,8 @@ void RoundCellProperties::writeProperties(QXmlStreamWriter& writer) const {
 /// \param pLifeCycle The life state we want the radius for
 CellVariableAttribute<double> RoundCellProperties::getMembraneRadius(LifeCycles::LifeCycle pLifeCycle) const {
 	if(_membraneRadius.find(pLifeCycle) == _membraneRadius.end()) {
-		QString mes = "unknow membrane radius for requested LifeCycle" + QString::number(pLifeCycle);
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mes.toStdString(), "Cell properties");
+		std::string mes = "unknow membrane radius for requested LifeCycle" + std::to_string(pLifeCycle);
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mes, "Cell properties");
 		return {0., 0.};
 	}
 

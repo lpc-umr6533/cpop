@@ -70,8 +70,8 @@ Point_2 SimpleDiscoidalCell::getNucleusCenter(eNucleusPosType nucleusPositionTyp
 		}
 		default:
 		{
-			QString mess = "unknow nucleusPositionType" + QString::number(nucleusPositionType) + ", Set tposition to the barycenter ";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "SpheroidalCellMesh");
+			std::string mess = "unknow nucleusPositionType" + std::to_string(nucleusPositionType) + ", Set tposition to the barycenter ";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "SpheroidalCellMesh");
 			return getNucleusCenter(BARYCENTER);
 		}
 	}

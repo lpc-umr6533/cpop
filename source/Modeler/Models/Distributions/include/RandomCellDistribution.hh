@@ -5,8 +5,8 @@
 #include "RandomEngineManager.hh"
 #include "SimulatedSubEnv.hh"
 #include "RoundCell.hh"
-#include "Round_Shape.hh"
 #include "RoundNucleus.hh"
+#include "RoundCellProperties.hh"
 
 /// \brief Define a random cell distribution inside a world.
 /// @author Henri Payno
@@ -49,9 +49,9 @@ void RandomCellDistribution<Kernel, Point, Vector>::distribute(
 	assert(pSubEnv);
 
 	if(DEBUG_RANDOM_CELL_DISTRIB) {
-		QString mess = "ask for distribution with template parameters : " +
-		QString(typeid(Kernel).name()) + ", " + QString(typeid(Point).name()) + ", " + QString(typeid(Vector).name()) + ", ";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "RandomCellDistribution");
+		std::string mess = std::string{"ask for distribution with template parameters : "} +
+		typeid(Kernel).name() + ", " + typeid(Point).name() + ", " + typeid(Vector).name() + ", ";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "RandomCellDistribution");
 	}
 
 	int nbCellGenerated = 0;
@@ -86,8 +86,8 @@ void RandomCellDistribution<Kernel, Point, Vector>::distribute(
 	}
 
 	if(DEBUG_RANDOM_CELL_DISTRIB) {
-		QString message = "nb cell created : " + QString::number(nbCellGenerated);
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, message.toStdString(), "Random distribution" );
+		std::string message = "nb cell created : " + std::to_string(nbCellGenerated);
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, message, "Random distribution" );
 	}
 }
 

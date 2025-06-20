@@ -1,8 +1,8 @@
 #include "simulationEnvironment.hh"
 
-#include "Grid.hh"
-#include "Spheroid.hh"
 #include "SpheroidalCellMesh.hh"
+#include "MaterialManager.hh"
+
 #include <G4String.hh>
 #include <G4UnitsTable.hh>
 #include <cmath>
@@ -237,6 +237,6 @@ void SimulationEnvironment::savePopulation(std::string const& filename) {
 void SimulationEnvironment::exportToVis(std::string const& filename, bool divided) {
 	int error;
 	t_Mesh_3* voronoiMesh = MeshFactory::getInstance()->create_3DMesh(&error, simulatedEnv, MeshTypes::Round_Cell_Tesselation, numberOfFacetPerCell);
-	voronoiMesh->exportToFile(QString::fromStdString(filename), MeshOutFormats::OFF, divided);
+	voronoiMesh->exportToFile(filename, MeshOutFormats::OFF, divided);
 	delete voronoiMesh;
 }

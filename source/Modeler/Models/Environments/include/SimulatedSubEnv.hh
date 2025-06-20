@@ -1,7 +1,6 @@
 #ifndef SIMULATED_SUB_ENVIRONMENT_HH
 #define SIMULATED_SUB_ENVIRONMENT_HH
 
-#include "ActiveDelimitation.hh"
 #include "SpatialDelimitation.hh"
 
 #include "Environment.hh"
@@ -27,11 +26,10 @@ class SimulatedSubEnv : public SubEnvironment<Kernel, Point, Vector>
 public:
 	SimulatedSubEnv(
 		Environment<Kernel, Point, Vector>* pParent,
-		QString pName,
+		std::string pName,
 		SpatialDelimitation<Kernel, Point, Vector>* pDelimitation,
 		std::set<t_Portal *> pPortal = std::set<t_Portal *>()
 	);
-	~SimulatedSubEnv();
 
 	/// \brief add a portal to the simulation
 	void addPortal(t_Portal* portal);
@@ -47,10 +45,10 @@ public:
 	SpatialDelimitation<Kernel, Point, Vector>* getSpatialDelimitation() const { return _delimitation; };
 
 	/// \brief draw the simulated sub environment
-	virtual void draw() const;
+	void draw() const override;
 
 	/// \brief print cell information (used also to save the cell on a .txt file)
-	virtual void write(QXmlStreamWriter&) const;
+	void write(QXmlStreamWriter&) const override;
 
 private:
 	SpatialDelimitation<Kernel, Point, Vector>* _delimitation;  ///< \brief the spatial delimitation of this sub environment.
@@ -71,10 +69,10 @@ static constexpr char LAYER_DELIMITATION_NAME[] = "Delimitation";
 template <typename Kernel, typename Point, typename Vector>
 SimulatedSubEnv<Kernel, Point, Vector>::SimulatedSubEnv(
 	Environment<Kernel, Point, Vector>* pParent,
-	QString pName,
+	std::string pName,
 	SpatialDelimitation<Kernel, Point, Vector>* pDelimitation,
 	std::set<t_Portal*> pPortal) :
-	SubEnvironment<Kernel, Point, Vector>(pParent, pName),
+	SubEnvironment<Kernel, Point, Vector>(pParent, std::move(pName)),
 	_delimitation(pDelimitation),
 	_portals(pPortal)
 {
@@ -92,12 +90,6 @@ SimulatedSubEnv<Kernel, Point, Vector>::SimulatedSubEnv(
 
 	/// by default delimitaion layer is red
 	setDelimitationsColor(Utils::Color::Red());
-}
-
-template <typename Kernel, typename Point, typename Vector>
-SimulatedSubEnv<Kernel, Point, Vector>::~SimulatedSubEnv()
-{
-	/// TODO : delete portals
 }
 
 /// \param portal The portal to ad to the sub environement
@@ -151,7 +143,7 @@ template <typename Kernel, typename Point, typename Vector>
 void SimulatedSubEnv<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) const {
 	/// write himself
 	writer.writeStartElement(simulated_sub_env_flag);
-	writer.writeAttribute( name_flag, Layer::getName() );
+	writer.writeAttribute(name_flag, QString::fromStdString(Layer::getName()));
 
 	/// ask children to write themself
 	auto const& childs = Layer::getChilds();

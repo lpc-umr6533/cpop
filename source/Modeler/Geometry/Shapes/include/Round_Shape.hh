@@ -37,8 +37,8 @@ Round_Shape<Kernel, Point, Vector>::Round_Shape(Kernel pRadius):
 
 template<typename Kernel, typename Point, typename Vector>
 void Round_Shape<Kernel, Point, Vector>::draw() const {
-	QString mess = "unable to draw shape for this king of template parameter";
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Round shape");
+	std::string mess = "unable to draw shape for this king of template parameter";
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Round shape");
 }
 
 /// 2D specialization

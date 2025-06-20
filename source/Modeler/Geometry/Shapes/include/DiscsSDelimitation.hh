@@ -65,12 +65,12 @@ void DiscsSDelimitation<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) 
 	{
 		/// write internal radius
 		writer.writeStartElement(internalDelimitation_flag);
-		writer.writeAttribute(radius_flag, QString::number(_internalRadius) );
+		writer.writeAttribute(radius_flag, QString::fromStdString(std::to_string(_internalRadius)));
 		writer.writeEndElement();
 
 		/// write external radius
 		writer.writeStartElement(externalDelimitation_flag);
-		writer.writeAttribute(radius_flag, QString::number(_externalRadius) );
+		writer.writeAttribute(radius_flag, QString::fromStdString(std::to_string(_externalRadius)));
 		writer.writeEndElement();
 
 		/// write center
@@ -83,8 +83,8 @@ void DiscsSDelimitation<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) 
 /// \return 	 				The spot according to a type of distribution
 template<typename Kernel, typename Point, typename Vector>
 Point DiscsSDelimitation<Kernel, Point, Vector>::getSpot(Distribution::DistributionType pDistributionType) const {
-	QString mess = "getSpot not defined for this type of template parameter";
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "DiscSDelimitation");
+	std::string mess = "getSpot not defined for this type of template parameter";
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "DiscSDelimitation");
 	return {};
 }
 
@@ -100,8 +100,8 @@ Point_3 DiscsSDelimitation<double, Point_3, Vector_3>::getSpot(Distribution::Dis
 
 template<typename Kernel, typename Point, typename Vector>
 bool DiscsSDelimitation<Kernel, Point, Vector>::isIn(Point) const {
-	QString mess = "hasIn undefined for this type of template parameter";
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "DiscSDelimitation");
+	std::string mess = "hasIn undefined for this type of template parameter";
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "DiscSDelimitation");
 	return false;
 }
 
@@ -116,8 +116,8 @@ bool DiscsSDelimitation<double, Point_3, Vector_3>::isIn(Point_3) const;
 
 template<typename Kernel, typename Point, typename Vector>
 BoundingBox<Point> DiscsSDelimitation<Kernel, Point, Vector>::createBoundingBox() {
-	QString mess = "Unable to generate bounding box for this configuration";
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "DiscSDelimitation");
+	std::string mess = "Unable to generate bounding box for this configuration";
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "DiscSDelimitation");
 	return BoundingBox<Point>(Point(), Point());
 }
 

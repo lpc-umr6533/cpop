@@ -2,8 +2,6 @@
 #include "InformationSystemManager.hh"
 #include "IDManager.hh"
 
-#include <QString>
-
 /// \param pAnimat the animation/ behavior of the Agent
 /// \param pBody the body ( physical entity ) of the agent
 Agent::Agent(Body* pBody) :
@@ -56,14 +54,14 @@ int Agent::goToNextLogicalState() {
 		}
 		case DEAD:
 		{
-			QString mess = "Agent - " + QString::number(_id) + " - has no next logical state, he already reachs the Dead state";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Agent");
+			std::string mess = "Agent - " + std::to_string(_id) + " - has no next logical state, he already reachs the Dead state";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Agent");
 			return 1;
 		}
 		default:
 		{
-			QString mess = "Agent - " + QString::number(_id) + " has an unknow state";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Agent");
+			std::string mess = "Agent - " + std::to_string(_id) + " has an unknow state";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Agent");
 			return 2;
 		}
 	}

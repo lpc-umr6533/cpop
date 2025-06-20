@@ -28,9 +28,9 @@ public:
 	virtual void writeAttributes(QXmlStreamWriter& writer) const;
 
 	/// \brief will return cell mesh specificities for R.
-	[[nodiscard]] virtual QString addStatsData() const;
+	[[nodiscard]] virtual std::string addStatsData() const;
 	/// \brief inform about the statistics exported by the meitter
-	[[nodiscard]] virtual QString writeStatsHeader() const;
+	[[nodiscard]] virtual std::string writeStatsHeader() const;
 
 private:
 	/// \brief a pointer to the body, converted on the round shape he must be
@@ -53,14 +53,14 @@ RoundCell<Kernel, Point, Vector>::RoundCell(const CellProperties* pCellPropertie
 	_shape->setCrossable(false);	// a cell is never crossable
 	_shape->setDeformable(true);
 	DynamicAgent<Kernel, Point, Vector>::setPosition(pOrigin);
-	Agent::_body = static_cast<Body*> (_shape);
+	Agent::_body = static_cast<Body*>(_shape);
 }
 
 /// \param writer the exporter used to write statistical attributes
 template<typename Kernel, typename Point, typename Vector>
 void RoundCell<Kernel, Point, Vector>::writeAttributes(QXmlStreamWriter& writer) const {
 	Cell<Kernel, Point, Vector>::writeAttributes(writer);
-	writer.writeTextElement(radius_flag, 	QString::number(getRadius()));
+	writer.writeTextElement(radius_flag, QString::fromStdString(std::to_string(getRadius())));
 }
 
 template <typename Kernel, typename Point, typename Vector>
@@ -76,13 +76,13 @@ void RoundCell<Kernel, Point, Vector>::setRadius(Kernel pRadius) {
 }
 
 template <typename Kernel, typename Point, typename Vector>
-QString RoundCell<Kernel, Point, Vector>::addStatsData() const {
-	return Cell<Kernel, Point, Vector>::addStatsData() + QString("\t" + QString::number(getRadius()));
+std::string RoundCell<Kernel, Point, Vector>::addStatsData() const {
+	return Cell<Kernel, Point, Vector>::addStatsData() + std::string("\t" + std::to_string(getRadius()));
 }
 
 template <typename Kernel, typename Point, typename Vector>
-QString RoundCell<Kernel, Point, Vector>::writeStatsHeader() const {
-	return ( Cell<Kernel, Point, Vector>::writeStatsHeader() +"\t" + Settings::Statistics::Cell_Radius_flag);
+std::string RoundCell<Kernel, Point, Vector>::writeStatsHeader() const {
+	return Cell<Kernel, Point, Vector>::writeStatsHeader() + "\t" + Settings::Statistics::Cell_Radius_flag;
 }
 
 #endif

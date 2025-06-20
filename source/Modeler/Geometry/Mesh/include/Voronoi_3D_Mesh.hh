@@ -28,6 +28,9 @@ class Voronoi_3D_Mesh : public Mesh<double, Point_3, Vector_3>, public Delaunay_
 	using Delaunay_3D_SDS::remove;  // overloaded function
 
 public:
+	using SpheroidalCells = std::vector<SpheroidalCell*>;
+
+public:
 	Voronoi_3D_Mesh(unsigned int pMaxNbFacet, double delta, std::set<t_Cell_3*> pInitSpatialables = std::set<t_Cell_3*>());
 	~Voronoi_3D_Mesh() override;
 
@@ -36,7 +39,7 @@ public:
 	/// \brief remove a point to the mesh
 	void remove(t_Cell_3*) override;
 	/// \brief the mesh exporter
-	int exportToFile(QString, MeshOutFormats::outputFormat, bool) override;
+	int exportToFile(std::string const&, MeshOutFormats::outputFormat, bool) override;
 	/// \brief the bounding box getter.
 	K::Iso_cuboid_3 getBoundingBox() const;
 
@@ -60,15 +63,19 @@ public:
 
 protected:
 	/// \brief export to an off file
-	virtual int exportToFileOff(QString pPath, std::vector<SpheroidalCell*> cells, bool pDivided);
+	virtual int exportToFileOff(std::string const& path, SpheroidalCells const& cells, bool divided);
 	/// \brief export all cells on the same file
-	virtual int exportToFileOff_undivided(QString pPath, std::vector<SpheroidalCell*>*);
+	virtual int exportToFileOff_undivided(std::string const& path, SpheroidalCells const& cells);
 	/// \brief export all cells on the same file
-	virtual int exportToFileOff_divided(QString pPath, std::vector<SpheroidalCell*>*);
+	virtual int exportToFileOff_divided(std::string const& path, SpheroidalCells const& cells);
 
-	virtual int exportToFileSTL(QString pPath, std::vector<SpheroidalCell*> cells, bool pDivided);
-	virtual int exportToFileSTL_undivided(QString pPath, std::vector<SpheroidalCell*>*);
-	virtual int exportToFileSTL_divided(QString pPath, std::vector<SpheroidalCell*>*);
+	virtual int exportToFileSTL(std::string const& path, SpheroidalCells const& cells, bool divided);
+	virtual int exportToFileSTL_undivided(std::string const& path, SpheroidalCells const& cells);
+	virtual int exportToFileSTL_divided(std::string const& path, SpheroidalCells const& cells);
+
+	virtual int exportNucleiToFile(std::string const& path, SpheroidalCells const&, bool divided);
+	virtual int exportNucleiToFileUndivided(std::string const& path, SpheroidalCells const&);
+	virtual int exportNucleiToFileDivided(std::string const& path, SpheroidalCells const&);
 
 	/// \brief get all polygons from the delaunay mesh.
 	std::vector<SpheroidalCell*> getCellsStructure();

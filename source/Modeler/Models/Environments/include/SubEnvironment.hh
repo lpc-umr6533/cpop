@@ -6,8 +6,6 @@
 #include "WorldLayer.hh"
 #include "Writable.hh"
 
-#include <QString>
-
 /// \brief enumeration of option for the getAgent() function
 enum GET_AGENT_OPTIONS {
 	WITH_DELIMITATION,    /// all agent type
@@ -25,7 +23,7 @@ class SubEnvironment : public WorldLayer<Kernel, Point, Vector>, public Writable
 	using Layer::getAgents;
 
 public:
-	SubEnvironment(Environment<Kernel, Point, Vector>* pParent, QString name);
+	SubEnvironment(Environment<Kernel, Point, Vector>* pParent, std::string name);
 
 	/// \brief the parent getter, return the environement he is part of.
 	Environment<Kernel, Point, Vector>* getParent() const	{ return parent;};
@@ -45,9 +43,8 @@ protected:
 /// \param pParent the parent of this subEnvironment
 /// \param pName The name of the creted SubEnvironment
 template<typename Kernel, typename Point, typename Vector>
-SubEnvironment<Kernel, Point, Vector>::SubEnvironment(Environment<Kernel, Point, Vector>* pParent, QString pName):
-	WorldLayer<Kernel, Point, Vector>(pName, pParent),
-	Writable(),
+SubEnvironment<Kernel, Point, Vector>::SubEnvironment(Environment<Kernel, Point, Vector>* pParent, std::string pName):
+	WorldLayer<Kernel, Point, Vector>(std::move(pName), pParent),
 	parent(pParent)
 {
 }

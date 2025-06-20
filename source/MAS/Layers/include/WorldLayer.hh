@@ -3,10 +3,7 @@
 
 #include "Dimensioned_Layer.hh"
 
-#include <map>
 #include <set>
-
-#include <QString>
 
 /// \brief Define a world layer. A world layer can include agent
 /// \details
@@ -18,8 +15,8 @@
 template<typename Kernel, typename Point, typename Vector>
 class WorldLayer : public Dimensioned_Layer<Kernel, Point, Vector> {
 public:
-	/// \warning : the ID (QString) must be unique in order to avoid issues.
-	WorldLayer(QString pName, Layer* parent);
+	/// \warning : the ID (std::string) must be unique in order to avoid issues.
+	WorldLayer(std::string pName, Layer* parent);
 	/// \brief destructor
 	virtual ~WorldLayer();
 
@@ -51,8 +48,8 @@ public:
 #define LIGHT_GRAY 0.25f
 
 template<typename Kernel, typename Point, typename Vector>
-WorldLayer<Kernel, Point, Vector>::WorldLayer(QString pName, Layer* pParent) :
-	Dimensioned_Layer<Kernel, Point, Vector>(pName, pParent)
+WorldLayer<Kernel, Point, Vector>::WorldLayer(std::string pName, Layer* pParent) :
+	Dimensioned_Layer<Kernel, Point, Vector>(std::move(pName), pParent)
 {
 	///< set the color of the layer for display
 	Layer::_color = std::vector<float>(3, LIGHT_GRAY);
@@ -103,8 +100,8 @@ void WorldLayer<Kernel, Point, Vector>::draw() const {
 		(*it)->draw();
 
 	if(DEBUG_WORLD_LAYER) {
-		QString message = "layer " + Layer::_name + " displaying : " + QString::number(Layer::_agents.size());
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, message.toStdString(), "WorldLayer");
+		std::string message = "layer " + Layer::_name + " displaying : " + std::to_string(Layer::_agents.size());
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, message, "WorldLayer");
 	}
 }
 

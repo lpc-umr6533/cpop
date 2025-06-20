@@ -28,7 +28,7 @@ public:
 	virtual int update() = 0;
 
 	/// \brief export the structure to a file. For checking for example.
-	[[nodiscard]] virtual int exportToFile(QString) const;
+	[[nodiscard]] virtual int exportToFile(std::string const&) const;
 	/// \brief return the neighbors we want to interact with
 	virtual std::set<const t_SpatialableAgent*> getNeighbours(const t_SpatialableAgent*) const = 0;
 	/// \brief return the compatible shape types of the spatial data structure
@@ -39,7 +39,7 @@ public:
 
 protected:
 	std::set<ShapeTypes::ShapeType> compShapes;	///< \brief the ompatible shapes with this SDS
-};	
+};
 
 ////////////////////////////// FUNCTION DEFINITIONS ////////////////////////////////
 
@@ -47,20 +47,20 @@ protected:
 /// \param <pCompatibleShapes> {The set of compatible shapes}
 template<typename Kernel, typename Point, typename Vector>
 CellPopulationSDS<Kernel, Point, Vector>::CellPopulationSDS(QString pName, std::set<ShapeTypes::ShapeType> pCompatibleShapes):
-	SpatialDataStructure<Kernel, Point, Vector>(pName), 
+	SpatialDataStructure<Kernel, Point, Vector>(pName),
 	compShapes(std::move(pCompatibleShapes))
 {
 }
 
 /// \param <pOutFile> {The out put file}
-/// \return { return : 
+/// \return { return :
 ///					- 0 : sucess.
 ///					- 1 : not implemented yet
 ///	}
 template<typename Kernel, typename Point, typename Vector>
-int CellPopulationSDS<Kernel, Point, Vector>::exportToFile(QString pOutFile) const {
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, 
-		"export not implemented yet", 
+int CellPopulationSDS<Kernel, Point, Vector>::exportToFile(std::string const&) const {
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES,
+		"export not implemented yet",
 		SpatialDataStructure<Kernel, Point, Vector>::getName().toStdString()
 	);
 	return 1;

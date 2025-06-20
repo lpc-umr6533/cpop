@@ -31,7 +31,7 @@ void Round_Shape<double, Point_3, Vector_3>::draw() const {
 	glScalef(_radius, _radius, _radius);
 	Utils::OpenGLUtils::drawSphere(NB_LINES_PER_AXE_SPHERE, NB_LINES_PER_AXE_SPHERE);
 	if(DEBUG_ROUND_SHAPE) {
-		QString message = "Drawing spheroid of radius : " + QString::number(_radius);
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, message.toStdString(), "Spheroid");
+		std::string message = "Drawing spheroid of radius : " + std::to_string(_radius);
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, message, "Spheroid");
 	}
 }

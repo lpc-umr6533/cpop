@@ -1,6 +1,6 @@
 #include "Layer.hh"
 
-#include <assert.h>
+#include <cassert>
 
 #if ( defined(WIN32) || defined(WIN64) || defined(_WIN32) || defined(_WIN64) )
 	#include <windows.h>
@@ -19,12 +19,14 @@
 /// \param pName 		The name to set to the layer ( ID )
 /// \param parent 		The parent Layer of this layer
 /// \param pLayerType 	The type of layer : root, node, leaf
-Layer::Layer(QString pName, Layer* parent, LayerType pLayerType) :
-	_name(pName), _alpha(1.f), _layerType(pLayerType)
+Layer::Layer(std::string name, Layer* parent, LayerType layerType) :
+	_name(std::move(name)),
+	_alpha(1.f),
+	_layerType(layerType)
 {
 	if(DEBUG_LAYER) {
-		QString mess =  "creating the layer " + _name;
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess.toStdString(), "Layer");
+		std::string mess =  "creating the layer " + _name;
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::INFORMATION_MES, mess, "Layer");
 	}
 
 	if(parent)
@@ -55,7 +57,7 @@ void Layer::draw() const {
 bool Layer::addChild(Layer* pLayer) {
 	assert(pLayer);
 
-	_childLayers.insert(std::pair<QString, Layer*>(pLayer->getName(), pLayer));
+	_childLayers.insert(std::pair<std::string, Layer*>(pLayer->getName(), pLayer));
 	// the root stay root
 	if(_layerType == LEAF)
 		_layerType = NODE;
@@ -78,18 +80,18 @@ void Layer::removeChild(Layer* pLayer) {
 std::set<Agent*> Layer::getUniqueSubAgents() const {
 	std::set<Agent*> res;
 
-	for(auto itLayer = _childLayers.begin(); itLayer != _childLayers.end(); ++itLayer) {
-		std::set<Agent*> agentsLvl1 = itLayer->second->getAgents();
+	for(auto const& _childLayer : _childLayers) {
+		std::set<Agent*> agentsLvl1 = _childLayer.second->getAgents();
 
-		for(auto itAgent = agentsLvl1.begin(); itAgent != agentsLvl1.end(); ++itAgent) {
+		for(auto* itAgent : agentsLvl1) {
 			/// the set insure the unicity of an element. If already exists, we not be added
-			res.insert((*itAgent));
+			res.insert(itAgent);
 		}
 
-		std::set<Agent*> agentsLvl2 = itLayer->second->getUniqueSubAgents();
-		for(auto itAgent = agentsLvl2.begin(); itAgent != agentsLvl2.end(); ++itAgent) {
+		std::set<Agent*> agentsLvl2 = _childLayer.second->getUniqueSubAgents();
+		for(auto* itAgent : agentsLvl2) {
 			/// the set insure the unicity of an element. If already exists, we not be added
-			res.insert((*itAgent));
+			res.insert(itAgent);
 		}
 	}
 
@@ -102,14 +104,14 @@ void Layer::includeSubLayersAgents() {
 
 	std::set<Agent*> lSubAgents = getUniqueSubAgents();
 
-	for(auto itAgent = lSubAgents.begin(); itAgent != lSubAgents.end(); itAgent++) {
+	for(auto* lSubAgent : lSubAgents) {
 		/// the set insure the unicity of an element. If already exists, we not be added
-		_agents.insert(*itAgent);
+		_agents.insert(lSubAgent);
 	}
 
 	if(DEBUG_LAYER) {
-		QString mess = " after initialisation, layer " + _name + " contained : " + QString::number(_agents.size());
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Layer");
+		std::string mess = " after initialisation, layer " + _name + " contained : " + std::to_string(_agents.size());
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Layer");
 	}
 }
 
@@ -118,8 +120,8 @@ std::set<Agent*> Layer::getUniqueAgentsAndSubAgents() const {
 	std::set<Agent*> res = _agents;
 	std::set<Agent*> subAgents = getUniqueSubAgents();
 
-	for(auto itAgent = subAgents.begin(); itAgent != subAgents.end(); ++itAgent)
-		res.insert(*itAgent);
+	for(auto* subAgent : subAgents)
+		res.insert(subAgent);
 
 	return res;
 }
@@ -130,7 +132,7 @@ std::set<Agent*> Layer::getUniqueAgentsAndSubAgents() const {
 /// 	inside the world.
 void Layer::init() {
 	if(DEBUG_LAYER) {
-		QString mess = "initalisation of layer " + _name + "with state : ";
+		std::string mess = "initalisation of layer " + _name + "with state : ";
 		switch(_layerType) {
 			case ROOT :
 			{
@@ -149,12 +151,12 @@ void Layer::init() {
 			default:
 				mess += "UNKNOW";
 		}
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Layer");
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Layer");
 	}
 
 	/// init child layers
-	for(auto itWL = _childLayers.begin(); itWL != _childLayers.end(); ++itWL)
-		(itWL)->second->init();
+	for(auto const& _childLayer : _childLayers)
+		_childLayer.second->init();
 
 	/// the root will include all sub agents with a unicity control
 	/// in order to execute them once only.
@@ -165,8 +167,8 @@ void Layer::init() {
 	}
 
 	if(DEBUG_LAYER) {
-		QString mess = "initalisation done for layer " + _name + "know including" + QString::number(_agents.size()) + " agents.";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Layer");
+		std::string mess = "initalisation done for layer " + _name + "know including" + std::to_string(_agents.size()) + " agents.";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Layer");
 	}
 }
 
@@ -176,8 +178,8 @@ inline bool Layer::contains(Layer* pLayer) const {
 	if(_childLayers.find(pLayer->getName()) != _childLayers.end())
 		return true;
 
-	for(auto itLayer = _childLayers.begin(); itLayer != _childLayers.end(); ++itLayer) {
-		if(itLayer->second->contains(pLayer))
+	for(auto const& _childLayer : _childLayers) {
+		if(_childLayer.second->contains(pLayer))
 			return true;
 	}
 
@@ -196,11 +198,11 @@ void Layer::setColor(float r, float g, float b) {
 
 /// \param pID The Layer ID
 /// \return The requested layer, Null if doesn't exits.
-Layer* Layer::getChild(QString pID) const {
-	if(_childLayers.find(pID)==_childLayers.end())
+Layer* Layer::getChild(std::string const& pID) const {
+	if(_childLayers.find(pID) == _childLayers.end())
 		return nullptr;
 
-	return (_childLayers.find(pID)->second);
+	return _childLayers.find(pID)->second;
 }
 
 /// \param pNbAgentToPick The number of agent requested

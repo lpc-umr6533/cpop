@@ -1,16 +1,15 @@
 #include "CellFactory.hh"
-#include "ParametersGetter.hh"
 #include "RandomEngineManager.hh"
 #include "SimpleDiscoidalCell.hh"
 #include "SimpleSpheroidalCell.hh"
-#include <QString>
+#include "RoundCellProperties.hh"
 
 #if ( defined(WIN32) || defined(WIN64) || defined(_WIN32) || defined(_WIN64) )
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 #endif
 
-static CellFactory* factory = 0;	/// the factory defined as a singleton
+static CellFactory* factory = nullptr;	/// the factory defined as a singleton
 
 /// \return { The cell factory singleton}
 CellFactory* CellFactory::getInstance() {
@@ -22,8 +21,6 @@ CellFactory* CellFactory::getInstance() {
 ////////////////////////////////////// TEMPLATE SPECIALIZATION /////////////////////
 
 #include "RandomEngineManager.hh"
-#include "Box_Shape.hh"
-#include "Round_Shape.hh"
 
 using namespace Settings::Geometry;
 
@@ -47,8 +44,8 @@ Cell<double, Point_3, Vector_3>* CellFactory::produce(const CellProperties* pCel
 			if(lDSProp) {
 				radius = RandomEngineManager::getInstance()->randd(lDSProp->getMembraneRadius(pLifeCycle).var_min(), lDSProp->getMembraneRadius(pLifeCycle).var_max());
 			} else {
-				QString mess = "!!! Unable to find radius for the requested cell from cell properties";
-				InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, mess.toStdString(), "CellFactory::produce");
+				std::string mess = "!!! Unable to find radius for the requested cell from cell properties";
+				InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, mess, "CellFactory::produce");
 				exit(0);
 			}
 
@@ -65,8 +62,8 @@ Cell<double, Point_3, Vector_3>* CellFactory::produce(const CellProperties* pCel
 
 		default:
 		{
-			QString mess = "!!! Unable to create the wanted Cell - Undefined cell for this kind of type";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, mess.toStdString(), "CellFactory::produce");
+			std::string mess = "!!! Unable to create the wanted Cell - Undefined cell for this kind of type";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, mess, "CellFactory::produce");
 			exit(0);
 		}
 	}
@@ -94,8 +91,8 @@ Cell<double, Point_2, Vector_2>* CellFactory::produce(const CellProperties* pCel
 			if(lDSProp) {
 				radius = RandomEngineManager::getInstance()->randd(lDSProp->getMembraneRadius(pLifeCycle).var_min(), lDSProp->getMembraneRadius(pLifeCycle).var_max());
 			} else {
-				QString mess = "!!! Unable to find radius for the requested cell from cell properties";
-				InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, mess.toStdString(), "CellFactory");
+				std::string mess = "!!! Unable to find radius for the requested cell from cell properties";
+				InformationSystemManager::getInstance()->Message(InformationSystemManager::FATAL_ERROR_MES, mess, "CellFactory");
 				exit(0);
 			}
 
@@ -114,8 +111,8 @@ Cell<double, Point_2, Vector_2>* CellFactory::produce(const CellProperties* pCel
 		}
 		default:
 		{
-			QString mess = "!!! Unable to create the wanted Cell - Undefined cell for this kind of type";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "CellFactory");
+			std::string mess = "!!! Unable to create the wanted Cell - Undefined cell for this kind of type";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "CellFactory");
 		}
 	}
 

@@ -26,8 +26,8 @@ Point_2 DiscsSDelimitation<double, Point_2, Vector_2>::getSpot(Distribution::Dis
 	}
 
 	if(DISCS_DELIM_DEBUG) {
-		QString mess = "find a spot at " + QString::number(p.x()) + ", " + QString::number(p.y());
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "DiscsSDelimitation");
+		std::string mess = "find a spot at " + std::to_string(p.x()) + ", " + std::to_string(p.y());
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "DiscsSDelimitation");
 	}
 	return p;
 }
@@ -51,8 +51,8 @@ Point_3 DiscsSDelimitation<double, Point_3, Vector_3>::getSpot(Distribution::Dis
 	}
 
 	if(DISCS_DELIM_DEBUG) {
-		QString mess = "find a spot at " + QString::number(p.x()) + ", " + QString::number(p.y()) + ", 0.";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "DiscsSDelimitation");
+		std::string mess = "find a spot at " + std::to_string(p.x()) + ", " + std::to_string(p.y()) + ", 0.";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "DiscsSDelimitation");
 	}
 	return p;
 }

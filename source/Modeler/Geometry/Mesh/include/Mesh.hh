@@ -38,7 +38,7 @@ public:
 	virtual void remove(t_Cell*) = 0;
 
 	/// \brief the mesh exporter
-	virtual int exportToFile(QString, MeshOutFormats::outputFormat, bool = false);
+	virtual int exportToFile(std::string const&, MeshOutFormats::outputFormat, bool = false);
 	/// \brief return the cell contained on the mesh
 	virtual std::set<t_Cell*> getCells() const = 0;
 	/// \brief return the cell contained on the mesh
@@ -78,7 +78,7 @@ Mesh<Kernel, Point, Vector>::Mesh(MeshTypes::MeshType pMeshType ) :
 ///					- 1 : not implemented yet
 ///				}
 template <typename Kernel, typename Point, typename Vector>
-int Mesh<Kernel, Point, Vector>::exportToFile(QString, MeshOutFormats::outputFormat, bool) {
+int Mesh<Kernel, Point, Vector>::exportToFile(std::string const&, MeshOutFormats::outputFormat, bool) {
 	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, "export hasn't been implemented for this type of mesh yet", "Mesh");
 	return 1;
 }

@@ -91,9 +91,9 @@ void Octree<TNode>::construct(TIt begin, TIt end) {
 	TIt itSpa;
 	for(itSpa = begin; itSpa != end; ++itSpa) {
 		if(!topNode.add(*itSpa)) {
-			QString mess = "unable to add the spatialable : " + QString::number((*itSpa)->getID())
-				+ " @ (" + QString::number( (*itSpa)->getPosition().x() ) + ", " + QString::number( (*itSpa)->getPosition().y() ) + ", " + QString::number( (*itSpa)->getPosition().z() ) + ")";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Octree:construtor");
+			auto const& pos = (*itSpa)->getPosition();
+			std::string mess = "unable to add the spatialable : " + std::to_string((*itSpa)->getID()) + " @ (" + std::to_string(pos.x()) + ", " + std::to_string(pos.y()) + ", " + std::to_string(pos.z()) + ")";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Octree:construtor");
 		}
 	}
 }

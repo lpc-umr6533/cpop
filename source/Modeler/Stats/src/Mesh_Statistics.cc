@@ -31,14 +31,14 @@ bool generateMeshStats(std::vector<const t_Cell_3*> pCells, MeshOutFormats::outp
 	/// write cell header
 	if(pCellOut) {
 		writeCellStatsHeader(pFormat, pCellOut);
-		*pCellOut << "###" << (*pCells.begin())->writeStatsHeader().toStdString() << "\tcellMeshVolume\tcytoplasmMeshVolume" << std::endl;
+		*pCellOut << "###" << (*pCells.begin())->writeStatsHeader() << "\tcellMeshVolume\tcytoplasmMeshVolume" << std::endl;
 	}
 
 	/// write cell nuclei header
 	if(pNucleiOut) {
 		writeCellNucleiStatsHeader(pFormat, pNucleiOut);
 		if(dynamic_cast<const SimpleSpheroidalCell*>(*pCells.begin()))
-			*pNucleiOut << "###" << "CellID\t" << dynamic_cast<const SimpleSpheroidalCell*>(*pCells.begin())->getNucleus()->writeStatsHeader().toStdString() << "\tmeshVolume" << std::endl;
+			*pNucleiOut << "###" << "CellID\t" << dynamic_cast<const SimpleSpheroidalCell*>(*pCells.begin())->getNucleus()->writeStatsHeader() << "\tmeshVolume" << std::endl;
 	}
 
 	/// then write statistic for cell and is nucleus
@@ -46,7 +46,7 @@ bool generateMeshStats(std::vector<const t_Cell_3*> pCells, MeshOutFormats::outp
 		assert(pCell);
 		// print cell mesh stats
 		if(pCellOut) {
-			*pCellOut << pCell->addStatsData().toStdString()  << "\t"
+			*pCellOut << pCell->addStatsData()  << "\t"
 				// cell volume mesh
 				<< pCell->getMeshVolume(pFormat) << "\t"; // add the volume here because is dependant of the mesh type
 		}
@@ -60,7 +60,7 @@ bool generateMeshStats(std::vector<const t_Cell_3*> pCells, MeshOutFormats::outp
 			// print nuclei mesh stats
 			if(pNucleiOut) {
 				*pNucleiOut	<< lID << "\t"
-					<< itNucleus->addStatsData().toStdString() << "\t"
+					<< itNucleus->addStatsData() << "\t"
 					<< itNucleus->getMeshVolume(pFormat) << std::endl;
 			}
 

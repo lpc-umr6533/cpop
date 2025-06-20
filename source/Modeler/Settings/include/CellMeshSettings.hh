@@ -1,8 +1,8 @@
 #ifndef CELL_MESH_SETTINGS_HH
 #define CELL_MESH_SETTINGS_HH
 
-#include <QString>
 #include <QThread>
+#include <string>
 
 static constexpr double MAX_RATIO_NUCLEUS_TO_CELL 	= 0.8;  ///<\brief must be in [0..1]. Which ratio the nucleus can reach compare to the cell membrane radius
 /// \brief the number of step on each axis the sphere must be composed of
@@ -13,8 +13,8 @@ extern unsigned int NUCLEUS_SPHERE_NB_POINT; // = 8;// MIN_SPHERE_NB_POINT; ///<
 static constexpr unsigned int MIN_NB_CELL_PER_THREAD= 600;  ///<\brief number of cell each thread contains
 static constexpr unsigned int MIN_DISC_POINT 		= 8;        ///< \brief the number of points a cell mesh discribed by a disc must contained
 static constexpr bool REMOVE_SMALLEST_WEIGHT	 	= false;    ///< \brief the polity of removal for conflict cells on Delaunay triangulation
-static const QString cellNamePrefix				= "cell_";
-static const QString nucleusNamePrefix			= "nucleus_";
+static const std::string cellNamePrefix				  = "cell_";
+static const std::string nucleusNamePrefix			= "nucleus_";
 static constexpr bool USE_THREAD_FOR_MESH_SUBDVN 	= true;   /// \brief do we want to use thread for subdivision. To optimize must be set to true, but for some profiler must be set to false.
 
 static const double overlapToleranceForG4 		= 0.00004;    // 40 nanometre. In G4

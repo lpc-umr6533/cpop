@@ -103,11 +103,11 @@ Scheduler* Scheduler::getInstance() {
 /// \return {The duration of the next step}
 double Scheduler::computeSimulationStepDuration() {
 	if(DEBUG_SCHEDULER) {
-		QString mess = "computing simulation step with : ";
-		mess += "\n   - current time : " + QString::number(_currentTime);
-		mess += "\n   - step duration : " + QString::number(_stepDuration);
-		mess += "\n   - totalDuration : " + QString::number(_totalDuration);
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "SCHEDULER");
+		std::string mess = "computing simulation step with : ";
+		mess += "\n   - current time : " + std::to_string(_currentTime);
+		mess += "\n   - step duration : " + std::to_string(_stepDuration);
+		mess += "\n   - totalDuration : " + std::to_string(_totalDuration);
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "SCHEDULER");
 	}
 
 	double lNextStepDuration = 0.;

@@ -7,6 +7,7 @@
 #include "CellMeshSettings.hh"
 #include "EngineSettings.hh"
 #include "File_Utils_OFF.hh"
+#include "MaterialManager.hh"
 #include "SpheroidalCell_MeshSub_Thread.hh"
 #include "UnitSystemManager.hh"
 
@@ -75,9 +76,9 @@ void SpheroidalCellMesh::clean() {
 ///					- 1 : not implemented yet
 ///					- 2 : failed during export
 ///					- 3 : unknow format
-int SpheroidalCellMesh::exportToFile(QString pPath, MeshOutFormats::outputFormat pFormat, bool pDivided) {
+int SpheroidalCellMesh::exportToFile(std::string const& path, MeshOutFormats::outputFormat format, bool divided) {
 	assert(_delaunay.is_valid());
-	if(pFormat >= MeshOutFormats::Unknow)
+	if(format >= MeshOutFormats::Unknow)
 		return 3;
 
 	/// create cell
@@ -85,11 +86,11 @@ int SpheroidalCellMesh::exportToFile(QString pPath, MeshOutFormats::outputFormat
 
 	int error = 0;
 
-	switch(pFormat) {
+	switch(format) {
 		case MeshOutFormats::GDML:
 		{
 #ifdef WITH_GDML_EXPORT
-			error = exportToFileGDML(pPath, cells, pDivided);
+			error = exportToFileGDML(path, cells, divided);
 #else
 			error = 1;
 			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES,
@@ -100,12 +101,12 @@ int SpheroidalCellMesh::exportToFile(QString pPath, MeshOutFormats::outputFormat
 		}
 		case MeshOutFormats::OFF:
 		{
-			error = exportToFileOff(pPath, cells, pDivided);
+			error = exportToFileOff(path, cells, divided);
 			break;
 		}
 		case MeshOutFormats::STL:
 		{
-			error = exportToFileSTL(pPath, cells, pDivided);
+			error = exportToFileSTL(path, cells, divided);
 			break;
 		}
 		default:
@@ -115,6 +116,12 @@ int SpheroidalCellMesh::exportToFile(QString pPath, MeshOutFormats::outputFormat
 				"SpheroidalCellMesh"
 			);
 			error = 1;
+		}
+	}
+
+	if (!error) {
+		for(auto const& cell: cells) {
+			cell->exportNucleiToFile(path + "_nuclei.txt");
 		}
 	}
 
@@ -128,8 +135,8 @@ std::vector<SpheroidalCell*> SpheroidalCellMesh::generateMesh() {
 
 	// remove conflicting cells ( if one is included into an other one )
 	removeConflicts();
-	QString mess = "generateMesh "  + QString::number(_delaunay.number_of_vertices() ) + " Cell(s) ";
-	//InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "SpheroidalCellMesh");
+	std::string mess = "generateMesh "  + std::to_string(_delaunay.number_of_vertices()) + " Cell(s) ";
+	//InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "SpheroidalCellMesh");
 
 	auto const& cells = getCellsStructure();
 
@@ -158,8 +165,8 @@ std::vector<SpheroidalCell*> SpheroidalCellMesh::generateMesh() {
 			unsigned int threadID = 0;
 			while(reffinementThreads.size() < nbThreadToCreate) {
 				if(SPHEROIDAL_CELL_MESH_DEBUG) {
-					mess = "create a new thread of ID "  + QString::number(threadID);
-					InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "SpheroidalCellMesh");
+					mess = "create a new thread of ID "  + std::to_string(threadID);
+					InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "SpheroidalCellMesh");
 				}
 
 				reffinementThreads.push_back(
@@ -212,20 +219,19 @@ std::vector<SpheroidalCell*> SpheroidalCellMesh::generateMesh() {
 ///					- 1 : not implemented yet
 ///					- 2 : failed during export
 ///
-int SpheroidalCellMesh::exportToFileOff_undivided(QString pPath, std::vector<SpheroidalCell*>* cells) {
+int SpheroidalCellMesh::exportToFileOff_undivided(std::string const& path, SpheroidalCells const& cells) {
 	unsigned long int nbFacets = 0;				// hte total number of facet on the file
 	std::set<Point_3, comparePoint_3> points; 						// all the points included inside the mesh
 	std::map<Point_3, unsigned long int, comparePoint_3> indexes;	// the points and their ids
 	/// create .off file for the mesh
-	pPath += ".off";
-	std::ofstream* voronoiOut = IO::OFF::createOffFileWithHeader(pPath.toStdString());
+	std::string fullPath = path + ".off";
+	std::ofstream* voronoiOut = IO::OFF::createOffFileWithHeader(fullPath);
 
 	// deal with markup points
 	std::map<std::set<Point_3>, std::pair<CGAL::Color, double>> boxes;
 	{
 		// convert all of them to boxes
-		for(auto const& markupPoint : markupPoints)
-		{
+		for(auto const& markupPoint : markupPoints) {
 			std::set<Point_3> boxPoints = Utils::myCGAL::convertPointToBox(markupPoint.first, markupPoint.second.second);
 			boxes.insert(std::make_pair(boxPoints, markupPoint.second));
 			points.insert( boxPoints.begin(), boxPoints.end());
@@ -236,7 +242,7 @@ int SpheroidalCellMesh::exportToFileOff_undivided(QString pPath, std::vector<Sph
 	}
 
 	Polyhedron_3::Point_iterator itPolyPts;
-	for(auto const& cell : *cells)
+	for(auto const& cell : cells)
 	{
 		points.insert(cell->shape_points_begin(), cell->shape_points_end());
 		// add shape facets
@@ -244,8 +250,7 @@ int SpheroidalCellMesh::exportToFileOff_undivided(QString pPath, std::vector<Sph
 
 		// add nucleus points
 		std::vector<t_Nucleus_3*> lNuclei = cell->getNuclei();
-		for(auto const& nucleus : lNuclei)
-		{
+		for(auto const& nucleus : lNuclei) {
 			std::vector<Point_3> lCellNucleusPoints = nucleus->getShapePoints();
 			points.insert(lCellNucleusPoints.begin(), lCellNucleusPoints.end());
 			// add the nucleus facets :
@@ -258,7 +263,7 @@ int SpheroidalCellMesh::exportToFileOff_undivided(QString pPath, std::vector<Sph
 	*voronoiOut << distance(points.begin(), points.end()) << " " << nbFacets << " 0" << std::endl;
 	/// \todo : generate a thread to write on it
 	IO::OFF::exportVerticesToOff(points, indexes, voronoiOut);
-	for(auto const& cell : *cells)
+	for(auto const& cell : cells)
 		IO::OFF::exportSpheroidalCellToOff(cell, voronoiOut, indexes);
 
 	// export organelles points
@@ -436,14 +441,14 @@ G4LogicalVolume* SpheroidalCellMesh::convertToG4Logical(
 	unsigned int nbRemovedForG4 = 0;
 	std::vector<std::pair<G4TessellatedSolid*, G4Orb*>> solids;
 	for(auto & cell : cells) {
-		QString polyName = cellNamePrefix + QString::number(iPoly);
+		std::string polyName = cellNamePrefix + std::to_string(iPoly);
 
 		// TODO ==?
 		// because of dimension changement from CPOP to G4 and numerical precision we can be forced to remove some cells to ensure no recovrement.
 		auto neighbours = static_cast<const std::map<SpheroidalCell*, std::set<const SpheroidalCell*>>>(_neighboursCell);
 
 		if(!cell->convertToG4Structure(logicBB, polyName, checkOverlaps, &_neighboursCell, getMaxNbFacetPerCell(), getDeltaWin(), pMapCells, pMapNuclei, pExportNuclei)) {
-			std::cout << "\n polyname : " << (polyName.toStdString()).c_str() << std::endl;
+			std::cout << "\n polyname : " << polyName.c_str() << std::endl;
 			nbRemovedForG4++;
 		}
 
@@ -465,17 +470,17 @@ G4LogicalVolume* SpheroidalCellMesh::convertToG4Logical(
 ///					- 1 : not implemented yet
 ///					- 2 : failed during export
 ///
-int SpheroidalCellMesh::exportToFileGDML(QString pPath, std::vector<SpheroidalCell*> cells, bool pCheckOverLaps) {
+int SpheroidalCellMesh::exportToFileGDML(std::string const& path, SpheroidalCells const& cells, bool checkOverLaps) {
 	if(cells.size() < 1)
 		return 0;
 
-	auto* physiWorld = convertToG4World(pCheckOverLaps);
+	auto* physiWorld = convertToG4World(checkOverLaps);
 
 	// export the G4 world
 	MyGDML_Parser GDMLParser;
-	QString path = pPath + ".gdml";
+	std::string fullPath = path + ".gdml";
 
-	std::remove((path.toLocal8Bit()).data());
+	std::remove(fullPath.c_str());
 	// GDMLParser.write(path, physiWorld); //TODO : remove the hack to allow gdml writing if wanted
 
 	delete physiWorld;

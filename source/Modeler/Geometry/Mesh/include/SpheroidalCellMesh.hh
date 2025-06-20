@@ -32,7 +32,7 @@ public:
 	~SpheroidalCellMesh() override;
 
 	/// \brief the mesh exporter
-	int exportToFile(QString, MeshOutFormats::outputFormat, bool pDivided = false) override;
+	int exportToFile(std::string const&, MeshOutFormats::outputFormat, bool divided = false) override;
 	/// \brief return curently the number of visible cell
 	unsigned int getNumberOfVisibleCell()	{ return Voronoi_3D_Mesh::_delaunay.number_of_vertices(); }
 	/// \brief generate all cell structures.
@@ -49,7 +49,7 @@ public:
 	);
 
 	/// \brief return the bounding box englobing the spheroid. Without converting cell into G4 entities
-	virtual G4LogicalVolume* getG4BoundingLogicalVolume( G4ThreeVector&, G4Material* pMaterialBetwwenCell = nullptr);
+	virtual G4LogicalVolume* getG4BoundingLogicalVolume(G4ThreeVector&, G4Material* pMaterialBetwwenCell = nullptr);
 
 	/// \brief export the configuration to a G4LogicalVolume. The one returned is the "world"/top G4 entity
 	virtual G4LogicalVolume* convertToG4Logical(
@@ -65,13 +65,13 @@ public:
 
 protected:
 	/// \brief export all cells on the same file
-	int exportToFileOff_undivided(QString, std::vector<SpheroidalCell*>* ) override;
+	int exportToFileOff_undivided(std::string const&, SpheroidalCells const&) override;
 	/// \brief clean data structures
 	void clean() override;
 
 #ifdef WITH_GDML_EXPORT
 	/// \brief export to a GDML file
-	virtual int exportToFileGDML(QString, std::vector<SpheroidalCell*>, bool);
+	virtual int exportToFileGDML(std::string const&, SpheroidalCells const&, bool);
 #endif
 
 };

@@ -20,15 +20,15 @@
 /// \param pNucleusMat 		The material to set to the nucleus
 /// \param checkOverLaps 	The material to set to the nucleus
 template<>
-G4PVPlacement* RoundNucleus<double, Point_3, Vector_3>::convertToG4Entity(QString name, G4LogicalVolume* motherVolume, G4Material* pNucleusMat, bool checkOverLaps) const {
+G4PVPlacement* RoundNucleus<double, Point_3, Vector_3>::convertToG4Entity(std::string const& name, G4LogicalVolume* motherVolume, G4Material* pNucleusMat, bool checkOverLaps) const {
 	auto convertToG4 = G4double(UnitSystemManager::getInstance()->getConversionToG4());
 	G4LogicalVolume* logicVol = convertToG4LogicalVolume(name, pNucleusMat);
 
-	QString physVolName = "PV_" + name;
+	std::string physVolName = "PV_" + name;
 	auto* physVol = new G4PVPlacement(
 		G4Translate3D(_origin.x()*convertToG4, _origin.y()*convertToG4, _origin.z()*convertToG4),	// no rotation
 		logicVol,                                                                                 // its logical volume
-		physVolName.toStdString(),                                                                // its name
+		physVolName,                                                                              // its name
 		(motherVolume == nullptr ) ? nullptr : motherVolume,                                      // its mother  volume
 		false,                                                                                    // no boolean operations
 		0,                                                                                        // copy number
@@ -42,17 +42,17 @@ G4PVPlacement* RoundNucleus<double, Point_3, Vector_3>::convertToG4Entity(QStrin
 /// \param pNucleusMat 		The material to set to the nucleus
 /// \param checkOverLaps 	The material to set to the nucleus
 template<>
-G4LogicalVolume* RoundNucleus<double, Point_3, Vector_3>::convertToG4LogicalVolume(QString name, G4Material* pNucleusMat) const {
+G4LogicalVolume* RoundNucleus<double, Point_3, Vector_3>::convertToG4LogicalVolume(std::string const& name, G4Material* pNucleusMat) const {
 	assert(pNucleusMat);
 
 	auto convertToG4 = G4double(UnitSystemManager::getInstance()->getConversionToG4());
-	auto* nucleusSolid = new G4Orb(name.toStdString(), getRadius()*convertToG4);
+	auto* nucleusSolid = new G4Orb(name, getRadius()*convertToG4);
 
 	assert(nucleusSolid);
 
-	QString logicalVolName = "LV_" + name;
+	std::string logicalVolName = "LV_" + name;
 
-	return new G4LogicalVolume(nucleusSolid, pNucleusMat, logicalVolName.toStdString(), nullptr, nullptr, nullptr);
+	return new G4LogicalVolume(nucleusSolid, pNucleusMat, logicalVolName, nullptr, nullptr, nullptr);
 }
 
 #endif

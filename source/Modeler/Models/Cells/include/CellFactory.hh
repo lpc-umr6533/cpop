@@ -3,7 +3,6 @@
 
 #include "Cell.hh"
 #include "CellProperties.hh"
-#include "RoundCellProperties.hh"
 
 /// \brief define the cell factory
 /// @author Henri Payno
@@ -24,9 +23,8 @@ public:
 /// \return Cell The generated cell from her properties
 template<typename Kernel, typename Point, typename Vector>
 Cell<Kernel, Point, Vector>* CellFactory::produce(const CellProperties* pCellProp, const LifeCycles::LifeCycle pLifeCycle) {
-	QString mess = "Unable to create cell for this template parameter " + 
-		QString(typeid(Kernel).name()) + ", " + QString(typeid(Point).name()) + ", " + QString(typeid(Vector).name()) + ", ";
-	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "CellFactory");
+	std::string mess = std::string{"Unable to create cell for this template parameter "} + typeid(Kernel).name() + ", " + typeid(Point).name() + ", " + typeid(Vector).name() + ", ";
+	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "CellFactory");
 }
 
 #include "GeometrySettings.hh"

@@ -59,23 +59,23 @@ CellProperties* CPOP_Loader::getCellProperties(QXmlStreamReader* xmlReader, unsi
 	while(!xmlReader->atEnd() &&  !xmlReader->hasError() &&	(xmlReader->name() != cell_property_flag)) {
 		// set nucleus radius
 		if(xmlReader->name() == nucleus_radius_flag)
-			result->setNucleusRadius( getCellProp_d_Value(xmlReader, nucleus_radius_flag ));
+			result->setNucleusRadius(getCellProp_d_Value(xmlReader, nucleus_radius_flag.toStdString()));
 
 		// set masses
 		if(xmlReader->name() == mass_flag)
-			result->setMasses( getCellProp_d_Value(xmlReader, mass_flag ));
+			result->setMasses(getCellProp_d_Value(xmlReader, mass_flag.toStdString()));
 
 		// set membrane material
 		if(xmlReader->name() == cytoplasms_mat_flag )
-			result->setCytoplasmMaterials( getCellProp_Mat_Value(xmlReader, cytoplasms_mat_flag ));
+			result->setCytoplasmMaterials(getCellProp_Mat_Value(xmlReader, cytoplasms_mat_flag.toStdString()));
 
 		// set nuclei material
 		if(xmlReader->name() == nuclei_mat_flag)
-			result->setNucleusMaterials( getCellProp_Mat_Value(xmlReader, nuclei_mat_flag ));
+			result->setNucleusMaterials(getCellProp_Mat_Value(xmlReader, nuclei_mat_flag.toStdString()));
 
 		if(xmlReader->name() == membrane_radius_flag) {
 				assert(dynamic_cast<RoundCellProperties*>(result));
-				dynamic_cast<RoundCellProperties*>(result)->setMembraneRadius( getCellProp_d_Value(xmlReader, membrane_radius_flag) );
+				dynamic_cast<RoundCellProperties*>(result)->setMembraneRadius(getCellProp_d_Value(xmlReader, membrane_radius_flag.toStdString()));
 		}
 
 		xmlReader->readNext();
@@ -87,14 +87,14 @@ CellProperties* CPOP_Loader::getCellProperties(QXmlStreamReader* xmlReader, unsi
 /// \param node The node where is stored the cell property
 /// \param nodeID The name of the node we are looking for
 /// \return The map linking LifeCycle and the associated CellProperties
-std::map<LifeCycles::LifeCycle, CellProperties::t_CellVarAtt_d > CPOP_Loader::getCellProp_d_Value(QXmlStreamReader* xmlReader, QString closingNodeName) {
+std::map<LifeCycles::LifeCycle, CellProperties::t_CellVarAtt_d > CPOP_Loader::getCellProp_d_Value(QXmlStreamReader* xmlReader, std::string const& closingNodeName) {
 	assert(xmlReader);
-	assert(xmlReader->name() == closingNodeName);
+	assert(xmlReader->name() == QString::fromStdString(closingNodeName));
 	xmlReader->readNext();
 
 	std::map<LifeCycles::LifeCycle, CellProperties::t_CellVarAtt_d> result;
 
-	while(!xmlReader->atEnd() &&  !xmlReader->hasError() &&	(xmlReader->name() != closingNodeName)) {
+	while(!xmlReader->atEnd() &&  !xmlReader->hasError() &&	(xmlReader->name() != QString::fromStdString(closingNodeName))) {
 		if(xmlReader->name() == variable_attribute_flag) {
 			QXmlStreamAttributes attributes = xmlReader->attributes();
 			assert(attributes.hasAttribute(life_cycle_flag));
@@ -123,14 +123,14 @@ std::map<LifeCycles::LifeCycle, CellProperties::t_CellVarAtt_d > CPOP_Loader::ge
 /// \param node The node where is stored the cell property
 /// \param nodeID The name of the node we are looking for
 /// \return The map linking LifeCycle and G4Material
-std::map<LifeCycles::LifeCycle, G4Material* > CPOP_Loader::getCellProp_Mat_Value(QXmlStreamReader* xmlReader, QString closingNodeName) {
+std::map<LifeCycles::LifeCycle, G4Material* > CPOP_Loader::getCellProp_Mat_Value(QXmlStreamReader* xmlReader, std::string const& closingNodeName) {
 	assert(xmlReader);
-	assert(xmlReader->name() == closingNodeName);
+	assert(xmlReader->name() == QString::fromStdString(closingNodeName));
 	xmlReader->readNext();
 
 	std::map<LifeCycles::LifeCycle, G4Material*> result;
 
-	while(!xmlReader->atEnd() &&  !xmlReader->hasError() &&	(xmlReader->name() != closingNodeName)) {
+	while(!xmlReader->atEnd() &&  !xmlReader->hasError() &&	(xmlReader->name() != QString::fromStdString(closingNodeName))) {
 		if(xmlReader->name() == variable_attribute_flag) {
 			QXmlStreamAttributes attributes = xmlReader->attributes();
 			assert(attributes.hasAttribute(life_cycle_flag));
@@ -409,8 +409,8 @@ std::map<unsigned long int, Agent*> CPOP_Loader::getAgents(QXmlStreamReader* xml
 			Agent* lAgt = getAgentFromNode(xmlReader, forceID);
 			assert(lAgt);
 			if(agents.find(lID) != agents.end()) {
-				QString mess = "Error - found two agent with the same ID : " + QString::number(lAgt->getID());
-				InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "FILE::XML::getAgents");
+				std::string mess = "Error - found two agent with the same ID : " + std::to_string(lAgt->getID());
+				InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "FILE::XML::getAgents");
 			} else {
 				agents.insert(std::make_pair(lID, lAgt));
 			}
@@ -591,12 +591,12 @@ t_SpatialDelimitation_3* CPOP_Loader::getDelimitationFromDomNode(QXmlStreamReade
 
 /// \endcond
 
-bool CPOP_Loader::foundEnvironmentName(QXmlStreamReader* xmlReader, QString& theName) {
+bool CPOP_Loader::foundEnvironmentName(QXmlStreamReader* xmlReader, std::string& theName) {
 	while(!xmlReader->atEnd() &&  !xmlReader->hasError()) {
 		xmlReader->readNext();
 		QXmlStreamAttributes attributes = xmlReader->attributes();
 		if(attributes.hasAttribute(name_flag)) {
-			theName = attributes.value(name_flag).toString();
+			theName = attributes.value(name_flag).toString().toStdString();
 			return true;
 		}
 	}

@@ -4,6 +4,7 @@
 #include "Mesh.hh"
 
 #include <set>
+#include <vector>
 #include "Delaunay_2D_SDS.hh"
 #include "DiscoidalCell.hh"
 #include "Mesh2DSettings.hh"
@@ -23,6 +24,9 @@ class Voronoi_2D_Mesh : public Mesh<double, Point_2, Vector_2>, public Delaunay_
 	using Delaunay_2D_SDS::remove;
 
 public:
+	using DiscoidalCells = std::vector<DiscoidalCell*>;
+
+public:
 	Voronoi_2D_Mesh(unsigned int, double, std::set<t_Cell_2*> pInitSpatialables = std::set<t_Cell_2*>());
 	~Voronoi_2D_Mesh() override;
 
@@ -31,7 +35,7 @@ public:
 	/// \brief remove a point to the mesh
 	void remove(t_Cell_2*) override;
 	/// \brief the mesh exporter
-	int exportToFile(QString, MeshOutFormats::outputFormat, bool) override;
+	int exportToFile(std::string const&, MeshOutFormats::outputFormat, bool) override;
 	/// \brief return the bounding box of the mesh.
 	[[nodiscard]] Iso_rectangle_2 getBoundingBox() const;
 
@@ -57,11 +61,11 @@ protected:
 	/// \brief remove node in conflict
 	virtual void removeConflicts();
 	/// \brief export to an off file
-	int exportToFileOff_divided(QString pPath, std::vector<DiscoidalCell*>* cells);
+	int exportToFileOff_divided(std::string const& path, DiscoidalCells const& cells);
 	/// \brief export directly all discoidal cell given in paramater
-	virtual int exportToFileOff_undivided(QString pPath, std::vector<DiscoidalCell*>* cells);
+	virtual int exportToFileOff_undivided(std::string const& path, DiscoidalCells const& cells);
 	/// \brief exportter to .OFF file format
-	virtual int exportToFileOff(QString pPath, bool pDivided);
+	virtual int exportToFileOff(std::string const& path, bool pDivided);
 	/// \brief clean data structures
 	virtual void clean();
 	/// \brief get all polygons from the delaunay mesh.

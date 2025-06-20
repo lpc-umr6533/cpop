@@ -49,8 +49,8 @@ int ThreadAgentGroup::removeAgent(Agent* agentToRemove) {
 
 void ThreadAgentGroup::run() {
 	if(DEBUG_THREAD_AGENT_GROUP) {
-		QString mess = "thread " + QString::number(_ID) + "will process " + QString::number(_agents.size()) + " agents" ;
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "ThreadAgentGroup");
+		std::string mess = "thread " + std::to_string(_ID) + "will process " + std::to_string(_agents.size()) + " agents";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "ThreadAgentGroup");
 	}
 
 	/// process all agent contained

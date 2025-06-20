@@ -49,8 +49,8 @@ void DiscoidalCell::resetMesh() {
 /// \return The random spot requested on the cytoplasm
 Point_2 DiscoidalCell::getSpotOnCellMembrane() const {
 	if(_shape->size() < 1) {
-		QString mess = "Unvalid shape, unable to compute a spot on the membrane";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "DiscoidalCell");
+		std::string mess = "Unvalid shape, unable to compute a spot on the membrane";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "DiscoidalCell");
 		return {};
 	} else {
 		int indexShape = RandomEngineManager::getInstance()->randi(0, _shape->size() - 1);
@@ -78,8 +78,8 @@ Point_2 DiscoidalCell::getSpotOnCytoplasm() const {
 /// \return The random spot requested on a nuclei
 Point_2 DiscoidalCell::getSpotOnNuclei() const {
 	if(_nuclei.size() < 1) {
-		QString mess = "No nuclei, unable to compute a spot on a  nuclei";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "DiscoidalCell");
+		std::string mess = "No nuclei, unable to compute a spot on a  nuclei";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "DiscoidalCell");
 		return {};
 	} else {
 		int indexShape = RandomEngineManager::getInstance()->randi(0, _nuclei.size() -1);
@@ -91,8 +91,8 @@ Point_2 DiscoidalCell::getSpotOnNuclei() const {
 /// \return The random spot requested in a nuclei
 Point_2 DiscoidalCell::getSpotInNuclei() const {
 	if(_nuclei.size() < 1) {
-		QString mess = "No nuclei, unable to compute a spot on a  nuclei";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "DiscoidalCell");
+		std::string mess = "No nuclei, unable to compute a spot on a  nuclei";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "DiscoidalCell");
 		return {};
 	} else {
 		int indexShape = RandomEngineManager::getInstance()->randi(0, _nuclei.size() -1);

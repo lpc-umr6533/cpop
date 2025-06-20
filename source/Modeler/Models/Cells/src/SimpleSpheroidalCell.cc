@@ -4,6 +4,7 @@
 #include "SimpleSpheroidalCell.hh"
 
 #include <CGAL/centroid.h>
+#include <string>
 
 /// \param pCellProperties the cell properties
 /// \param pOrigin the origin to the cell
@@ -43,8 +44,8 @@ Point_3 SimpleSpheroidalCell::getNucleusCenter(eNucleusPosType nucleusPositionTy
 		}
 		default:
 		{
-			QString mess = "unknow nucleusPositionType" + QString::number(nucleusPositionType) + ", Set tposition to the barycenter ";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "SpheroidalCellMesh");
+			std::string mess = "unknow nucleusPositionType" + std::to_string(nucleusPositionType) + ", Set tposition to the barycenter ";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "SpheroidalCellMesh");
 			return getNucleusCenter(BARYCENTER);
 		}
 	}
@@ -118,4 +119,9 @@ Point_3 SimpleSpheroidalCell::getSpotOnCytoplasm() const {
 	}
 
 	return res;
+}
+
+void SimpleSpheroidalCell::exportNucleiToFile(std::string const& path) const {
+	for(auto const& nucleus: _nuclei) {
+	}
 }

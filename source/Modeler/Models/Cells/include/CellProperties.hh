@@ -8,10 +8,6 @@
 #include "ECellTypes.hh"
 #include "ELifeCycles.hh"
 #include "ENucleusPosType.hh"
-#include "IDManager.hh"
-#include "InformationSystemManager.hh"
-#include "MaterialManager.hh"
-#include "Shape.hh"
 #include "Writable.hh"
 
 // G4 import
@@ -25,7 +21,7 @@ using namespace LifeCycles;
 /// @author Henri Payno
 class CellProperties : public Writable {
 public:
-	typedef CellVariableAttribute<double> t_CellVarAtt_d;		///< \brief cell variable attribute
+	using t_CellVarAtt_d = CellVariableAttribute<double>;		///< \brief cell variable attribute
 
 	friend class CellFactory;
 

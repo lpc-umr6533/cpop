@@ -24,13 +24,15 @@ public:
 	/// \brief return true if nuclei radius are coherent
 	[[nodiscard]] bool checkNucleiRadius() const override { return _nucleus->getRadius() > 0; }
 	/// \brief return the cell description
-	[[nodiscard]] QString getDescription() const override { return "SimpleSpheroidalCell"; }
+	[[nodiscard]] std::string getDescription() const override { return "SimpleSpheroidalCell"; }
 	/// \brief return a random point inside the cytoplasm, avoiding membrane and nucleus
 	// virtual Point_3 getSpotOnCytoplasm() const;
 	/// \brief return the round nucleus
 	[[nodiscard]] RoundNucleus<double, Point_3, Vector_3>* getNucleus() const { return _nucleus; }
 	/// \brief return a random point inside the cytoplasm, avoiding membrane and nucleus
 	[[nodiscard]] Point_3 getSpotOnCytoplasm() const override;
+
+	void exportNucleiToFile(std::string const& path) const override;
 
 protected:
 	/// \brief max rattio getter

@@ -58,8 +58,8 @@ std::set<const SpatialableAgent<Kernel, Point, Vector>* > Force<Kernel, Point, V
 		}
 		default:
 		{
-			QString mess = "unable to get concerned agent by force for this kind of ForceInputType : "  + _concernedAgt;
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "Force");
+			std::string mess = "unable to get concerned agent by force for this kind of ForceInputType : "  + _concernedAgt;
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "Force");
 			return std::set<const SpatialableAgent<Kernel, Point, Vector>* >();
 		}
 	}

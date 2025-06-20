@@ -33,9 +33,9 @@ DiscoidalCellMesh::~DiscoidalCellMesh() {
 /// \param pPath 	the output file path
 /// \param pFormat 	the output format of the mesh
 /// \param pDivided	True if we want to create one file per cell
-int DiscoidalCellMesh::exportToFile(QString pPath, MeshOutFormats::outputFormat pFormat, bool pDivided) {
-	if(pFormat == MeshOutFormats::OFF) {
-		return exportToFileOff(pPath, pDivided);
+int DiscoidalCellMesh::exportToFile(std::string const& path, MeshOutFormats::outputFormat format, bool divided) {
+	if(format == MeshOutFormats::OFF) {
+		return exportToFileOff(path, divided);
 	} else {
 		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, "Exporter do not deal with this kind of format yet", "DiscoidalCellMesh");
 		return 1;
@@ -45,24 +45,23 @@ int DiscoidalCellMesh::exportToFile(QString pPath, MeshOutFormats::outputFormat 
 /// \param pPath the output file path
 /// \param cells The cells to export
 /// \return 0 if success
-int DiscoidalCellMesh::exportToFileOff_undivided(QString pPath, std::vector<DiscoidalCell*>* cells) { /// TODO : passer en const
+int DiscoidalCellMesh::exportToFileOff_undivided(std::string const& path, DiscoidalCells const& cells) { /// TODO : passer en const
 	std::map<Point_2, unsigned long int> indexes;
 
 	/// create the .off file to set the mesh
-	pPath += ".off";
-	std::ofstream* voronoiOut = IO::OFF::createOffFileWithHeader(pPath.toStdString());
+	std::string fullPath = path + ".off";
+	std::ofstream* voronoiOut = IO::OFF::createOffFileWithHeader(fullPath);
 
 	// deal with cell
 	std::set<Point_2> points;
-	std::vector<Segment_2>::iterator itPolyPts;
-	for(auto const& cell : *cells) {
+	for(auto const* cell : cells) {
 		// add membrane shape points
-		for(itPolyPts = cell->shape_begin(); itPolyPts != cell->shape_end(); ++itPolyPts)
+		for(auto itPolyPts = cell->shape_begin(); itPolyPts != cell->shape_end(); ++itPolyPts)
 			points.insert(itPolyPts->source());
 
 		// add nucleus shape points
-		std::vector<t_Nucleus_2*> lNuclei = cell->getNuclei();
-		for(auto const& nucleus : lNuclei) {
+		auto lNuclei = cell->getNuclei();
+		for(auto const* nucleus : lNuclei) {
 			auto const& lCellNucleusPoints = nucleus->getShapePoints();
 			points.insert(lCellNucleusPoints.begin(), lCellNucleusPoints.end());
 		}
@@ -81,14 +80,14 @@ int DiscoidalCellMesh::exportToFileOff_undivided(QString pPath, std::vector<Disc
 		}
 	}
 
-	*voronoiOut << points.size() << " " << rectangles.size() + cells->size() * 2 << " 0" << std::endl;	// *2 because we also include cell nucleus
+	*voronoiOut << points.size() << " " << rectangles.size() + cells.size() * 2 << " 0" << std::endl;	// *2 because we also include cell nucleus
 	IO::OFF::exportVerticesToOff(points, indexes, voronoiOut);
 
 	// export cell shapes
-	for(auto const& cell : *cells) {
+	for(auto const* cell : cells) {
 		// define membrane shape
 		*voronoiOut << cell->shape_size();
-		for(itPolyPts = cell->shape_begin(); itPolyPts != cell->shape_end(); ++itPolyPts)
+		for(auto itPolyPts = cell->shape_begin(); itPolyPts != cell->shape_end(); ++itPolyPts)
 			*voronoiOut << " " << indexes[itPolyPts->source()];
 
 		*voronoiOut << " " << IO::exportColor(cell->getColor()).toStdString() << std::endl; /// add a random color to each voronoi cell
@@ -146,7 +145,7 @@ std::vector<DiscoidalCell*> DiscoidalCellMesh::generateMesh() {
 		std::vector<DiscoidalCellMeshSubThread*> reffinementThreads;
 
 		// create the reffinement threads
-		unsigned int nbThreadToCreate = (cells.size() / MIN_NB_CELL_PER_THREAD) + 1 ;
+		unsigned int nbThreadToCreate = (cells.size() / MIN_NB_CELL_PER_THREAD) + 1;
 		{
 			// create as much thread as needed
 			if(nbThreadToCreate > INITIAL_MAX_THREAD)
@@ -155,8 +154,8 @@ std::vector<DiscoidalCell*> DiscoidalCellMesh::generateMesh() {
 			unsigned int threadID = 0;
 			while(reffinementThreads.size() < nbThreadToCreate) {
 				if(DISCOIDAL_CELL_MESH_DEBUG) {
-					QString mess = "create a new thread of ID "  + QString::number(threadID);
-					InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "DiscoidalCellMesh");
+					std::string mess = "create a new thread of ID "  + std::to_string(threadID);
+					InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "DiscoidalCellMesh");
 				}
 
 				reffinementThreads.push_back(

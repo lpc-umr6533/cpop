@@ -21,8 +21,8 @@ void save(Writable* writable, QString path) {
 	assert(writable);
 	QFile xmlFile(path);
 	if(!xmlFile.open(QIODevice::WriteOnly)) {
-		QString mess = "Error - can't save - cannot open the requested " + path;
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "FILE::XML::getAgents");
+		std::string mess = "Error - can't save - cannot open the requested " + path.toStdString();
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "FILE::XML::getAgents");
 		return;
 	}
 

@@ -48,9 +48,9 @@ public:
 	/// \brief return the statistic of the mesh for a mesh type given.
 	[[nodiscard]] Kernel getMeshVolume(MeshOutFormats::outputFormat meshType) const override;
 	/// \warning must be in correlation with the R treatment.
-	[[nodiscard]] QString addStatsData() const override;
+	[[nodiscard]] std::string addStatsData() const override;
 	/// \brief inform about the statistics exported by the meitter
-	[[nodiscard]] QString writeStatsHeader() const override;
+	[[nodiscard]] std::string writeStatsHeader() const override;
 	/// \brief print cell information (used also to save the cell on a .txt file)
 	void writeAttributes(QXmlStreamWriter&) const override;
 
@@ -59,9 +59,9 @@ public:
 
 #ifdef CONVERT_TO_G4
 	/// \brief return the G4 entity corresponding
-	G4PVPlacement* convertToG4Entity(QString name, G4LogicalVolume* motherVolume, G4Material* pNucleusMat, bool pCheckOverlapse = false) const override;
+	G4PVPlacement* convertToG4Entity(std::string const& name, G4LogicalVolume* motherVolume, G4Material* pNucleusMat, bool pCheckOverlapse = false) const override;
 	/// \brief return the G4 entity corresponding
-	G4LogicalVolume* convertToG4LogicalVolume(QString name, G4Material* pNucleusMat) const override;
+	G4LogicalVolume* convertToG4LogicalVolume(std::string const& name, G4Material* pNucleusMat) const override;
 #endif
 
 private:
@@ -88,25 +88,25 @@ RoundNucleus<Kernel, Point, Vector>::RoundNucleus(double pRadius, Point pOrigin,
 /// \param motherVolume The mother volume is any
 /// \param pNucleusMat The material to set on the nucleus
 template <typename Kernel, typename Point, typename Vector>
-G4PVPlacement* RoundNucleus<Kernel, Point, Vector>::convertToG4Entity(QString, G4LogicalVolume*, G4Material*, bool) const {
+G4PVPlacement* RoundNucleus<Kernel, Point, Vector>::convertToG4Entity(std::string const&, G4LogicalVolume*, G4Material*, bool) const {
 	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, "convertor not created for this kind of template manager", "RoundNucleus");
 	return nullptr;
 }
 
 template<>
-G4PVPlacement* RoundNucleus<double, Point_3, Vector_3>::convertToG4Entity(QString name, G4LogicalVolume* motherVolume, G4Material* pNucleusMat, bool) const;
+G4PVPlacement* RoundNucleus<double, Point_3, Vector_3>::convertToG4Entity(std::string const& name, G4LogicalVolume* motherVolume, G4Material* pNucleusMat, bool) const;
 
 /// \param name The name to give to the G4 entities
 /// \param motherVolume The mother volume is any
 /// \param pNucleusMat The material to set on the nucleus
 template <typename Kernel, typename Point, typename Vector>
-G4LogicalVolume* RoundNucleus<Kernel, Point, Vector>::convertToG4LogicalVolume(QString , G4Material*) const {
+G4LogicalVolume* RoundNucleus<Kernel, Point, Vector>::convertToG4LogicalVolume(std::string const&, G4Material*) const {
 	InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, "convertor not created for this kind of template manager", "RoundNucleus");
 	return nullptr;
 }
 
 template<>
-G4LogicalVolume* RoundNucleus<double, Point_3, Vector_3>::convertToG4LogicalVolume(QString name, G4Material* pNucleusMat ) const;
+G4LogicalVolume* RoundNucleus<double, Point_3, Vector_3>::convertToG4LogicalVolume(std::string const& name, G4Material* pNucleusMat) const;
 /// \endcond
 
 #endif
@@ -171,14 +171,14 @@ double RoundNucleus<double, Point_3, Vector_3>::getMeshVolume(MeshOutFormats::ou
 ////////////////////////////////////////////////////// addStatsData ///////////////////////////////////////////////////:
 /// \return the stats to add to the file
 template <typename Kernel, typename Point, typename Vector>
-QString RoundNucleus<Kernel, Point, Vector>::addStatsData() const {
-	return ( QString::number(getRadius()) );
+std::string RoundNucleus<Kernel, Point, Vector>::addStatsData() const {
+	return std::to_string(getRadius());
 }
 
 ////////////////////////////////////////////////////// writeStatsHeader ///////////////////////////////////////////////////:
 /// \return the stats to add to the file
 template <typename Kernel, typename Point, typename Vector>
-QString RoundNucleus<Kernel, Point, Vector>::writeStatsHeader() const {
+std::string RoundNucleus<Kernel, Point, Vector>::writeStatsHeader() const {
 	return Settings::Statistics::Nucleus_Radius_flag;
 }
 
@@ -186,7 +186,7 @@ QString RoundNucleus<Kernel, Point, Vector>::writeStatsHeader() const {
 /// \param writer
 template <typename Kernel, typename Point, typename Vector>
 void RoundNucleus<Kernel, Point, Vector>::writeAttributes(QXmlStreamWriter& writer) const {
-	writer.writeAttribute(radius_flag, QString::number(getRadius()));
+	writer.writeAttribute(radius_flag, QString::fromStdString(std::to_string(getRadius())));
 }
 
 /// \param pt the point to check to know is is inside or outside

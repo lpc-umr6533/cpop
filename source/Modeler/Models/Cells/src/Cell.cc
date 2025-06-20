@@ -11,24 +11,23 @@ Dimension Cell<double, Point_3, Vector_3>::getDimension() const {
 }
 
 template<>
-QString Cell<double, Point_2, Vector_2>::getPositionForStates() const {
-	return QString(QString::number(getPosition().x())) +
-		QString("\t" + QString::number(getPosition().y()));
+std::string Cell<double, Point_2, Vector_2>::getPositionForStates() const {
+	return std::to_string(getPosition().x()) + "\t" + std::to_string(getPosition().y());
 }
 
 template<>
-QString Cell<double, Point_3, Vector_3>::getPositionForStates() const {
-	return QString(QString::number(getPosition().x())) +
-		QString("\t" + QString::number(getPosition().y())) +
-		QString("\t" + QString::number(getPosition().z()));
+std::string Cell<double, Point_3, Vector_3>::getPositionForStates() const {
+	return std::to_string(getPosition().x()) +
+		"\t" + std::to_string(getPosition().y()) +
+		"\t" + std::to_string(getPosition().z());
 }
 
 template<>
-QString Cell<double, Point_2, Vector_2>::getPositionFlag() const {
+std::string Cell<double, Point_2, Vector_2>::getPositionFlag() const {
 	return {"x_pos \ty_pos"};
 }
 
 template<>
-QString Cell<double, Point_3, Vector_3>::getPositionFlag() const {
+std::string Cell<double, Point_3, Vector_3>::getPositionFlag() const {
 	return {"x_pos \ty_pos \tz_pos"};
 }

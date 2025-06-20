@@ -20,7 +20,6 @@
 #include "Writable.hh"
 #include "XMLSettings.hh"
 
-#include <QString>
 #include <vector>
 
 using namespace XML::CPOP_Flag;
@@ -45,9 +44,9 @@ public:
 	/// \brief will return cell mesh specificities for R.
 	/// By default : no specifities.
 	/// \warning must be in correlation with the R treatment.
-	[[nodiscard]] QString addStatsData() const override = 0;
+	[[nodiscard]] std::string addStatsData() const override = 0;
 	/// \brief inform about the statistics exported by the meitter
-	[[nodiscard]] QString writeStatsHeader() const override = 0;
+	[[nodiscard]] std::string writeStatsHeader() const override = 0;
 	/// \todo : write nucleus shape
 	/// \brief print cell information (used also to save the cell on a .txt file)
 	void write(QXmlStreamWriter&) const override;
@@ -63,9 +62,9 @@ public:
 
 #ifdef CONVERT_TO_G4
 	/// \brief return the G4 entity corresponding
-	virtual G4PVPlacement* convertToG4Entity(QString name, G4LogicalVolume* motherVolume, G4Material* pNucleusMat, bool pCheckOverlapse = false) const = 0;
+	virtual G4PVPlacement* convertToG4Entity(std::string const& name, G4LogicalVolume* motherVolume, G4Material* pNucleusMat, bool pCheckOverlapse = false) const = 0;
 	/// \brief return the G4 entity corresponding
-	virtual G4LogicalVolume* convertToG4LogicalVolume(QString name, G4Material* pNucleusMat) const = 0;
+	virtual G4LogicalVolume* convertToG4LogicalVolume(std::string const& name, G4Material* pNucleusMat) const = 0;
 #endif
 
 private:
@@ -88,8 +87,8 @@ Nucleus<Kernel, Point, Vector>::Nucleus(eNucleusType pNucleusType, eNucleusPosTy
 template<typename Kernel, typename Point, typename Vector>
 void Nucleus<Kernel, Point, Vector>::write(QXmlStreamWriter& writer) const {
 	writer.writeStartElement(nucleus_flag);
-	writer.writeAttribute(nucleus_pos_type_flag, QString::number(_posType));
-	writer.writeAttribute(nucleus_shape_type_flag, QString::number(_shapeType));
+	writer.writeAttribute(nucleus_pos_type_flag, QString::fromStdString(std::to_string(_posType)));
+	writer.writeAttribute(nucleus_shape_type_flag, QString::fromStdString(std::to_string(_shapeType)));
 	writeAttributes(writer);
 	writer.writeEndElement(); // nucleus_flag
 }

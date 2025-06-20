@@ -18,10 +18,10 @@ public:
 	~DiscoidalCellMesh() override;
 
 	/// \brief the mesh exporter
-	int exportToFile(QString, MeshOutFormats::outputFormat, bool pDivided = false) override;
+	int exportToFile(std::string const&, MeshOutFormats::outputFormat, bool divided = false) override;
 
 	/// \brief export all cells on the same file
-	int exportToFileOff_undivided(QString pPath, std::vector<DiscoidalCell*>* ) override;
+	int exportToFileOff_undivided(std::string const& path, DiscoidalCells const&) override;
 	// /// \brief return the spheroidal cell structure.
 	// virtual DiscoidalCell* getDiscoidalCell(Point_2 ptOrigin);
 	/// \brief clean data structures

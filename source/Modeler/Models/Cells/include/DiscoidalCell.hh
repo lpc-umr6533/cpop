@@ -25,8 +25,12 @@ public:
 	shapeIterator shape_begin() { return _shape->begin(); }
 	/// \brief return the iterator on the end of the shape
 	shapeIterator shape_end() { return _shape->end(); }
+	/// \brief return the iterator on the begining of the shape
+	[[nodiscard]] auto shape_begin() const { return _shape->begin(); }
+	/// \brief return the iterator on the end of the shape
+	[[nodiscard]] auto shape_end() const { return _shape->end(); }
 	/// \brief return the number of element on the shape
-	unsigned int shape_size() { return _shape->size(); }
+	[[nodiscard]] unsigned int shape_size() const { return _shape->size(); }
 	/// \brief add a segment to the shae
 	void add_to_shape(Segment_2 s) { _shape->push_back(s); }
 	/// \brief shape getter
@@ -54,7 +58,7 @@ public:
 	/// \brief reset the mesh
 	void resetMesh() override;
 	/// \brief return the cell description
-	[[nodiscard]] QString getDescription() const override = 0;
+	[[nodiscard]] std::string getDescription() const override = 0;
 
 	/// \brief return the volume defined by the mesh
 	[[nodiscard]] double getMeshVolume(MeshOutFormats::outputFormat ) const override { return -1.; }

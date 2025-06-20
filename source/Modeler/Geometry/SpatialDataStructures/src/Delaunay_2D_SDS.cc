@@ -1,9 +1,8 @@
 #include "Delaunay_2D_SDS.hh"
 #include "Round_Shape.hh"
-#include "CellMeshSettings.hh"
 
 #include <CGAL/range_search_delaunay_2.h>
-#include <iterator>     // std::back_inserter
+
 #ifndef NDEBUG
  	#define DEBUG_DELAUNAY_2D_SDS 0
 #else
@@ -16,8 +15,8 @@ using namespace Settings::Geometry;
 using namespace Settings::Geometry::Mesh2D;
 
 /// \param pName the name to give to the agent
-Delaunay_2D_SDS::Delaunay_2D_SDS(QString pName):
-	SpatialDataStructure<double, Point_2, Vector_2>(pName)
+Delaunay_2D_SDS::Delaunay_2D_SDS(std::string const& name):
+	SpatialDataStructure<double, Point_2, Vector_2>(name)
 {
 }
 
@@ -34,8 +33,8 @@ bool Delaunay_2D_SDS::add(const t_SpatialableAgent_2* pSpaAgt) {
 	// check if agent get a round shape
 	auto* shape = dynamic_cast<Round_Shape<double, Point_2, Vector_2>*>(pSpaAgt->getBody());
 	if(!shape) {
-		QString mess = "unable to add the agent, the body isn't disc shape.";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Weighted Delaunay 2D - SDS");
+		std::string mess = "unable to add the agent, the body isn't disc shape.";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Weighted Delaunay 2D - SDS");
 		return false;
 	}
 
@@ -92,8 +91,8 @@ inline std::set<const t_SpatialableAgent_2*> Delaunay_2D_SDS::getNeighbours(cons
 
 	// check the agent is on the Spatial data structure
 	if(_agentToVertex.find(pAgent) == _agentToVertex.end()) {
-		QString mess = "unable to give neighbours for agent " + QString::number(pAgent->getID()) + ", not set on the Spatial Data structure";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Weighted Delaunay 2D - SDS");
+		std::string mess = "unable to give neighbours for agent " + std::to_string(pAgent->getID()) + ", not set on the Spatial Data structure";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Weighted Delaunay 2D - SDS");
 		return {};
 	}
 

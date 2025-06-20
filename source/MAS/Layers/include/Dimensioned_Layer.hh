@@ -24,7 +24,7 @@ public:
 	using SpatialDataStructureSet = std::set<SpatialDataStructureKPV*>;
 
 public:
-	Dimensioned_Layer(QString, Layer* pParent = nullptr, LayerType pType = LEAF);
+	Dimensioned_Layer(std::string, Layer* pParent = nullptr, LayerType pType = LEAF);
 
 	/// \brief return the spatial data structures link to the layer
 	[[nodiscard]] auto const& getSpatialDataStructures() const { return _spatialDataStructures; };
@@ -61,8 +61,8 @@ protected:
 
 /// constructor
 template<typename Kernel, typename Point, typename Vector>
-Dimensioned_Layer<Kernel, Point, Vector>::Dimensioned_Layer(QString pName, Layer* pParent, LayerType pType):
-	Layer(pName, pParent, pType)
+Dimensioned_Layer<Kernel, Point, Vector>::Dimensioned_Layer(std::string pName, Layer* pParent, LayerType pType):
+	Layer(std::move(pName), pParent, pType)
 {
 }
 
@@ -119,16 +119,16 @@ template<typename Kernel, typename Point, typename Vector>
 void Dimensioned_Layer<Kernel, Point, Vector>::init() {
 	Layer::init();
 	if(DEBUG_DIMENSIONED_LAYER) {
-		QString mess = "start initalisation for dimensioned layer " + getName();
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Dimensioned Layer");
+		std::string mess = "start initalisation for dimensioned layer " + getName();
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Dimensioned Layer");
 	}
 
 	initSpatialDataStructures();
 
 	if(DEBUG_DIMENSIONED_LAYER) {
-		QString mess = "initalisation done for dimensioned layer " + getName();
-		mess += ". Add init : " + QString::number(_spatialDataStructures.size()) + " spatial data structures.";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Layer");
+		std::string mess = "initalisation done for dimensioned layer " + getName();
+		mess += ". Add init : " + std::to_string(_spatialDataStructures.size()) + " spatial data structures.";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Layer");
 	}
 }
 

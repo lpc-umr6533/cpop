@@ -17,7 +17,7 @@ using namespace Settings::nAgent;
 /// @author Henri Payno
 class Delaunay_2D_SDS: public SpatialDataStructure<double, Point_2, Vector_2> {
 public:
-	Delaunay_2D_SDS(QString);
+	Delaunay_2D_SDS(std::string const&);
 
 	/// \brief function to call to add a spatialable entity
 	bool add(const t_SpatialableAgent_2*) override;

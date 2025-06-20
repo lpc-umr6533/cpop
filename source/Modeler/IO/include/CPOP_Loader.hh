@@ -8,7 +8,6 @@
 
 #include <QDomElement>
 #include <QFile>
-#include <QString>
 
 #include <QXmlStreamReader>
 
@@ -27,10 +26,10 @@ class CPOP_Loader {
 public:
 	/// \brief load 2D environment
 	/// \warning for now this function is only able to load environment with only one "level" of similated sub environment
-	t_Environment_2* load2DEnvironment(QString filePath, bool forceID = false) { return loadEnvironement<double, Point_2, Vector_2>(filePath, forceID); }
+	t_Environment_2* load2DEnvironment(std::string const& filePath, bool forceID = false) { return loadEnvironement<double, Point_2, Vector_2>(filePath, forceID); }
 	/// \brief load 3D environment
 	/// \warning for now this function is only able to load environment with only one "level" of similated sub environment
-	t_Environment_3* load3DEnvironment(QString filePath, bool forceID = false) { return loadEnvironement<double, Point_3, Vector_3>(filePath, forceID); }
+	t_Environment_3* load3DEnvironment(std::string const& filePath, bool forceID = false) { return loadEnvironement<double, Point_3, Vector_3>(filePath, forceID); }
 
 	/// \brief load all agent from the XML given and store them by the key "ID"
 	std::map<unsigned long int, Agent*> getAgents(QXmlStreamReader* path, bool forceID = false);
@@ -45,7 +44,7 @@ private:
 
 	/// \brief load an environment.
 	template<typename Kernel, typename Point, typename Vector>
-	Environment<Kernel, Point, Vector>* loadEnvironement(QString, bool);
+	Environment<Kernel, Point, Vector>* loadEnvironement(std::string const&, bool);
 
 	/// \brief load a sub environment from a QDomNode
 	template<typename Kernel, typename Point, typename Vector>
@@ -77,11 +76,11 @@ private:
 	SpheroidalCell* createSpheroidalCell(QXmlStreamReader* node, bool forceID);
 
 	/// \brief return a map of variable attribute stored under the node of ID "nodeID"
-	std::map<LifeCycles::LifeCycle, CellProperties::t_CellVarAtt_d> getCellProp_d_Value(QXmlStreamReader*, QString nodeID);
+	std::map<LifeCycles::LifeCycle, CellProperties::t_CellVarAtt_d> getCellProp_d_Value(QXmlStreamReader*, std::string const& nodeID);
 	/// \brief return a map of material attribute stored under the node of ID "nodeID"
-	std::map<LifeCycles::LifeCycle, G4Material*> getCellProp_Mat_Value(QXmlStreamReader*, QString);
+	std::map<LifeCycles::LifeCycle, G4Material*> getCellProp_Mat_Value(QXmlStreamReader*, std::string const&);
 
-	bool foundEnvironmentName(QXmlStreamReader* xmlReader, QString& theName);
+	bool foundEnvironmentName(QXmlStreamReader* xmlReader, std::string& theName);
 
 private:
 	/// \brief last load cell proeprties
@@ -96,11 +95,11 @@ private:
 /// must be used cautiously
 /// \return The set of file generated from the given file
 template<typename Kernel, typename Point, typename Vector>
-Environment<Kernel, Point, Vector>* CPOP_Loader::loadEnvironement(QString filePath, bool forceID)
+Environment<Kernel, Point, Vector>* CPOP_Loader::loadEnvironement(std::string const& filePath, bool forceID)
 {
 	using t_Environment = Environment<Kernel, Point, Vector>;
 	/// load data
-	QFile xmlFile(filePath);
+	QFile xmlFile(QString::fromStdString(filePath));
 	if(!xmlFile.open(QIODevice::ReadOnly)) return nullptr;
 
 	QXmlStreamReader xmlReader(&xmlFile);
@@ -127,9 +126,9 @@ Environment<Kernel, Point, Vector>* CPOP_Loader::loadEnvironement(QString filePa
 	}
 
 	// create the environment
-	QString environmentName;
+	std::string environmentName;
 	foundEnvironmentName(&xmlReader, environmentName);
-	auto* env = new t_Environment( environmentName);
+	auto* env = new t_Environment(environmentName);
 
 	// get all stored cell properties
 	_cellPropertiesMap.clear();
@@ -214,7 +213,7 @@ SimulatedSubEnv<Kernel, Point, Vector>* CPOP_Loader::loadSimuSubEnvironment(Envi
 	assert(xmlReader->name().toString() == simulated_sub_env_flag);
 	assert(xmlReader->attributes().hasAttribute(name_flag));
 
-	QString lName = xmlReader->attributes().value(name_flag).toString();
+	std::string lName = xmlReader->attributes().value(name_flag).toString().toStdString();
 
 	using t_SimulatedSubEnv = SimulatedSubEnv<Kernel, Point, Vector>;
 	using t_SpatialDelimitation = SpatialDelimitation<Kernel, Point, Vector>;
@@ -230,7 +229,7 @@ SimulatedSubEnv<Kernel, Point, Vector>* CPOP_Loader::loadSimuSubEnvironment(Envi
 	assert(delimitation);
 	// if unable to create the spatial delimitation
 	if(delimitation == nullptr) {
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES,"Unable to generate the SimulatedSubEnvironment no delimitation recognize", "FILE::XML::loadSimuSubEnvironment");
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, "Unable to generate the SimulatedSubEnvironment no delimitation recognize", "FILE::XML::loadSimuSubEnvironment");
 		exit(0);
 	}
 
@@ -265,8 +264,8 @@ SimulatedSubEnv<Kernel, Point, Vector>* CPOP_Loader::loadSimuSubEnvironment(Envi
 
 			unsigned long int agentID = xmlReader->text().toString().toLong();
 			if(pAgents->find(agentID) == pAgents->end()) {
-				QString mess = "Unable to retrace to the agent of ID : " + QString::number(agentID);
-				InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "FILE::XML::loadSimuSubEnvironment");
+				std::string mess = "Unable to retrace to the agent of ID : " + std::to_string(agentID);
+				InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "FILE::XML::loadSimuSubEnvironment");
 			}
 
 			subEnvironment->addAgent( pAgents->find(agentID)->second );

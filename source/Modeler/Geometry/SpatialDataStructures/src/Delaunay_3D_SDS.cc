@@ -8,8 +8,8 @@
 	#define DEBUG_DELAUNAY_3D_SDS 0	// must always stay at 0
 #endif
 
-Delaunay_3D_SDS::Delaunay_3D_SDS(QString pName):
-	SpatialDataStructure<double, Point_3, Vector_3>(pName)
+Delaunay_3D_SDS::Delaunay_3D_SDS(std::string const& name):
+	SpatialDataStructure<double, Point_3, Vector_3>(name)
 {
 }
 
@@ -27,8 +27,8 @@ bool Delaunay_3D_SDS::add(const t_SpatialableAgent_3* pSpaAgt) {
 
 	auto* shape = dynamic_cast<Round_Shape<double, Point_3, Vector_3>*>(pSpaAgt->getBody());
 	if(!shape) {
-		QString mess = "unable to add the agent, the body isn't disc shape.";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Weighted Delaunay 3D - SDS");
+		std::string mess = "unable to add the agent, the body isn't disc shape.";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Weighted Delaunay 3D - SDS");
 		return false;
 	}
 
@@ -86,8 +86,8 @@ inline std::set<const t_SpatialableAgent_3*> Delaunay_3D_SDS::getNeighbours(cons
 	// check the agent is on the Spatial data structure
 	if(_agentToVertex.find(pAgent) == _agentToVertex.end()) {
 		if(DEBUG_DELAUNAY_3D_SDS) {
-			QString mess = "unable to give neighbours for agent " + QString::number(pAgent->getID()) + ", not set on the Spatial Data structure";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "Delaunay_3D_SDS");
+			std::string mess = "unable to give neighbours for agent " + std::to_string(pAgent->getID()) + ", not set on the Spatial Data structure";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "Delaunay_3D_SDS");
 		}
 
 		return {};

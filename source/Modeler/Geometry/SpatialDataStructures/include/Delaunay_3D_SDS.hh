@@ -16,7 +16,7 @@ using namespace Settings::Geometry::Mesh3D;
 /// @author Henri Payno
 class Delaunay_3D_SDS : public SpatialDataStructure<double, Point_3, Vector_3> {
 public:
-	Delaunay_3D_SDS(QString);
+	Delaunay_3D_SDS(std::string const&);
 
 	/// \brief function to call to add a spatialable entity
 	bool add(const t_SpatialableAgent_3*) override;

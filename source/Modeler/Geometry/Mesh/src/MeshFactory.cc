@@ -45,8 +45,8 @@ void MeshFactory::get2DWeightedSpatialables(std::set<t_Cell_2*>* pCells, std::se
 		}
 
 		if(DEBUG_MESH_FACTORY) {
-			QString mess = "add a point to the vornoi with a weight of :  " + QString::number(lWeight);
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString() , "MeshFactory");
+			std::string mess = "add a point to the vornoi with a weight of :  " + std::to_string(lWeight);
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "MeshFactory");
 		}
 
 		lWeightedSpatialables->insert(std::pair<const t_Spatialable_2*, double>(static_cast<const t_Spatialable_2*>(cell), lWeight));
@@ -69,8 +69,8 @@ void MeshFactory::get3DWeightedSpatialables(std::set<t_Cell_3*>* pCells, std::se
 		}
 
 		if(DEBUG_MESH_FACTORY) {
-			QString mess = "add a point to the vornoi with a weight of :  " + QString::number(lWeight);
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString() , "MeshFactory");
+			std::string mess = "add a point to the vornoi with a weight of :  " + std::to_string(lWeight);
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "MeshFactory");
 		}
 
 		lWeightedSpatialables->insert(std::pair<const t_Spatialable_3*, double>(static_cast<const t_Spatialable_3*>(cell), lWeight));
@@ -142,8 +142,8 @@ t_Mesh_2* MeshFactory::create_2DMesh(int* pError, std::set<t_Cell_2*> pCells, Me
 		}
 		default:
 		{
-			QString mess = "Failed to create the mesh, unknow mesh type with ID " + QString::number(pMeshType);
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString() , "MeshFactory");
+			std::string mess = "Failed to create the mesh, unknow mesh type with ID " + std::to_string(pMeshType);
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "MeshFactory");
 			return nullptr;
 		}
 	}
@@ -174,8 +174,8 @@ t_Mesh_3* MeshFactory::create_3DMesh(int* pError, std::set<t_Cell_3*> pCells, Me
 		}
 		default:
 		{
-			QString mess = "Failed to create the mesh, unknow mesh type with ID " + QString::number(pMeshType);
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString() , "MeshFactory");
+			std::string mess = "Failed to create the mesh, unknow mesh type with ID " + std::to_string(pMeshType);
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "MeshFactory");
 			return nullptr;
 		}
 	}

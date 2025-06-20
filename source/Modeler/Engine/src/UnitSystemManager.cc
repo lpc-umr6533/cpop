@@ -28,8 +28,8 @@ double UnitSystemManager::getMetricUnit(eMetricSystem unitSyst) const {
 		case Nanometer:   return 1.e-3;
 		default:
 		{
-			QString mess = "unknow metric system requested";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "UnitSystemManager");
+		  std::string mess = "unknow metric system requested";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "UnitSystemManager");
 		}
 	}
 	return Nanometer;
@@ -45,8 +45,8 @@ double UnitSystemManager::getWeightUnit(eWeightSystem unitSystem) const {
 		case Nanogram:  return CLHEP::nanogram;
 		default:
 		{
-			QString mess = "unknow metric system requested";
-			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "UnitSystemManager");
+			std::string mess = "unknow metric system requested";
+			InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "UnitSystemManager");
 		}
 	}
 	return CLHEP::kilogram;

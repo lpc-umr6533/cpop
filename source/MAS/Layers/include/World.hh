@@ -1,8 +1,6 @@
 #ifndef WORLD_HH
 #define WORLD_HH
 
-#include <QString>
-
 #include "Dimensioned_Layer.hh"
 #include "ViewerUpdater.hh"
 
@@ -19,7 +17,7 @@
 template<typename Kernel, typename Point, typename Vector>
 class World: public ViewerUpdater, public Dimensioned_Layer<Kernel, Point, Vector> {
 public:
-	World(QString pName);
+	World(std::string const& name);
 	~World() override;
 };
 
@@ -34,15 +32,15 @@ public:
 #endif
 
 template<typename Kernel, typename Point, typename Vector>
-World<Kernel, Point, Vector>::World(QString pName):
+World<Kernel, Point, Vector>::World(std::string const& name):
 	ViewerUpdater(),
-	Dimensioned_Layer<Kernel, Point, Vector>(pName, nullptr, Layer::ROOT)
+	Dimensioned_Layer<Kernel, Point, Vector>(name, nullptr, Layer::ROOT)
 {
 }
 
 template<typename Kernel, typename Point, typename Vector>
 World<Kernel, Point, Vector>::~World() {
-	std::set<Agent*> lAllAgents = Layer::getUniqueAgentsAndSubAgents();
+	std::set<Agent*> const& lAllAgents = Layer::getUniqueAgentsAndSubAgents();
 	for(auto const& agent: lAllAgents)
 			delete agent;
 }

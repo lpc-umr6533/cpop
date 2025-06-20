@@ -1,7 +1,6 @@
 #include "RandomEngineManager.hh"
 #include "CellMeshSettings.hh"
-#include "File_Utils_TXT.hh"
-#include "Geometry_Utils_Sphere.hh"
+#include "MaterialManager.hh"
 #include "SpheroidalCell.hh"
 
 #include "Debug_Settings.hh"
@@ -11,16 +10,11 @@
 #include <CGAL/Object.h>
 #include <CGAL_Utils.hh>
 
-#include <QString>
-
 #include "Nucleus.hh"
 
 #include "G4UnitsTable.hh"
 
 #include "G4RunManager.hh"
-#include "G4Run.hh"
-#include "analysis.hh"
-#include "RunAction.hh"
 
 #include <string>
 #include <fstream>
@@ -36,7 +30,6 @@ namespace fs = std::filesystem;
 	#include "Voronoi3DCellMeshSubThread.hh"
 #ifdef WITH_GEANT_4
 	#include "G4TriangularFacet.hh"
-	#include "G4Orb.hh"
 	#include "G4TessellatedSolid.hh"
 #else
 	#include "geometry/solid/specific/G4TriangularFacet.hh"
@@ -100,8 +93,8 @@ void SpheroidalCell::resetMesh() {
 /// \return A random spot requested on the cytoplasm
 Point_3 SpheroidalCell::getSpotOnCellMembrane() const {
 	if(_shape->size_of_facets() < 1) {
-		QString mess = "Unvalid shape, unable to compute a spot on the membrane";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "SpheroidalCell");
+		std::string mess = "Unvalid shape, unable to compute a spot on the membrane";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "SpheroidalCell");
 		return {0., 0., 0.};
 	} else {
 		// get a random point :
@@ -170,8 +163,8 @@ Point_3 SpheroidalCell::getSpotOnCytoplasm() const {
 /// \return A random spot requested on a nuclei
 Point_3 SpheroidalCell::getSpotOnNuclei() const {
 	if(_nuclei.size() < 1) {
-		QString mess = "No nuclei, unable to compute a spot on a  nuclei";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "SpheroidalCell");
+		std::string mess = "No nuclei, unable to compute a spot on a  nuclei";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "SpheroidalCell");
 		return {0., 0., 0.};
 	} else {
 		int indexShape = RandomEngineManager::getInstance()->randi(0, _nuclei.size() -1);
@@ -183,8 +176,8 @@ Point_3 SpheroidalCell::getSpotOnNuclei() const {
 /// \return A random spot requested in a nuclei
 Point_3 SpheroidalCell::getSpotInNuclei() const {
 	if(_nuclei.size() < 1) {
-		QString mess = "No nuclei, unable to compute a spot on a  nuclei";
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess.toStdString(), "SpheroidalCell");
+		std::string mess = "No nuclei, unable to compute a spot on a  nuclei";
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mess, "SpheroidalCell");
 		return {0., 0., 0.};
 	} else {
 		int indexShape = RandomEngineManager::getInstance()->randi(0, _nuclei.size() -1);
@@ -224,26 +217,26 @@ bool SpheroidalCell::hasIn(Point_3 ptToCheck) const {
 
 /// \param meshFormat the format of the mesh we want information for
 /// \return inforamtion about the mesh
-QString SpheroidalCell::getMeshStats(MeshOutFormats::outputFormat meshFormat) const {
-	QString res;
-	res += " --- start cell #" + QString::number(getID()) + "_stats --- \n";
-	res += " ID : " + QString::number(getID()) + "\n";
-	res += " type_of_cell_is : " 		+ getDescription()						+ "\n";
-	res += " position :" 				+ QString::number( getPosition().x() )
-			+ ", " 						+ QString::number( getPosition().y() )
-			+ ", "						+ QString::number( getPosition().z() )	+ "\n";
-	res += " approximated_volume : "	+ QString::number(getMeshVolume(meshFormat)) 			+ "\n";
+std::string SpheroidalCell::getMeshStats(MeshOutFormats::outputFormat meshFormat) const {
+	std::string res;
+	res += " --- start cell #"                 + std::to_string(getID())                   + "_stats --- \n";
+	res += " ID : "                            + std::to_string(getID())                   + "\n";
+	res += " type_of_cell_is : "               + getDescription()                          + "\n";
+	res += " position :"                       + std::to_string(getPosition().x())
+	    + ", "                                 + std::to_string(getPosition().y())
+	    + ", "                                 + std::to_string(getPosition().z())         + "\n";
+	res += " approximated_volume : "           + std::to_string(getMeshVolume(meshFormat)) + "\n";
 	res += "    --- start NucleiStats --- \n";
 
 	unsigned int iNuclei = 0;
 	for(auto const& itN : _nuclei) {
 		assert(itN);
-		res += "      Nuclei #" + QString::number(iNuclei) + "  : " + itN->getMeshVolume(meshFormat);
+		res += "      Nuclei #" + std::to_string(iNuclei) + "  : " + std::to_string(itN->getMeshVolume(meshFormat));
 		++iNuclei;
 	}
 
 	res += "    --- end Nuclei_stats --- \n";
-	res += " --- end cell" + QString::number(getID()) + "_stats  --- \n";
+	res += " --- end cell" + std::to_string(getID()) + "_stats  --- \n";
 
 	return res;
 }
@@ -274,12 +267,12 @@ double SpheroidalCell::getMeshVolume(MeshOutFormats::outputFormat meshFormat) co
 /// \param pName The prefix name to give to the G4entities
 /// \return The G4LogicalVolume* representing the membrane
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-G4LogicalVolume* SpheroidalCell::convertMembraneToG4(QString pName) {
+G4LogicalVolume* SpheroidalCell::convertMembraneToG4(std::string const& pName) {
 	auto convertToG4 = G4double(UnitSystemManager::getInstance()->getConversionToG4());
 
 	Polyhedron_3::Vertex_iterator itVertex;
 	// define the tesselated solid
-	auto* membraneSolid = new G4TessellatedSolid(pName.toStdString());
+	auto* membraneSolid = new G4TessellatedSolid(pName);
 	membraneSolid->SetSolidClosed(false);
 
 	// add all external facets
@@ -348,13 +341,13 @@ G4LogicalVolume* SpheroidalCell::convertMembraneToG4(QString pName) {
 	}
 
 	// define all facet and add them.
-	QString logicalVolName = "LV_" + pName;
+	std::string logicalVolName = "LV_" + pName;
 	auto* lCellMat = this->getCellProperties()->getCytoplasmMaterial(this->getLifeCycle());
 	if(!lCellMat)
 		lCellMat = MaterialManager::getInstance()->getDefaultMaterial();
 
 	assert(lCellMat);
-	return new G4LogicalVolume(membraneSolid, lCellMat, logicalVolName.toStdString(), nullptr, nullptr, nullptr);
+	return new G4LogicalVolume(membraneSolid, lCellMat, logicalVolName, nullptr, nullptr, nullptr);
 }
 
 /// \param pMother 			The mother logical volume
@@ -370,7 +363,7 @@ G4LogicalVolume* SpheroidalCell::convertMembraneToG4(QString pName) {
 // TODO : appeler ca convertToG3Entity
 G4PVPlacement* SpheroidalCell::convertToG4Structure(
 	G4LogicalVolume* pMother,
-	QString pName,
+	std::string const& pName,
 	bool checkOverLaps,
 	const std::map<SpheroidalCell*, std::set<const SpheroidalCell*> >* pNeighbourCells,
 	unsigned int pNbFacet,
@@ -385,16 +378,16 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 
 	G4LogicalVolume* membraneLogicVol = convertMembraneToG4(pName);
 
-	QString physVolName = "PV_" + pName;
+	std::string physVolName = "PV_" + pName;
 	// std::cout << '\n' << " physVolName " << printf(physVolName.toStdString().c_str()) <<'\n';
 
 	auto* vpPalcement = new G4PVPlacement(
-		G4Transform3D(),           // no rotation
-		membraneLogicVol,          // its logical volume
-		physVolName.toStdString(), // its name
-		pMother,                   // its mother  volume
-		false,                     // no boolean operations
-		0                          // copy number
+		G4Transform3D(),  // no rotation
+		membraneLogicVol, // its logical volume
+		physVolName,      // its name
+		pMother,          // its mother  volume
+		false,            // no boolean operations
+		0                 // copy number
 		, true
 	);
 
@@ -477,7 +470,7 @@ G4PVPlacement* SpheroidalCell::convertToG4Structure(
 		G4int err = 0;
 
 		for(auto const& itNucleus : _nuclei) {
-			QString nucleusName = nucleusNamePrefix + pName + QString::number(iNucleus);
+			std::string nucleusName = nucleusNamePrefix + pName + std::to_string(iNucleus);
 			iNucleus++;
 			auto* nucPlacement = itNucleus->convertToG4Entity(nucleusName, membraneLogicVol, lNucleusMat, checkOverLaps);
 			// std::cout << "  Masse cell " << membraneLogicVol->GetMass()  <<'\n';

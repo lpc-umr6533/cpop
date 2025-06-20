@@ -1,5 +1,7 @@
 #include "CellProperties.hh"
 #include "XMLSettings.hh"
+#include "IDManager.hh"
+#include "InformationSystemManager.hh"
 
 #include <cassert>
 #include <utility>
@@ -52,8 +54,8 @@ void CellProperties::print() const {
 /// \param pLifeCycle The life state we want the masses for
 CellVariableAttribute<double> CellProperties::getMasses(LifeCycle pLifeCycle) const {
 	if(_masses.find(pLifeCycle) == _masses.end()) {
-		QString mes = "unknow masses for requested LifeCycle" + QString::number(pLifeCycle);
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mes.toStdString(), "Cell properties");
+		std::string mes = "unknow masses for requested LifeCycle" + std::to_string(pLifeCycle);
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mes, "Cell properties");
 		return {0., 0.};
 	}
 
@@ -68,8 +70,8 @@ bool CellProperties::hasNucleusRadius(LifeCycle pLifeCycle) const {
 /// \param pLifeCycle The life state we want the nucleusRadius for
 CellVariableAttribute<double> CellProperties::getNucleusRadius(LifeCycle pLifeCycle) const {
 	if(!hasNucleusRadius(pLifeCycle)) {
-		QString mes = "unknow nucleus radius for requested LifeCycle " + QString::number(pLifeCycle);
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mes.toStdString(), "Cell properties");
+		std::string mes = "unknow nucleus radius for requested LifeCycle " + std::to_string(pLifeCycle);
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::CANT_PROCESS_MES, mes, "Cell properties");
 		return {0., 0.};
 	}
 
@@ -110,13 +112,13 @@ void CellProperties::writeProperties(QXmlStreamWriter& writer) const {
 	// write cell properties ID
 	writer.writeAttribute(cell_properties_ID_flag, QString::number(getID()));
 	// write cell types
-	writer.writeAttribute(cell_shape_type_flag, getCellTypeName( _cellType));
+	writer.writeAttribute(cell_shape_type_flag, getCellTypeName(_cellType));
 	// write nucleus pos type
 	writer.writeAttribute(nucleus_pos_type_flag, QString::number(_nucleusPosType));
 
 	// write active life cycle
 	for(auto const& itLC : availableLifeCycle)
-		writer.writeTextElement(life_cycle_flag, 	QString::number(itLC));
+		writer.writeTextElement(life_cycle_flag, QString::number(itLC));
 
 	// write masses
 	{
@@ -136,9 +138,9 @@ void CellProperties::writeProperties(QXmlStreamWriter& writer) const {
 		writer.writeStartElement(nucleus_radius_flag);
 		for(auto const& nucleusRadiu : _nucleusRadius) {
 			writer.writeStartElement(variable_attribute_flag);
-			writer.writeAttribute(life_cycle_flag, 	QString::number(nucleusRadiu.first));
-			writer.writeAttribute(min_flag, 		QString::number(nucleusRadiu.second.var_min()) );
-			writer.writeAttribute(max_flag, 		QString::number(nucleusRadiu.second.var_max()) );
+			writer.writeAttribute(life_cycle_flag, QString::number(nucleusRadiu.first));
+			writer.writeAttribute(min_flag, QString::number(nucleusRadiu.second.var_min()));
+			writer.writeAttribute(max_flag, QString::number(nucleusRadiu.second.var_max()));
 			writer.writeEndElement(); // var_prop
 		}
 		writer.writeEndElement(); // nucleus_radius_flag
@@ -150,8 +152,8 @@ void CellProperties::writeProperties(QXmlStreamWriter& writer) const {
 		std::map<LifeCycle, G4Material* >::const_iterator itCytoMaterial;
 		for(auto const& cytoplasmMaterial : _cytoplasmMaterials) {
 			writer.writeStartElement(variable_attribute_flag);
-			writer.writeAttribute(life_cycle_flag, 	QString::number(cytoplasmMaterial.first));
-			writer.writeAttribute(material_flag, 	QString(cytoplasmMaterial.second->GetName()) );
+			writer.writeAttribute(life_cycle_flag, QString::number(cytoplasmMaterial.first));
+			writer.writeAttribute(material_flag, QString(cytoplasmMaterial.second->GetName()));
 			writer.writeEndElement(); // var_prop
 		}
 		writer.writeEndElement(); // cytoplasms_mat_flag
@@ -162,8 +164,8 @@ void CellProperties::writeProperties(QXmlStreamWriter& writer) const {
 		writer.writeStartElement(nuclei_mat_flag);
 		for(auto const& nucleiMaterial : _nucleiMaterials) {
 			writer.writeStartElement(variable_attribute_flag);
-			writer.writeAttribute(life_cycle_flag, 	QString::number(nucleiMaterial.first));
-			writer.writeAttribute(material_flag, 	QString(nucleiMaterial.second->GetName()) );
+			writer.writeAttribute(life_cycle_flag, QString::number(nucleiMaterial.first));
+			writer.writeAttribute(material_flag, QString(nucleiMaterial.second->GetName()));
 			writer.writeEndElement(); // var_prop
 		}
 		writer.writeEndElement(); // nuclei_mat_flag

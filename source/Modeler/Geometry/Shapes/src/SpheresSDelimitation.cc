@@ -62,8 +62,8 @@ Point_3 SpheresSDelimitation::getSpot(Distribution::DistributionType pDistType) 
 	}
 
 	if(SPHERES_DELIM_DEBUG) {
-		QString mess = "find a spoat at " + QString::number(p.x()) + ", " + QString::number(p.y()) + ", " + QString::number(p.z());
-		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess.toStdString(), "SphereSDelimitation");
+		std::string mess = "find a spoat at " + std::to_string(p.x()) + ", " + std::to_string(p.y()) + ", " + std::to_string(p.z());
+		InformationSystemManager::getInstance()->Message(InformationSystemManager::DEBUG_MES, mess, "SphereSDelimitation");
 	}
 
 	return p;
