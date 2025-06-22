@@ -266,7 +266,7 @@ int Voronoi_3D_Mesh::exportToFileSTL_undivided(std::string const& path, Spheroid
 
 	for(auto* cell: cells) {
 		auto const& shape = cell->getShape();
-		for(auto it = shape->faces_begin(); it != shape->faces_end(); ++it) {
+		for(auto it = shape->facets_begin(); it != shape->facets_end(); ++it) {
 			auto const& points = {
 				(*it).halfedge()->vertex()->point(),
 				(*it).halfedge()->next()->vertex()->point(),

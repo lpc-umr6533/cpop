@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <limits>
+#include <iostream>
 
 static IDManager* idManager = nullptr;
 
