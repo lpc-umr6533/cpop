@@ -57,7 +57,7 @@ public:
 	/// \brief return true if nuclei radius are coherent
 	[[nodiscard]] bool checkNucleiRadius() const override = 0;
 
-	virtual void exportNucleiToFile(std::string const& path) const = 0;
+	virtual void exportNucleiToStream(std::ofstream&) const = 0;
 
 	/// \brief reset the mesh
 	void resetMesh() override;

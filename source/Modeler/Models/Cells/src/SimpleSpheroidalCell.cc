@@ -1,6 +1,4 @@
 #include "RandomEngineManager.hh"
-#include "CellMeshSettings.hh"
-#include "Geometry_Utils_Sphere.hh"
 #include "SimpleSpheroidalCell.hh"
 
 #include <CGAL/centroid.h>
@@ -121,7 +119,9 @@ Point_3 SimpleSpheroidalCell::getSpotOnCytoplasm() const {
 	return res;
 }
 
-void SimpleSpheroidalCell::exportNucleiToFile(std::string const& path) const {
-	for(auto const& nucleus: _nuclei) {
+void SimpleSpheroidalCell::exportNucleiToStream(std::ofstream& of) const {
+	for(auto const* nucleus: _nuclei) {
+		nucleus->write(of);
+		of << '\n';
 	}
 }

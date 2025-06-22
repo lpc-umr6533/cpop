@@ -32,7 +32,7 @@ public:
 	/// \brief return a random point inside the cytoplasm, avoiding membrane and nucleus
 	[[nodiscard]] Point_3 getSpotOnCytoplasm() const override;
 
-	void exportNucleiToFile(std::string const& path) const override;
+	void exportNucleiToStream(std::ofstream& of) const override;
 
 protected:
 	/// \brief max rattio getter

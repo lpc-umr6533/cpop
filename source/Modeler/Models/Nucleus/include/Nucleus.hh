@@ -53,10 +53,12 @@ public:
 	/// \brief print cell information (used also to save the cell on a .txt file)
 	virtual void writeAttributes(QXmlStreamWriter&) const = 0;
 
+	virtual void write(std::ofstream&) const = 0;
+
 	/// \brief pos type setter
-	void setPositionType(eNucleusPosType pType)	{ _posType = pType;};
+	void setPositionType(eNucleusPosType pType)	{ _posType = pType; }
 	/// \brief pos type getter
-	[[nodiscard]] eNucleusPosType getPositionType() const	{ return _posType;};
+	[[nodiscard]] eNucleusPosType getPositionType() const	{ return _posType; }
 	/// \brief return true if point is in the nucleus
 	virtual bool hasIn(Point) const = 0;
 

@@ -119,10 +119,11 @@ int SpheroidalCellMesh::exportToFile(std::string const& path, MeshOutFormats::ou
 		}
 	}
 
+	// TODO optional? Relocate?
 	if (!error) {
-		for(auto const& cell: cells) {
-			cell->exportNucleiToFile(path + "_nuclei.txt");
-		}
+		std::ofstream of(path + "_nuclei.txt", std::ios::trunc);
+		for(auto const& cell: cells)
+			cell->exportNucleiToStream(of);
 	}
 
 	return error;

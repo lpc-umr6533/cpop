@@ -54,6 +54,10 @@ public:
 	/// \brief print cell information (used also to save the cell on a .txt file)
 	void writeAttributes(QXmlStreamWriter&) const override;
 
+	void write(std::ofstream& of) const override {
+		of << _origin << " " << _radius;
+	}
+
 	/// \brief return true if point is in the nucleus
 	[[nodiscard]] bool hasIn(Point) const override;
 
